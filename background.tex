@@ -196,6 +196,93 @@
     The rule (Inh) applies when the reaction \((R, I, P)\) should not be executed; it records in the label the possible causes for which the reaction is disabled: possibly some inhibiting entities \((J \subseteq I)\) are present or some reactants \((Q \subseteq R)\) are missing, with \(J \cup Q \neq \emptyset\), as at least one cause is needed for explaining why the reaction is not enabled.
   \end{section}
 
+
+  \begin{section}{Positive Reaction Systems}
+    A particular kind of Reaction Systems are those without inhibitors. Such reactions are called positive and can be simply written as pairs \((R, P)\) and are equivalent to \((R, \emptyset, P)\). One can always encode any standard RS \(\mathcal{A} = (S, A)\) into an equivalent one without inhibitors. In order to track the absence of entities, a new ``negative'' entity is added for each original one. In any meaningful state \(W = D \cup C\) there will always be either one between \(a\) and \(\bar{a}\), but never both. As a consequence, for any entity \(a \in S_C\), we must assume that the context will provide either \(a\) or \(\bar{a}\).
+    Define \(\textbf{S} \defeq S \uplus \bar{S} \) and \( \bar{S} \defeq \{ \bar{a} \vert a \in S\}\). A subscript \(D\) or \(C\) will be used to differentiate between entities related to reaction products and related to the context.
+
+    \begin{definition}[State consistency]
+      A set \(\textbf{W} \subseteq \textbf{S}\) is non-contradictory if for all entities \(a \in S\) it holds that \(\{a, \bar{a}\} \nsubseteq \textbf{W}\). A non-contradictory state \(\textbf{W} \subseteq \textbf{S}\) is consistent if, for any entity \(a \in S\), either \(a \in \textbf{W}\) or \(\bar{a} \in \textbf{W}\) holds.
+    \end{definition}
+
+    \begin{definition}[Positive RS]\label{positive_rs}
+      A Positive RS is a Reaction System \(\mathcal{A}^+ = (\textbf{S}, A)\) that satisfies the following conditions:
+      \begin{enumerate}
+      \item Each reaction \(r\) in \(A\) is positive, i.e., \(r = (\textbf{R}, \emptyset, \textbf{P})\) for some non-contradictory sets \(\textbf{R}\) and \(\textbf{P}\).
+      \item Consistency preservation: for any consistent state \(\textbf{W}\), the result set \(res_{\mathcal{A}^+}(\textbf{W})\) must be consistent.\label{second_condition_positive}
+      \end{enumerate}
+    \end{definition}
+
+    If one assumes that the initial state \(\textbf{D}_0 \subseteq \textbf{S}_D\) is a non-contradictory set and that the sets \(\textbf{C}_0, \ldots, \textbf{C}_n \subseteq \textbf{S}_C\) provided by the context are non-contradictory sets, the second condition of\ \ref{second_condition_positive} guarantees that all result states traversed by the computation will be consistent as well.
+
+    \begin{subsection}{From RSs to Positive RSs}
+      For each standard RS \(\mathcal{A} = (S, A)\) it is possible to construct a Positive RS \(\mathcal{A}^+ = (\textbf{S}, A^+)\) that exactly mimic the behavior of \(\mathcal{A}\).
+      The reactions in \(A^+\) can be split in two categories: \(A^+_{pos}\) that simply embeds the original reactions \(A\) and \(A^+_{neg}\) whose reactions serve for negative entities bookkeeping.
+
+      For each reaction \((R, I, P) \in A\) there will be one positive reaction \((R \cup \bar{I}, P) \in A^+_{pos}\). Extra reactions are needed to track the absence of the products of the original reactions. They will be produced whenever no reaction in \(A\) that produces \(a\) is enabled. For this purpose, assume to collect all reactions in \(A\) that are capable of producing \(a\): to ensure that none of them are enabled, we must make sure that, for each one, at least one reactant is absent or at least one inhibitor is present.
+
+      \begin{definition}[Prohibiting set]
+        Let \(\mathcal{A} = (S, A)\) be RS and \(a \in S_D\) one of its entities. A non-contradictory set \(\textbf{T} \subseteq \textbf{S}\) is a prohibiting set for \(a\) if for any reaction \((R, I, P \cup {a}) \in A\) we have that \(\textbf{T} \cap (I \cup \bar{R}) \neq \emptyset\).
+        Denote the set of prohibiting sets for \(a\) with \(\mathit{Proh}_{\mathcal{A}}(a)\).
+      \end{definition}
+
+      \begin{definition}[Encoding RSs into PRSs]
+        Let \(\mathcal{A} = (S, A)\) be a RS, its encoding into a Positive RS is obtained by considering \(\mathcal{A}^+ \defeq (\textbf{S}, A^+)\) whose set of positive reactions \(A^+ \defeq A^+_{pos} \cup A^+_{neg}\) is defined as follows:
+        \begin{align*}
+          A^+_{pos} &\defeq \left\{(R \cup \bar{I}, P) \vert (R, I, P) \in A \right\} \\
+          A^+_{neg} &\defeq \bigcup_{a \in S} \left\{ (\textbf{T}, \bar{a}) \vert \textbf{T} \in \mathit{Proh}_{\mathcal{A}}(a) \right\}
+        \end{align*}
+
+        The resulting \({\mathcal{A}}^+\) satisfies the two conditions from Definition\ \ref{positive_rs} and thus is a Positive RS.\@
+      \end{definition}
+
+      The states of the new Positive RS are in bijection with the states of the old system and can be proven that the two systems compute exactly the same states at each step.
+    \end{subsection}
+
+    \begin{subsection}{Minimization}
+      The procedure of converting a RS into a Positive RS can produce a system with many redundant reactions. The following rules are used to minimize the reactions after they are computed:
+      \begin{enumerate}
+      \item The reaction \(r_1 = (R_1, I_1, P)\) can be omitted if a reaction \(r_2 = (R_2, I_2, P)\) such that \(R_2 \subseteq R_1\) and \(I_2 \subseteq I_1\) is present.
+      \item If both reactions \(r_1 = (R \cup \{a\}, I, P)\) and \(r_2 = (R, I \cup \{a\}, P)\) are present, they can be replaced by \(r = (R, I, P)\).
+      \end{enumerate}
+
+      In general one can apply a minimization process to both standard and Positive RS and derive a simplified version of the original system with fewer reactions.
+    \end{subsection}
+
+    \begin{subsection}{Slicing}
+      In the context of programming, dynamic slicing is a technique that helps a user to debug a program by simplifying a partial execution trace, by pruning parts which are irrelevant and highlighting parts of the program wich are responsible for the production of an error.
+      In the case of RSs, the goal is to highlight how a subset of the elements in a state were originated. This include the reactants and reactions that were responsible for producing them.
+
+      \begin{algorithm}
+        \caption{Trace Slicer}
+        \hspace*{\algorithmicindent}\begin{tblr}{colspec={Q[l,m]Q[l,m]}, colsep=0pt, rowsep=0pt}
+          {\textbf{Input:}} &-\ a reaction system \(\mathcal{A}\) \\
+                            &-\ a trace \(T = \frac{D_0}{C_0} \xrightarrow{N_1} \cdots \xrightarrow{N_m} \frac{D_m}{C_m} \) \\
+                            &-\ a marking \(D_\sigma \subseteq D_m\) \\
+        \end{tblr}
+
+        \hspace*{\algorithmicindent} \textbf{Output:} a sliced trace \(\frac{D_0'}{C_0'} \xrightarrow{N_1'} \cdots \xrightarrow{N_m'} \frac{D_\sigma}{C_m} \)
+        \begin{algorithmic}[1]
+          \State{\(D_m' := D_\sigma\)}
+          \For{\(i = \{m, m-1, \ldots, 1 \}\)}
+            \State{\(D_{i-1}' := \emptyset\)}
+            \State{\( C_{i-1}' := \emptyset\)}
+            \State{\( N_{i}' := \emptyset\)}
+            \For{\(r_j = (R_j, I_j, P_j) \in N_i\) such that \((D_i' \cap P_j \neq \emptyset)\)}
+              \State{\(N_i' := N_i' \cup \{j\}\)}
+              \State{\(C_{i-1}' := C_{i-1}' \cup (R_j \cap S_C) \)}
+              \State{\(D_{i-1}' := D_{i-1}' \cup (R_j \cap S_D) \)}
+            \EndFor{}
+          \EndFor{}
+        \end{algorithmic}\label{slicing_algorithm}
+      \end{algorithm}
+
+      Starting from the pair \(\frac{D_{\sigma}}{C_m}\) denoting the user's marking and proceeding backwards, apply iteratively a slicing step that deletes from the partial computation all information not related to \(D_{\sigma}\). The sliced trace will contain only the subsets of entities and reactions which are necessary for deriving the marked entities.
+
+      Since the algorithm\ \ref{slicing_algorithm} can only capture dependencies related to reactants, but ignores the ones related to inhibitors, converting the RS into a Positive RS makes possible the tracking of the absence of entities via negative entities. Minimizing the Positive RS reduces the noise in the output and is thus desirable.
+    \end{subsection}
+  \end{section}
+
   \begin{section}{Bisimulation}
     Given two distinct RS processes, the natural question to ask would be if their simulation is the same, or at least behaves the same. Bisimulation is one such relation, defined in terms of coinductive games, of fixed point theory and of logic.
     Bisimulation equivalence aims to identify transitions systems with the same branching structure, and wich thus can simulate each other in a stepwise manner.
