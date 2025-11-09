@@ -1,15 +1,10 @@
-\documentclass[12pt, oneside]{article}
+\documentclass[11pt, twoside, openright]{book}
 
 %% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - %%
 %%                               Load Packages                               %%
 %% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - %%
 
 \usepackage[
-  top=2cm,
-  bottom=2cm,
-  left=2cm,
-  right=2cm,
-  headheight=20pt,
   centering
 ]{geometry}
 \geometry{a4paper}
@@ -50,12 +45,16 @@
 \usepackage{algpseudocode} %% loads algorithmicx
 \usepackage{amsthm}
 \usepackage{thmtools} %% theorems
+\usepackage{simplebnf}
+\usepackage{stmaryrd}
+\usepackage{ebproof}
+\usepackage{xfrac}
 
 %% plot packages
 \usepackage{pgfplots} %% plots used with \begin{tikzpicture}
 \usepackage{tikz} %% for pictures
-\usetikzlibrary{trees}
 \pgfplotsset{width=10cm,compat=newest}
+\usepackage{subcaption}
 
 %% design packages
 \usepackage{enumitem} %% for lists and enumerating
@@ -68,7 +67,6 @@
 %% load last
 \usepackage[hidelinks]{hyperref} %% links for table of contents, load last
 \usepackage{bookmark} %% for better table of contents
-
 
 %% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - %%
 %%                       Configuration of the packages                       %%
@@ -151,6 +149,14 @@
 \declaretheorem[numbered=no, style=steo]{theorem}
 
 \declaretheoremstyle[
+ headfont=\normalfont\bfseries,
+ notefont=\mdseries,
+ bodyfont=\normalfont,
+ qed=\qedsymbol % chktex 1
+]{slem}
+\declaretheorem[numbered=no, style=slem]{lemma}
+
+\declaretheoremstyle[
   headfont=\normalfont\bfseries,
   notefont=\mdseries,
   bodyfont=\normalfont,
@@ -171,7 +177,12 @@
 %% ......................................................................... %%
 %% local changes
 % \setcounter{secnumdepth}{0}
+\newcommand{\defeq}{\vcentcolon=}
 
+\usetikzlibrary{trees, positioning, shapes.misc, positioning, arrows.meta}
+
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\DeclarePairedDelimiter\doublesq{\llbracket}{\rrbracket}%
 
 %% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - %%
 
@@ -185,7 +196,8 @@
 
 \begin{document}
 
-\input{section}
+\input{introduction}
+\input{background}
 
 \end{document}
 

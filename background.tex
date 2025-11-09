@@ -1,0 +1,547 @@
+\begin{chapter}{Background}
+  \begin{section}{Reaction Systems}
+    Reaction Systems are a qualitative model inspired by biochemical processes.
+    The behavior is described by reactions, each of them requiring some reactants \(R\) and requiring the absence of inhibitors \(I\) to produce some product elements \(P\).
+
+    \begin{definition}[Reaction]
+      A reaction is a triplet a \(= (R, I, P)\), where \(R, I, P\) are finite sets with \(R \cap I = \emptyset\) and \(R, I, P \neq \emptyset\). If \(S\) is a set such that \(R, I, P \subseteq S\), then a is a reaction in \(S\).
+    \end{definition}
+
+    The reactions \((R, I, P)\) operate over a finite set of entities \(S\), called \textit{background set}.
+    The theory of RSs is based on three assumptions:
+    \begin{itemize}
+    \item\label{first_assumption} no permanency, meaning entities vanish unless sustained by a reaction;
+    \item\label{second_assumption} no counting, meaning the exact quantity of each entity is irrelevant;
+    \item threshold nature of resources, meaning if an entity is present, it is present for all possible reactions.
+    \end{itemize}
+
+    \begin{definition}
+      Let \(T\) be a finite set.
+      \begin{enumerate}
+      \item Let \(a\) be a reaction. Then \(a\) is enabled by \(T\), denoted by \(en_{a}(T)\) if \(R_a \subseteq T\) and \(I_a \cap T = \emptyset\). The result of \(a\) on \(T\), denoted by \(res_{a}(T)\), is defined by: \(res_{a}(T) \defeq P_a\) if \(en_a(T)\) and  \(res_{a}(T) \defeq \emptyset\) otherwise.
+      \item Let \(A\) be a finite set of reactions. The result of \(A\) on \(T\), denoted by \(res_A(T)\), is defined as \(res_A(T) \defeq \bigcup_{a \in A}{res_{a}(T)} \).
+      \end{enumerate}
+    \end{definition}
+
+    Note that by virtue of the second assumption \hyperref[second_assumption]{(2)} if two reactions \(a, b \in A\), with both \(a\) and \(b\) enabled by T, then even if \(R_a \cap R_b \neq \emptyset\), still both \(P_a \subseteq res_A(T)\) and \(P_b \subseteq res_A(T)\). Both reactions can use \(R_a \cap R_b\) to produce their products.
+    This would not be allowed in other models such as Petri nets\ \cite{Rozenberg_Engelfriet_1998}, a common model of concurrent systems.
+
+    Let \(rac(S)\) be the set of all the reactions in \(S\).
+
+    \begin{definition}[Reaction System]
+      A Reaction System (RS) is a pair \(\mathcal{A} = (S, A)\) such that \(S\) is a finite set and \(A \subseteq rac(S)\) is a finite set of reactions in S.
+    \end{definition}
+
+    The set \(S\) is called the \textit{background set} of \(\mathcal{A}\); its elements, called \textit{entities}, represent molecular entities (e.g.\ atoms, ions, molecules) that may be present in the state of the system modeled by \(\mathcal{A}\). The set \(A\) is called the \textit{set of reactions} of \(\mathcal{A}\). Since \(S\) is finite, so is \(A\).
+
+    the behavior of a RS is formalized through the notion of an interactive process.
+
+    \begin{definition}[Interactive Process]
+      Let \(\mathcal{A} = (S, A)\) be a RS and let \(n > 0\). An \(n\)-step interactive process in \(\mathcal{A}\) is a pair \(\pi = (\gamma, \delta)\) such that \(\gamma \defeq {\left\{C_i\right\}}_{i\in [0, n]}\) is the context sequence and \(\delta \defeq {\left\{D_i\right\}}_{i\in [0, n]}\) is the result sequence, where \(\forall i \in [0, n], C_i, D_i \subseteq S\), \(D_0 = \emptyset\) and \(\forall i \in [0, n-1], D_{i+1} \defeq res_A(D_i \cup C_i)\).
+      We call \(\tau \defeq W_0, \ldots, W_n\) the state sequence, where \(W_i \defeq C_i \cup D_i\) for all \(i \in [0, n]\).
+    \end{definition}
+
+    %% TODO figure 1 from 2001 a tour of reaction systems
+    % \begin{tikzpicture}[node distance=5mm]
+    %   \node (dot)   [terminal]                     {.};
+    %   \node (digit) [terminal,base right=of dot]   {digit};
+    %   \node (E)     [terminal,base right=of digit] {E};
+    % \end{tikzpicture}
+
+    Note that \(C_i\) and \(D_i\) do not have to be disjointed.
+
+    \(W_0 = C_0\)is called the initial state of \(\pi\). If \(C_i \subseteq D_i\) for all \(i \in [1, n]\) then \(\pi\) is called context-independent. For context-independent interactive process, we can take \(C_i = \emptyset\) for all \(i = [1, n]\) without changing the state sequence.
+
+    In a context-independent state sequence \(\tau = W_0, \ldots, W_i, W_{i+1}, \ldots, W_n \), during the transition from \(W_i\) to \(W_{i+1}\) all entities from \(W_i -res_{\mathcal{A}}(W_i)\) will not persist. This reflects the assumption of no permanency \hyperref[first_assumption]{(1)}. Thus, if \(\tau\) is not context-independent, an entity from a current state can also be sustained by the context \(C_{i+1}\).
+
+    \begin{definition}[Sequence Shift]
+      Let \(\gamma = {\left\{C_i\right\}}_{i\in [0, n]}\) a context sequence. Given a positive integer \(k \leq n\), let \(\gamma^{k} \defeq {\left\{C_{i+k}\right\}}_{i\in [0, n-k]}\).
+    \end{definition}
+
+    \begin{subsection}{Example: A binary counter}
+      A reaction system can act as a cyclic n-bit counter in which external signals trigger increment or decrement operations. To build the counter, let \(n > 0\) be an integer and define the background set as \( \{p_0, p_1, \ldots, p_{n-1}\} \cup \{ dec, inc\} \).
+
+      Five sets of reactions describe a binary counter-like behavior:
+
+      \begin{tblr}{colspec={Q[l,m]Q[l,m]Q[l,m]}, colsep=2pt}
+        \(a_j\) &= \((\{p_j\}, {dec, inc}, {p_j})\), &\(\forall j \in [0, n]\)\\
+        \(b_j\) &= \((\{inc, p_0, p_1, \ldots, p_{j-1}\}, {dec, p_j}, {p_j})\), &\(\forall j \in [0, n]\)\\
+        \(c_{j,k}\) &= \((\{inc, p_k\}, {dec, p_j}, {p_k})\), &\(\forall j, k \text{s.t.} 0 \leq j < k < n\)\\
+        \(d_j\) &= \((\{dec\}, {inc, p_0, p_1, \ldots, p_j}, {p_j})\), &\(\forall j \in [0, n]\)\\
+        \(e_{j,k}\) &= \((\{dec, p_j, p_k\}, {inc}, {p_k})\), &\(\forall j, k \text{s.t.} 0 \leq j < k < n\)\\
+      \end{tblr}
+
+      where reactions \(a\) cause the bits to be restrained in the next state if there is no operation, reactions \(b\) implement the increment operation by flipping the least significant zero to one, reactions \(c\) let the more significant bits remain, reactions \(d\) implements the decrement operation by flipping to one the bits when there is no one at a lower position, and reactions \(e\) let the more significant bits remain.
+
+      The complete RS \(\mathcal{B}_n\) is defined as follows: \(\mathcal{B}_n = \left(S_n, B_n\right)\) where \(S_n = \{p_0, p_1, \ldots, p_{n-1}\} \cup \{dec, inc\}\) and \(B_n = \{a_j, b_j, d_j | 0 \leq k < n\} \cup \{c_{j, k}, e_{j, k} | 0 \leq l < k < n\}\).
+
+      To illustrate the system in action consider the sequence of contexts:
+      \(C_0 = \{p1, p3\}, C_1 = \emptyset, C_2 = \{inc\}, C_3 = \{inc\}, C_4 = \{dec\}, C_5 = \{dec, inc\}\). This gives the result sequence \(\delta = \emptyset.\{p1, p3\}.\{p1, p3\}.\{p0, p1, p3\}.\{p2, p3\}.\{p0, p1, p3\}.\emptyset\) and state sequence \(\tau = \{p1, p3\}.\{p1, p3\}.\{p1, p3, inc\}.\{p0, p1, p3, inc\}.\{p2, p3, dec\}.\{p0, p1, p3, dec, inc\}.\emptyset\) that in binary representation is \(\{1010\}.\{1010\}.\{1010\}.\{1011\}.\{1100\}.\{1011\}.\{0000\}\) by ignoring \(inc\) and \(dec\).
+    \end{subsection}
+
+  \end{section}
+
+  \begin{section}{SOS rules for reaction systems}
+    The behavior of a RS could be defined as a discrete time interactive process: a finite context sequence describes the entities provided by the environment at each step, the current state is determined by the union of the entities coming from the environment with those produced from the previous step and the state sequence is determined by applying all and only the enabled reactions to the set of entities available in the current state.
+
+    Given the context sequence, the semantics of RSs is uniquely determined and can be represented as a finite, deterministic and labeled or unlabeled transition system.
+    RS have had defined a Labeled Transition System (LTS) semantics as seen in\cite{Brodo_Bruni_Falaschi_2021}.
+
+    \begin{definition}[RS processes]
+      Let \(S\) be a set of entities. An RS process \(P\) is any term defined by the following grammar:
+
+      \begin{bnf}(relation-sym-map = % chktex 36
+        {
+          {::=} = {\ensuremath{\Coloneqq}},
+          {->} = {},
+          {:in:} = {\ensuremath{\subseteq}},
+        },)
+        $P$ : ::= % chktex 26
+        | [$M$] : mixture process % chktex 26
+        ;; % chktex 26
+        $M$ : ::= % chktex 26
+        | $(R, I, P)$ : reaction % chktex 26
+        | $D$ : set of entities % chktex 26
+        | $K$ : context process % chktex 26
+        | $M \vert M$ : % chktex 26
+        ;; % chktex 26
+        $K$ : ::= % chktex 26
+        | \textbf{$0$} : nil context % chktex 26
+        | $X$ : process variable % chktex 26
+        | $C.X$ : set of entities followed by context % chktex 26
+        | $K + K$ : non deterministic choice % chktex 26
+        | $\texttt{rec} X . K$ : recursive operator % chktex 26
+        ;; % chktex 26
+        Where \\ & \(R, I, P\) :in: \(S\) non empty sets of entities : % chktex 26
+        ;; % chktex 26
+        \(C, D\) :in: \(S\) possibly empty set of entities : % chktex 26
+        ;; % chktex 26
+        \(X\) -> a process variable : % chktex 26
+      \end{bnf}
+    \end{definition}
+
+    An RS process \(P\) embeds a mixture process \(M\) obtained as he parallel composition of some reactions \((R, I, P)\), some set of currently present entities \(D\) (possibly the empty set \(\emptyset\)), and some context process \(K\). For brevity sake \(M_1 \vert M_2 \vert M_3 = \prod_{i \in \{1, 2, 3\}} M_i \).
+    A process context \(K\) is a possibly nondeterministic and recursive system: the nil context \(\textbf{0}\) stops the computation; the prefixed context \(C.K\) provides the entities in \(C\) and then uses \(K\) as the next context; the non deterministic choice \(K_1 + K_2\) allows the context to behave either as \(K_1\) or \(K_2\); X is a process variable; and \(\texttt{rec} X. K\) is the recursive operator of process algebras. For brevity sake \(K_1 + K_2 + K_3 = \sum_{i \in \{1, 2, 3\}}K_i\).
+
+    \begin{definition}[RSs as RS processes]
+      Let \(\mathcal{A}=(S, A)\) be a RS, and \(\pi = (\gamma, \delta)\) an \(n\)-step interactive process in \(\mathcal{A}\) with \(\gamma = {\{C_i\}}_{i \in [0, n]}\) and \(\delta = {\{D_i\}}_{i \in [0, n]}\). For any step \(i \in [0, n]\), the corresponding RS process \(\doublesq{\mathcal{A}, \pi}_i\) is defined as follows:
+
+      \[ \doublesq{\mathcal{A}, \pi}_i \defeq \left[ \prod_{a \in A} a \vert D_i \vert K_{\gamma^i} \right] \]
+
+      where the context process \(K_{\gamma^i} \defeq C_i . C_{i+1}. \ldots . C_n . \textbf{0} \) is the sequentialization of the entities offered by \(\gamma^i\).%% \ \(\doublesq{\mathcal{A}, \pi} = \doublesq{\mathcal{A}, \pi}_0\).
+    \end{definition}
+
+    \begin{definition}[Label]
+      A label is a tuple \(\langle W \triangleright R, I, P \rangle\) with \( W, R, I, P \subseteq S\).
+    \end{definition}
+    In a transition label \(\langle W \triangleright R, I, P \rangle\), \(W\) records the set of entities currently in the system (produced in the previous step or provided by the context), \(R\) records the set of entities whose presence is assumed (either because they are needed as reactants on an applied reaction or because their presence prevents the application of some reaction), \(I\) records the set of entities whose absence is assumed, and \(P\) records the set of entities produced by the applied reactions.
+
+    \begin{definition}[Operational Semantics]
+      The operational semantics of processes is defined by the set of SOS inference rules in figure\ \ref{SOS_semantics}.
+    \end{definition}
+
+    \begin{figure}[!h]
+      \centering
+      \begin{prooftree}
+        \Hypo{ \vphantom{K \left[ \sfrac{ \texttt{rec} X.K }{ X } \right] \xrightarrow{\langle W \triangleright R, I, P \rangle} K'} } % chktex 1
+        \Infer1[(Ent)]{D \xrightarrow{\langle D\ \triangleright\ \emptyset, \emptyset, \emptyset \rangle} \emptyset} % chktex 1
+      \end{prooftree}\hspace{1em}
+      \begin{prooftree}
+        \Hypo{ \vphantom{K \left[ \sfrac{ \texttt{rec} X.K }{ X } \right] \xrightarrow{\langle W \triangleright R, I, P \rangle} K'} } % chktex 1
+        \Infer1[(Ctx)]{C.K \xrightarrow{ \langle C\ \triangleright\ \emptyset, \emptyset, \emptyset \rangle } K} % chktex 1
+      \end{prooftree}\hspace{1em}
+      \begin{prooftree}
+        \Hypo{ K \left[ \sfrac{ \texttt{rec} X.K }{ X } \right] \xrightarrow{\langle W \triangleright R, I, P \rangle} K' } % chktex 1
+        \Infer1[(Rec)]{ \texttt{rec} X.K \xrightarrow{\langle W\ \triangleright\ R, I, P \rangle} K' } % chktex 1
+      \end{prooftree}\vspace{2em}
+
+      \begin{prooftree}
+        \Hypo{ K_1 \xrightarrow{\langle W \triangleright R, I, P \rangle} K_1' } % chktex 1
+        \Infer1[(Suml)]{ K_1 + K_2 \xrightarrow{\langle W\ \triangleright\ R, I, P \rangle} K_1' } % chktex 1
+      \end{prooftree}\hspace{1em}
+      \begin{prooftree}
+        \Hypo{ K_2 \xrightarrow{\langle W \triangleright R, I, P \rangle} K_2' } % chktex 1
+        \Infer1[(Sumr)]{ K_1 + K_2 \xrightarrow{\langle W\ \triangleright\ R, I, P \rangle} K_2' } % chktex 1
+      \end{prooftree}\vspace{2em}
+
+      \begin{prooftree}
+        \Hypo{ \vphantom{J \cup Q \neq \emptyset} } % chktex 1
+        \Infer1[(Pro)]{ (R, I, P) \xrightarrow{\langle \emptyset\ \triangleright\ R, I, P \rangle} (R, I, P) \vert P } % chktex 1
+      \end{prooftree}\hspace{1em}
+      \begin{prooftree}
+        \Hypo{ J \subseteq I } % chktex 1
+        \Hypo{ Q \subseteq R } % chktex 1
+        \Hypo{ J \cup Q \neq \emptyset } % chktex 1
+        \Infer3[(Inh)]{ (R, I, P) \xrightarrow{\langle \emptyset\ \triangleright\ R, I, P \rangle} (R, I, P) \vert P } % chktex 1
+      \end{prooftree}\vspace{2em}
+
+      \begin{prooftree}
+        \Hypo{ M_1 \xrightarrow{\langle W_1 \triangleright R_1, I_1, P_1 \rangle} M_1' } % chktex 1
+        \Hypo{ M_2 \xrightarrow{\langle W_2 \triangleright R_2, I_2, P_2 \rangle} M_2' } % chktex 1
+        \Hypo{ (W_1 \cup W_2 \cup R_1 \cup R_2) \cap (I_1 \cup I_2) } % chktex 1
+        \Infer3[(Par)]{ M_1 \vert M_2 \xrightarrow{\langle W_1 \cup W_2\ \triangleright\ R_1 \cup R_2, I_1 \cup I_2, P_1 \cup P_2 \rangle} M_1' \vert M_2' } % chktex 1
+      \end{prooftree}\vspace{2em}
+
+      \begin{prooftree}
+        \Hypo{ M \xrightarrow{\langle W \triangleright R, I, P \rangle} M' } % chktex 1
+        \Hypo{ R \subseteq W } % chktex 1
+        \Infer2[(Sys)]{ [M] \xrightarrow{\langle W\ \triangleright\ R, I, P \rangle} [M'] } % chktex 1
+      \end{prooftree}
+
+      \caption{SOS semantics of the reaction system process}\label{SOS_semantics}
+    \end{figure}
+
+    \(K \left[ \sfrac{ \texttt{rec} X.K }{ X } \right]\) denotes the process obtained by replacing in \(K\) every free occurrence of the variable \(X\) with its recursive definition \(\texttt{rec} X.K\).
+    The rule (Pro), executes the reaction \((R, I, P)\) (its reactants, inhibitors, and products are recorded the label), which remains available at the next step together with \(P\).
+    The rule (Inh) applies when the reaction \((R, I, P)\) should not be executed; it records in the label the possible causes for which the reaction is disabled: possibly some inhibiting entities \((J \subseteq I)\) are present or some reactants \((Q \subseteq R)\) are missing, with \(J \cup Q \neq \emptyset\), as at least one cause is needed for explaining why the reaction is not enabled.
+  \end{section}
+
+  \begin{section}{Bisimulation}
+    Given two distinct RS processes, the natural question to ask would be if their simulation is the same, or at least behaves the same. Bisimulation is one such relation, defined in terms of coinductive games, of fixed point theory and of logic.
+    Bisimulation equivalence aims to identify transitions systems with the same branching structure, and wich thus can simulate each other in a stepwise manner.
+
+    \begin{definition}[Transition System\cite{Baier_Katoen_Larsen_2016}]
+      A transition system \(TS\) is a tuple \((S, Act, \to, I, AP, L)\) where:
+      \begin{itemize}
+      \item \(S\) is a set of states,
+      \item \(Act\) is a set of actions,
+      \item \(\to \subseteq S \times Act \times S\) is a transition relation,
+      \item \(I \subseteq S\) is a set of initial states,
+      \item \(AP\) is a set of atomic propositions,
+      \item \(L: S \to 2^{AP}\) is a labeling function.
+      \end{itemize}
+
+      \(TS\) is called finite if \(S\), \(Act\), and \(AP\) are finite.
+    \end{definition}
+
+    The intuitive behavior of a transition system can be described as follows: the transition system start in some initial state \(s_0 \in I\) and evolves according to the transition relation \(\to\). Given \(s\) as the current state, then a transition \(s \xrightarrow{\alpha} s'\) is selected nondeterministically and taken, meaning the action \(\alpha\) is performed and the transition system evolves from state \(s\) into the state \(s'\). The labeling function \(L\) relates a set \(L(s) \in 2^{AP}\) of atomic propositions to any state \(s\). It intuitively stands for exactly those aotmic propositions \(\alpha \in AP\) which are satisfied by state \(s\).
+
+    \begin{definition}[Bisimulation Equivalence\cite{Baier_Katoen_Larsen_2016}]
+      Let \(TS_i = (S_i, Act_i, \to_i, I_i, AP, L_i), i \in \{1,2\}\), be transition systems over AP.\ A bisimulation for \((TS_1, TS_2)\) is a binary relation \(\mathcal{R} \subseteq S_1 \times S_2\) such that:
+      \begin{itemize}
+      \item \(\forall s_1 \in I_1 (\exists s_2 \in I_2. (s_1, s_2) \in \mathcal{R}) \) and \(\forall s_2 \in I_2 (\exists s_1 \in I_1. (s_1, s_2) \in \mathcal{R} )\)
+      \item for all \((s_1, s_2) \in \mathcal{R}\) it holds:
+        \begin{enumerate}
+        \item \(L_1(s_1) = L_2(s_2)\)
+        \item if \(s_1' \in Post(s_1)\) then there exists \(s_2' \in Post(s_2)\) with \((s_1', s_2') \in \mathcal{R}\)
+        \item if \(s_2' \in Post(s_2)\) then there exists \(s_1' \in Post(s_1)\) with \((s_1', s_2') \in \mathcal{R}\).
+        \end{enumerate}
+      \end{itemize}
+
+      \(TS_1\) and \(TS_2\) are bisimulation-equivalent (bisimilar), denoted \(TS_1 ~ TS_2\), if there exists a bisimulation \(\mathcal{R}\) for \((TS_1, TS_2)\).
+    \end{definition}
+
+    Where \(Post(s)\) is the set of successors of \(s\) defined as
+    \[Post(s) \defeq \bigcup_{\alpha \in Act} \left\{ s' \in S \middle| s \xrightarrow{\alpha} s' \right\} \]
+
+    An intuitive way to see bisimulation is by framing it as a game between an attacker and a defender: the attacker wants to disprove the equivalence between two processes \(s\) and \(t\), the latter tries to show that \(s\) and \(t\) are equivalent. Each turn the attacker picks one process and one transition \(s \xrightarrow{\alpha} s'\), the defender must reply by picking one transition \(t \xrightarrow{\alpha} t'\) of the other process with exactly the same label \(\alpha\). The game ends either with the attacker winning by finding a transition with no equivalent one in the other process or with the attacker losing by having no transitions available.
+
+    \begin{subsection}{Algorithms for evaluating bisimulation}
+      Follows a definition of a partition, used extensively in the following algorithms:
+
+      \begin{definition}[Partition]
+        A partition of \(S\) is a set \(\{B_0, \ldots, B_k\}, k\geq 0\) of non-empty subsets of \(S\) such that:
+        \begin{itemize}
+        \item \(B_i \cap B_j = \emptyset\), for all \(0 \leq i < j \leq k\),
+        \item \(S = B_0 \cup B_1 \cup \ldots \cup B_k\).
+        \end{itemize}
+      \end{definition}
+
+      An equivalence relation over the set of states \(S\) can be represented as a partition of the states. The sets \(B_i\) are called blocks.
+
+      Let \(\pi\) and \(\pi'\) be two partitions of \(S\).\ \(\pi'\) is a refinement of \(\pi\) if for each block \(B' \in \pi'\) there exists some block \(B \in \pi\) such that \(B'\subseteq B\).
+
+      \begin{paragraph}{The algorithm of Kanellakis and Smolka\cite{Aceto_Ingolfsdottir_Srba_2011}}
+        
+        Given a transition system \(T = (S, Act, \to, I, AP, L)\), let \(\pi = \{B_0, \ldots, B_k\}, k \geq 0\) be a partition of the set of states \(S\). The algorithm due to Kanellakis and Smolka is based on the notion of splitter.
+
+        \begin{definition}[Splitter]
+          A splitter for a block \(B_i \in \pi\) is a block \(B_j \in \pi\) such that, for some action \(\alpha \in Act\), some states in \(B_i\) have \(\alpha\)-labeled transitions whose target is a state in \(B_j\) and others do not.
+        \end{definition}
+
+        Intuitively, thinking of blocks as representing approximations of equivalence classes of processes with respect to strong bisimilarity, the existence of a splitter \(B_j\) for a block \(B_i\) in the current partition indicates that we have a reason for distinguishing two groups of sets of states in \(B_i\), namely those that afford an \(\alpha\)-labeled transition leading to a state in \(B_j\) and those that do not. Therefore \(B_i\) can be split by \(B_j\) with respect to action \(\alpha\) into the two new blocks:
+        \begin{align*}
+          B_i^1 &= \left\{ s \middle| s \in B_i \text{ and } s \xrightarrow{\alpha} s' \text{ for some } s' \in B_j \right\} \text{ and}\\
+          B_i^2 &= B_i \setminus B_i^1.
+        \end{align*}
+
+        This splitting results in the new partition:
+        \[\pi' = \left\{ B_o, \ldots, B_{i-1}, B_i^1, B_i^2, B_{i+1}, \ldots, B_k \right\}\]
+        which is a refinement of \(\pi\).
+
+        The algorithm of Kanellakis and Smolka iterate the splitting of some blocks \(B_i\) by some blocks \(B_j\) with respect to some action \(\alpha\) until no further refinement of the current partition is possible. The resulting partition coincides with bisimilarity over the input labeled transition systems when the initial partition \(\pi_{\text{initial}}\) is chosen to be equal to \(S\) and is called the coarsest stable partition.
+
+        \begin{definition}[Stable Partition and Coarsest Stable Partition]
+          A set \(B \subseteq S\) is stable with respect to a set \(I \subseteq S\) if either \(B \subseteq pre(I)\) or \(B\cap pre(I) = \emptyset\).
+
+          A partition \(\pi\) is stable with respect to a set \(I\) if each block \(B \in \pi\) is stable with respect to \(I\).
+
+          A partition \(\pi\) is stable with respect to a partition \(\pi'\) if \(\pi\) is stable with respect to each block \(B' \in \pi'\).
+          A partition \(\pi\) is stable if it is stable with respect to itself.
+
+          The coarsest stable refinement of a partition \(\pi_{\text{initial}}\) is a stable partition that is refined by any other stable partition that refines \(\pi_{\text{initial}}\).
+        \end{definition}
+
+        Note that \(B \subseteq S\) is stable with respect to a block \(C \subseteq S\) if and only if \(C\) is not a splitter for \(B\).
+
+        Follows the pseudocode for the algorithm of Kanellakis and Smolka\cite{Aceto_Ingolfsdottir_Srba_2011}.
+        \begin{algorithm}
+          \begin{algorithmic}[1]
+            \State{\(\pi := {S}\)}
+            \State{\(changed :=\) true}
+            \While{\(changed\)}
+              \State{\(changed :=\) false}
+              \For{each block \(B\in \pi\)}
+                \For{each action \(\alpha\)}
+                  \State{sort the \(\alpha\)-labeled transitions from states in \(B\)}
+                  \If{\texttt{split}\((B, \alpha, \pi)\) = \(\{ B_1, B_2 \} \neq \{ B \}\)}
+                    \State{refine \(\pi\) by replacing \(B\) with \(B_1\) and \(B_2\)}
+                    \State{\(changed :=\) true}
+                  \EndIf{}
+                \EndFor{}
+              \EndFor{}
+            \EndWhile{}
+          \end{algorithmic}
+        \end{algorithm}
+
+        \begin{algorithm}
+          \begin{algorithmic}[1]
+            \Procedure{\texttt{split}}{$B, \alpha, \pi$}
+              \State{choose some state \(s \in B\)}
+              \State{\(B_1, B_2 := \emptyset\)}
+              \For{each state \(t \in B\)}
+                \If{\(s\) and \(t\) can reach the same set of blocks in \(\pi\) via \(\alpha\)-labeled transitions}
+                  \State{\(B_1 := B_1 \cup \{t\}\)}
+                \Else{}
+                  \State{\(B_2 := B_2 \cup \{t\}\)}
+                \EndIf{}
+              \EndFor{}
+              \If{\(B_2\) is empty}
+                \State{return \(\{B_1\}\)}
+              \Else{}
+                \State{return \(\{B_1, B_2\}\)}
+              \EndIf{}
+            \EndProcedure{}
+          \end{algorithmic}
+        \end{algorithm}
+
+        The algorithm uses the function \texttt{split}\((B, \alpha, \pi)\) which given a partition \(\pi\), a block \(B \in \pi\) and an action \(\alpha\), splits \(B\) with respect to each block in \(\pi\) and action \(\alpha\).
+
+        \begin{theorem}{Kanellakis and Smolka}
+          When applied to a finite labeled transition system with \(n\) states and \(m\) transitions, the algorithm of Kanellakis and Smolka computes the partition corresponding to bisimilarity in time \(O(n \cdot m)\).
+        \end{theorem}
+
+        Proof of correctness relies on the fact that when \(changed\) is false, there is no splitter for any of the blocks in \(\pi\). Moreover, if we denote by \(\pi_i\) the partition after the \(i\)-iteration of the main loop, we have \(~ \subseteq ~_i \subseteq \pi_i\). Thus the algorithm terminates with \(\pi = ~\).
+      \end{paragraph}
+
+
+      \begin{paragraph}{The algorithm of Paige and Tarjan\cite{Cleaveland_Sokolsky_2001}}
+        Performance of the algorithm by Kanellakis and Smolka can be significantly improved through the use of more complex data structures. Paige and Tarjan proposed an algorithm that utilizes information about previous splits to make future splits more efficient. A simple algorithm over a one symbol alphabet is presented, followed by an algorithm that converts any LTS into a one symbol LTS.%
+
+        The Paige-Tarjan algorithm is based on the following observation. Let \(B\) be stable with respect to \(S\), and let \(S\) be partitioned into \(S_1\) and \(S_2\). Then, if \(B \cap S = \emptyset\), \(B\) is stable with respect to both \(S_1\) and \(S_2\). Otherwise \(B\) can be split into three blocks:
+        \begin{align*}
+          B_1 &= B \setminus pre(S_2), \\
+          B_{12} &= B \cap pre(S_1) \cap pre(S_2), \\
+          B_2 &= B \setminus pre(S_1).
+        \end{align*}
+        The improvement in complexity that the Paige-Tarjan algorithm provides over the algorithm by Kanellakis and Smolka stems from the fact that three-way splitting can be performed in time proportional to the size of the smaller of the two blocks \(S_1, S_2\).
+
+        Two types of splitter can be identified: simple and compound splitters.
+
+        \textit{simple splitters} are used to split blocks in \(\pi\) into two disjoint subsets as done in the algorithm of Kanellakis and Smolka.
+
+        \begin{definition}[Simple splitting]
+          Let \(\pi\) be a partition and let \(B\) be a set of states in \(S\).
+          Define \(\texttt{split}(B, \pi)\) as the following procedure:
+
+          For each block \(B' \in \pi\) such that \(B'\) is not stable with respect to \(B\), replace \(B'\) by the blocks
+          \begin{align*}
+            B_1' &= B' \cap pre(B)\quad \text{and}\\
+            B_2' &= B' \setminus pre(B).
+          \end{align*}
+
+          \(B\) is a splitter for \(\pi\) when \(\texttt{split}(B, \pi) \neq \pi\), in which case \(\pi\) is refined with respect to \(B\) and \(\texttt{split}(B, \pi)\) is the partition that results from that refinement.
+        \end{definition}
+
+        Some useful properties follow:
+
+        \begin{lemma}{\cite{Aceto_Ingolfsdottir_Srba_2011}}
+          \begin{enumerate}
+          \item Stability is preserved by refinement: if \(\pi\) refines \(\pi'\) and \(\pi'\) is stable with respect to a set of states \(I\), then so is \(\pi\).
+          \item Stability is preserved by union: if \(\pi\) is stable with respect to sets \(I_1\) and \(I_2\), then \(\pi\) is also stable with respect to \(S_1 \cup S_2\).
+          \item Assume that \(B \subseteq S\). Let \(\pi_1\) and \(\pi_2\) be two partitions of \(S\) such that \(\pi_1\) refines \(\pi_2\). Then \(\texttt{split}(B, \pi_1)\) refines \(\texttt{split}(B, \pi_2)\).
+          \item Assume that \(B, B' \subseteq S\). Let \(\pi\) be a partition of \(S\). Then
+            \[ \texttt{split}(B, \texttt{split}(B', \pi)) = \texttt{split}(B', \texttt{split}(B, \pi)) \]
+          \end{enumerate}
+        \end{lemma}
+
+        In order to implement the algorithm efficiently, it is useful to reduce the problem to that of considering a labeled transition system without deadlocked states, meaning without states with no outgoing edge. This can be done easily by preprocessing the initial partition \(\pi_{intial}\) by splitting each block \(B \in \pi_{initial}\) into:
+        \begin{align*}
+          B_1 &= B \cap pre(S)\quad\text{and}\\
+          B_2 &= B \ pre(S).
+        \end{align*}
+
+        \(B_2\) will never be split again by the refinement algorithm. Therefore run the refinement algorithm starting from the partition \(\pi_{initial}' = \{B_1 | B \in \pi_{initial}\}\).
+
+        In order to find splitters efficiently, some additional information is kept. The algorithm maintains another partition \(X\) such that
+        \begin{itemize}
+        \item \(\pi\) is a refinement of \(X\) and
+        \item \(\pi\) is stable with respect to \(X\).
+        \end{itemize}
+
+        Initially \(X = \{S\}\). Follows a general outline of the algorithm.
+        \begin{algorithm}
+          \begin{algorithmic}[1]
+            \While{\(\pi \neq X\)}
+              \State{Find a block \(I \in X \setminus \pi\)}
+              \State{Find a block \(B \in \pi\) such that \(B \subseteq S\) and \(\abs{B} \leq \frac{\abs{I}}{2}\)}
+              \State{Replace \(I\) withing \(X\) with the two sets \(B\) and \(I \setminus B\)}
+              \State{Replace \(\pi\) with \(\texttt{split}(I \setminus B, \texttt{split}(B, \pi))\)}.
+            \EndWhile{}
+          \end{algorithmic}
+        \end{algorithm}
+
+        The efficiency of the above algorithm relies on the heuristic for the choice of the block \(B\) at line 3 and on the use of three-way splitting to implement line 5 efficiently.
+
+        Suppose that we have a partition \(\pi\) that is stable with respect to a set of states \(I\) that is a union of some of the blocks in \(\pi\). Assume also that \(\pi\) is refined first with respect to a non-empty set \(B \subset I\) and then with respect to \( I \setminus B\). Two properties can be observed:
+
+        \begin{itemize}\label{refining_properties}
+        \item Refining \(\pi\) with respect to \(B\) splits a block \(D \in \pi\) into two blocks \(D_1 = D \cap pre(B)\) and \(D_2 = D \setminus pre(B)\) if, and only if, \(D\) is not stable with respect to \(B\).
+        \item Refining further \(\texttt{split}(B, \pi)\) with respect to \(I \setminus B\) splits the block \(D_1\) into two blocks \(D_{11} = D_1 \cap pre(S \setminus B) \) and \(D_{12} = D_1 \setminus D_{11}\) if, and only if, \(D_1\) is not stable with respect to \(S \setminus B\).
+        \end{itemize}
+        \begin{figure}[!h]
+          \centering
+          \begin{tikzpicture}[
+            place/.style={rectangle,draw=blue!50,fill=blue!20,thick,
+              inner sep=0pt,minimum size=6mm}
+            ]
+            \node[place]      (D)   {\(D\)};
+            \node[place]      (D1)  [below=of D, xshift=-11mm, yshift=-10mm]  {\(D_1 = D \cap pre(B)\)};
+            \node[place]      (D2)  [below=of D, xshift=11mm] {\(D_2 = D \setminus pre(B)\)};
+            \node[place] (D11) [below=of D1, xshift=-13mm, yshift=-10mm] {\(D_{11} = D \cap pre(B) \cap pre(I \setminus B)\)};
+            \node[place] (D12) [below=of D1, xshift=13mm]  {\(D_{12} = D \setminus pre(I \setminus B)\)};
+            \draw [->] (D) -- (D1);
+            \draw [->] (D) -- (D2);
+            \draw [->] (D1) -- (D11);
+            \draw [->] (D1) -- (D12);
+          \end{tikzpicture}
+          \caption{Three-way splitting of a block.}\label{three_way_splitting}
+        \end{figure}
+
+        A block \(I\) is simple if it is also a block of \(\pi\) and is compound otherwise. Note that a compound block \(I\) contains at least two blocks of \(\pi\). A compound block can be partitioned into \(B\) and \(I \setminus B\) in such a way that both of the properties\ \ref{refining_properties} hold.
+        If \(\pi\) is stable with respect to \(I\), either \(D \subseteq pre(I)\) or \(D \cap pre(I) = \emptyset\). If \(D\) is not stable with respect to \(B\), it holds that \(D \nsubseteq pre(B) \) and \(D \cap pre(B) \neq \emptyset\). Therefore, \(D \subseteq pre(I)\). One can thus infer that \(D_{12} = D_1 \setminus D_{11} = D_1 \cap (pre(B) \setminus pre(I \setminus B))\), which is the crucial observation underlying the implementation of the algorithm.
+
+        Depicted in\ \ref{three_way_splitting} the result of a three-way split of a block \(D\).
+
+        The time performance of the algorithm by Paige and Tarjan relies on the following observations:
+        \begin{itemize}
+        \item Each state in the input labeled transition system is in at most \(\log(n+1)\) blocks \(B\) used as refining sets, since each is at most half the size of the previous one.
+        \item A refinement step with respect to a block \(B\), as shown by Paige and Tarjan\cite{Paige_Tarjan_1987}, can be implemented in time \(O\left( \abs{B} + \sum_{b \in B} \abs{pre({b})} \right)\) by means of use of appropriate data structures.
+        \end{itemize}
+
+        The algorithm has thus an \(O(m \log{n})\) time bound.
+
+        \begin{subparagraph}{log-space reduction of bisimilarity checking over a one-letter action set}
+          In order to apply the previous algorithm to a LTS with arbitrary number of labels, there needs to be first a reduction to an equivalent LTS with only one symbol as label.
+          Assume two given processes \(P\) and \(Q\) over an LTS \(T\) with the set of actions \(\{\alpha_1, \alpha_2, \ldots, \alpha_l\}\). Let \(T'\) be the modified LTS which contains all the process of \(T\) together with some additional ones defined in the following way: for every transition \(P_1 \xrightarrow{\alpha_i} P_2\) in \(T\) we add into \(T'\)
+          \begin{itemize}
+          \item two transitions \(P_1 \to P_{(P_1, \alpha_i, P_2)}\) and \(P_{(P_1, \alpha_i, P_2)} \to P_2\) where \(P_{(P_1, \alpha_i, P_2)}\) is a newly added state, and
+          \item a newly added path of length \(i\) from \(P_{(P_1, \alpha_i, P_2)}\).
+          \end{itemize}
+
+          Finally for every process \(P\) in \(T\) we create in \(T'\) a newly added path of length \(l+1\) starting from \(P\).
+          A small optimization can be added by sorting the frequency of labels and thus creating the lowest possible number of auxiliary nodes for each label.
+
+          \begin{figure}[!h]
+            \begin{tblr}{width=\linewidth, colspec={X[1,c]X[4,c]}}
+              \begin{minipage}{.3\textwidth}
+                \begin{tikzpicture}[auto,
+                  place/.style={rectangle,draw=blue!50,fill=blue!20,thick,inner sep=0pt,
+                    minimum size=6mm},
+                  pre/.style={<-,shorten <=1pt,>={Stealth[round]},semithick},
+                  post/.style={->,shorten >=1pt,>={Stealth[round]},semithick}
+                  ]
+                  \node[place] (P1)               {\(P_1\)};
+                  \node[place] (P2) [right=of P1] {\(P_2\)}
+                  edge [pre] node [auto, swap] {\(\alpha_1\)} (P1);
+                  \node[place] (P3) [below=of P2] {\(P_3\)}
+                  edge [pre] node [auto] {\(\alpha_2\)} (P1)
+                  edge [pre] node [auto, swap] {\(\alpha_2\)} (P2);
+                \end{tikzpicture}
+              \end{minipage}
+              &
+                \begin{minipage}{.48\textwidth}
+                  \begin{tikzpicture}[auto,
+                    place/.style={rectangle,draw=blue!50,fill=blue!20,thick,inner sep=0pt,
+                      minimum size=6mm},
+                    new/.style={circle,draw=blue!30,fill=blue!10,thick,inner sep=0pt,
+                      minimum size=6mm},
+                    pre/.style={<-,shorten <=1pt,>={Stealth[round]},semithick},
+                    post/.style={->,shorten >=1pt,>={Stealth[round]},semithick}
+                    ]
+                    \node[place] (P1) {\(P_1\)};
+                    \node[new] (p1e1) [above=of P1] {}
+                    edge [pre] (P1);
+                    \node[new] (p1e2) [above=of p1e1] {}
+                    edge [pre] (p1e1);
+                    \node[new] (p1e3) [above=of p1e2] {}
+                    edge [pre] (p1e2);
+
+                    \node[new] (a1) [right=of P1] {}
+                    edge [pre] (P1);
+                    \node[new] (a1e1) [above=of a1] {}
+                    edge [pre] (a1);
+
+                    \node[place] (P2) [right=of a1] {\(P_2\)}
+                    edge [pre] (a1);
+                    \node[new] (p2e1) [above=of P2] {}
+                    edge [pre] (P2);
+                    \node[new] (p2e2) [above=of p2e1] {}
+                    edge [pre] (p2e1);
+                    \node[new] (p2e3) [above=of p2e2] {}
+                    edge [pre] (p2e2);
+
+                    \node[new] (a2) [below=of P2] {}
+                    edge [pre] (P2);
+                    \node[new] (a2e1) [right=of a2] {}
+                    edge [pre] (a2);
+                    \node[new] (a2e2) [right=of a2e1] {}
+                    edge [pre] (a2e1);
+
+                    \node[new] (a3) [below=of a1] {}
+                    edge [pre] (P1);
+                    \node[new] (a3e1) [below=of a3] {}
+                    edge [pre] (a3);
+                    \node[new] (a3e2) [below=of a3e1] {}
+                    edge [pre] (a3e1);
+
+                    \node[place] (P3) [below=of a2] {\(P_3\)}
+                    edge [pre] (a2)
+                    edge [pre] (a3);
+                    \node[new] (p3e1) [right=of P3] {}
+                    edge [pre] (P3);
+                    \node[new] (p3e2) [right=of p3e1] {}
+                    edge [pre] (p3e1);
+                    \node[new] (p3e3) [right=of p3e2] {}
+                    edge [pre] (p3e2);
+                  \end{tikzpicture}
+                \end{minipage} \\
+            \end{tblr}
+            \caption{Example of reduction}
+          \end{figure}
+
+        \end{subparagraph}
+
+      \end{paragraph}
+      
+    \end{subsection}
+
+  \end{section}
+  
+\end{chapter}
+
+
+%%% Local Variables:
+%%% TeX-command-extra-options: "-shell-escape"
+%%% TeX-master: "document.tex"
+%%% End:
