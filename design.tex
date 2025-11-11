@@ -1,0 +1,852 @@
+\begin{chapter}{Design}
+  Two sub-problems where identified during the design: simulating the behavior of Reaction Systems, RS processes and other operations on LTS, and interacting with the user in a intuitive manner. The programming language chosen was \href{https://rust-lang.org/}{Rust}, since it offered good performance and ease of development.
+  Two Git repositories are provided: \href{https://github.com/elvisrossi/ReactionSystems}{github.com/elvisrossi/ReactionSystems} and \href{https://github.com/elvisrossi/ReactionSystemsGUI}{github.com/elvisrossi/ReactionSystemsGUI}.
+
+  The ReactionSystems project follows a modular architecture and clear design principles to mirror the theoretical model; it implements procedures over RS as pure rust functions and is structured as a library. It also provides a crude Command Line Interface for some of the functions provided.
+  The code is organized in workspaces in order to reduce compilation time and aid code reuse.
+  In the second Git repository a native and web application is implemented in Rust and in \href{https://webassembly.org/}{webassembly} generated from Rust code. The web application consists of only static files and as such may be served by a simple HTTP server.
+
+  \begin{section}{ReactionSystems}
+    The design is structured to faithfully implement the reaction system formalism while remaining flexible.
+    It provides a foundation that matches theoretical definitions (ensuring correctness) and supports further expansion (such as adding optimization, visualization, or integration with other tools) by maintaining a clean separation between the model representation and the execution logic.
+    Since the language Rust supports object-oriented programming via traits, but lacks generic inheritance, the design of the basic building blocks of RSs are designed around this limitation.
+    Usually a basic trait is provided for each of them and an extension of the trait is implemented for all structures that implement the basic trait.
+
+    Since it is not practical for a user to specify the structures in Rust, a syntax for the basic structures has been specified. This syntax tries to remain as much as possible compatible with ones from previous software. To develop the parser, \href{https://github.com/lalrpop/lalrpop}{LALRPOP} was chosen as the parser generator framework. LALRPOP code is transpiled to Rust code via macros and then compiled to machine code.
+
+    \begin{figure}[!h]
+      \centering
+      \begin{tikzpicture}[
+        place/.style={rectangle,draw=blue!50,fill=blue!20,thick},
+        >=Stealth, thick, every node/.style={font=\sffamily}]
+
+        \node[place] (set)     at (0,3)      {Set};
+        \node[place] (reaction)at (4,3)      {Reaction};
+        \node[place] (choices) at (8,3)    {Choices};
+        \node[place] (label)   at (-2,1.5) {Label};
+        \node[place] (env)     at (2,1.5)  {Environment};
+        \node[place] (process) at (6,1.5)  {Process};
+        \node[place] (system)  at (4,0)    {System};
+        \node[place] (graph)   at (0,0)   {Graph};
+
+        % Set
+        \draw[->]              (set) -- (reaction);
+        \draw[->,bend left=18] (set) to (choices);
+        \draw[->,bend right=25](set) to (label);
+        \draw[->]              (set) -- (graph);
+        \draw[->,bend right=35,looseness=1.1] (set) to (system);
+        \draw[->,bend right=12](set) to (env);
+
+        % Label -> Graph
+        \draw[->] (label) -- (graph);
+
+        % Reaction
+        \draw[->,bend left=12]  (reaction) to (process);
+        \draw[->,bend right=12] (reaction) to (env);
+        \draw[->,bend left=16]  (reaction) to (system);
+
+        % Process
+        \draw[->]               (process) -- (env);
+        \draw[->]               (process) -- (system);
+        \draw[->,bend right=18] (process) to (choices);
+
+        \draw[->] (choices) to [bend left=2] (env);
+        \draw[->] (choices.south) to [bend left=25] (system.east);
+        \draw[->]               (env) -- (system);
+        \draw[<->,bend left=15] (system) to (graph);
+      \end{tikzpicture}
+      \caption{Basic structures and relationships between them}\label{basic_structures}
+    \end{figure}
+
+    \begin{subsection}{Entities}
+      Entities are the most basic data structure that a RS need to keep track of. They don't have a specified interface and are instead treated only in sets.
+
+      Positive elements are also defined and have a state, either \texttt{Positive} or \texttt{Negative}.
+
+      Since internally entities are represented as integers, a structure that keeps track of assignment between strings and integer is provided (\(\texttt{Translator}\)). This poses a problem with the default methods for formatting available in Rust, since for the trait \(\texttt{Display}\) and \(\texttt{Debug}\) only the structure itself can be used to generate the string. The trait \(\texttt{PrintableWithTranslator}\) and the structure \(\texttt{Formatter}\) solve this issue by incorporating the \(\texttt{Translator}\) into the struct. \(\texttt{Display}\) is then implemented on the generic structure \(\texttt{Translator}\).
+    \end{subsection}
+
+    \begin{subsection}{Set}
+      The common procedures required for all sets are:
+      \begin{itemize}
+      \item \(\texttt{is\_subset}(a, b) \to \texttt{bool}\), which should return true if \(a \subseteq b\);
+      \item \(\texttt{is\_disjoint}(a, b) \to \texttt{bool}\), which should return true if \(a \cap b = \emptyset\);
+      \item \(\texttt{union}(a, b) \to \texttt{set}\), which should return \(a \cup b\);
+      \item \(\texttt{push}(a, b)\), which should replace \(a\) with \(a \cup b\) in place\label{push_set};
+      \item \(\texttt{intersection}(a, b) \to \texttt{set}\), which should return \(a \cap b\);
+      \item \(\texttt{subtraction}(a, b) \to \texttt{set}\), which should return \(a \setminus b\);
+      \item \(\texttt{len}(a) \to \texttt{int}\), which should return the number of elements in \(a\);
+      \item \(\texttt{is\_empty}(a) \to \texttt{bool}\), which should return true if \(a\) has no elements, false otherwise;
+      \item \(\texttt{contains}(a, e: \texttt{entity}) \to \texttt{bool}\), which should return \(e \in a\);
+      \item \(\texttt{add}(a, e: \texttt{element})\), which should add the element \(e\) to \(a\) in place.
+      \end{itemize}
+
+      Some other procedures are required for ease of use:
+      \begin{itemize}
+      \item \(\texttt{extend}(a, b^?)\), which should extend \(a\) with \(a \cup b\) if \(b\) is a non-null value, and leave \(a\) unchanged otherwise, similar to \(\texttt{push}\) (\ref{push_set}).
+      \end{itemize}
+
+      Two other procedures are implemented for all structs that implement the BasicSet trait:
+      \begin{itemize}
+      \item \(\texttt{iter}(a) \to \texttt{iterable}\), which returns an iterator over the elements of the set \(a\);
+      \item \(\texttt{split}(a, \mathit{trace}: \texttt{[set]}) \to {(\texttt{[set]}, \texttt{[set]})}^{?}\), which returns the prefix and the loop part of a trace.
+      \end{itemize}
+
+      Both normal sets and positive sets satisfy this interface, but have additional specific functions for converting between the two.
+
+      The syntax for sets is:
+
+      \begin{minipage}{\textwidth}
+        \centering
+        \begin{minipage}{.48\textwidth}
+          \centering
+          \begin{bnf}(relation-sym-map = % chktex 36
+            {
+              {::=} = {\ensuremath{\Coloneqq}},
+              {->} = {},
+              {:in:} = {\ensuremath{\in}},
+            },)
+            $Set$ : ::= % chktex 26
+            | $\texttt{\{} S \texttt{\}}$ : % chktex 26
+            | $\texttt{\{} \texttt{\}}$ : % chktex 26
+            ;; % chktex 26
+            $S$ : ::= % chktex 26
+            | $s\ \texttt{,}\ S$ : % chktex 26
+            | $s$ : % chktex 26
+            ;; % chktex 26
+            Where \\ & \(s\) -> is a string : % chktex 26
+            ;; % chktex 26
+          \end{bnf}
+          \captionsetup{type=table, name=\textbf{Syntax}}
+          \caption{Syntax for Set}\label{bnf_set}
+        \end{minipage}%
+        \begin{minipage}{.48\textwidth}
+          \centering
+          \begin{bnf}(relation-sym-map = % chktex 36
+            {
+              {::=} = {\ensuremath{\Coloneqq}},
+              {->} = {},
+              {:in:} = {\ensuremath{\in}},
+            },)
+            $PositiveSet$ : ::= % chktex 26
+            | $\texttt{\{} S \texttt{\}}$ : % chktex 26
+            | $\texttt{\{} \texttt{\}}$ : % chktex 26
+            ;; % chktex 26
+            $S$ : ::= % chktex 26
+            | $\mathit{state}\ s\ \texttt{,}\ S$ : % chktex 26
+            | $\mathit{state}\ s$ : % chktex 26
+            ;; % chktex 26
+            $state$ : ::= % chktex 26
+            | $\texttt{+}$ : % chktex 26
+            | $\texttt{-}$ : % chktex 26
+            ;; % chktex 26
+            Where \\ & \(s\) -> is a string : % chktex 26
+            ;; % chktex 26
+          \end{bnf}
+          \captionsetup{type=table, name=\textbf{Syntax}}
+          \caption{Syntax for Positive Set}\label{bnf_positive_set}
+        \end{minipage}
+      \end{minipage}
+    \end{subsection}
+
+
+    \begin{subsection}{Reaction}
+      The methods required for all reactions are:
+
+      \begin{itemize}
+      \item \(\texttt{enabled}(r, \mathit{state}: \texttt{set}) \to \texttt{bool}\), which returns true if the reaction is enabled given the entities supplied by \(\mathit{state}\);
+      \item \(\texttt{compute\_step}(r, \mathit{state}: \texttt{set}) \to \texttt{set}^{?}\), which returns the products of the reaction if it is enabled by \(\mathit{state}\).
+      \end{itemize}
+
+      All reactions that satisfy the basic trait automatically implement the following methods:
+      \begin{itemize}
+      \item \(\texttt{find\_loop}(\mathit{rs}: \texttt{[reaction]}, \mathit{entities}: \texttt{set}, q: \texttt{set}) \to \texttt{([set], [set])}\), which finds a loop and returns the sets that make up the prefix and the loop separately;
+      \item \(\texttt{find\_only\_loop}(\mathit{rs}: \texttt{[reaction]}, \mathit{entities}: \texttt{set}, q: \texttt{set}) \to \texttt{[set]}\), which finds a loop and returns the sets that form it;
+      \item \(\texttt{find\_prefix\_len\_loop}(\mathit{rs}: \texttt{[reaction]}, \mathit{entities}: \texttt{set}, q: \texttt{set}) \to \texttt{(integer, [set])}\), which finds a loop and returns the length of the prefix and the sequence of sets that compose the loop;
+      \end{itemize}
+
+      \begin{minipage}{\textwidth}
+        \centering
+        \begin{minipage}{.48\textwidth}
+          \centering
+          \begin{bnf} (relation = {::=|:in:|->},
+            comment = {==},
+            relation-sym-map = % chktex 36
+            {
+              {::=} = {\ensuremath{\Coloneqq}},
+              {->} = {},
+              {:in:} = {\ensuremath{\in}},
+            },)
+            $Reaction$ == ::= % chktex 26
+            | $\texttt{[} s \texttt{,}\  s \texttt{,}\  s \texttt{]}$ == % chktex 26 chktex 9
+            | $\texttt{[r:}\ s \texttt{, i:}\ s \texttt{, p:}\ s \texttt{]}$ == % chktex 26 chktex 9
+            ;; % chktex 26
+            Where \\ & \(s\) -> {is a set, see\ \ref{bnf_set}} == % chktex 26
+            ;; % chktex 26
+          \end{bnf}
+          \captionsetup{type=table, name=\textbf{Syntax}}
+          \caption{Syntax for Reaction}\label{bnf_reaction}
+        \end{minipage}\vspace{1em}
+
+        \begin{minipage}{.48\textwidth}
+          \centering
+          \begin{bnf} (relation = {::=|:in:|->},
+            comment = {==},
+            relation-sym-map = % chktex 36
+            {
+              {::=} = {\ensuremath{\Coloneqq}},
+              {->} = {},
+              {:in:} = {\ensuremath{\in}},
+            },)
+            $PositiveReaction$ == ::= % chktex 26
+            | $\texttt{[} s \texttt{,}\  s \texttt{,}\  s \texttt{]}$ == % chktex 26 chktex 9
+            | $\texttt{[r:}\ s \texttt{, i:}\ s \texttt{, p:}\ s \texttt{]}$ == % chktex 26 chktex 9
+            ;; % chktex 26
+            Where \\ & \(s\) -> {is a positive set, see\ \ref{bnf_positive_set}} == % chktex 26
+            ;; % chktex 26
+          \end{bnf}
+          \captionsetup{type=table, name=\textbf{Syntax}}
+          \caption{Syntax for Positive Reaction}\label{bnf_positive_reaction}
+        \end{minipage}
+      \end{minipage}
+    \end{subsection}
+
+
+    \begin{subsection}{Process}
+      Process structures mirror the structure of RS processes as described in Section\ \ref{SOS_rules_section}. Since there is not much behavior that is shared between implementations and since usually they are used with pattern matching, the trait that describe a basic process is very simple.
+      \begin{itemize}
+      \item \(\texttt{concat}(a, b) \to \texttt{process}\), which returns a new process \(a \vert b\) flattened with regards to parallel composition;
+      \item \(\texttt{all\_elements}(a) \to \texttt{set}\), which returns all the entities used in the process;
+      \item \(\texttt{filter\_delta}(a, \mathit{id}: \texttt{entity}) \to \texttt{set}^{?}\), which returns the first rule \(X = Q. rec(X)\) for any symbol \(X\).
+      \end{itemize}
+
+      \begin{minipage}{\textwidth}
+        \begin{minipage}{.48\textwidth}
+          \begin{bnf} (relation = {::=|:in:|->},
+            comment = {==},
+            relation-sym-map = % chktex 36
+            {
+              {::=} = {\ensuremath{\Coloneqq}},
+              {->} = {},
+              {:in:} = {\ensuremath{\in}},
+            },)
+            $Process$ == ::= % chktex 26
+            | $\texttt{[} P \texttt{]}$ == % chktex 9
+            ;; % chktex 26
+            $P$ == ::= % chktex 26
+            | $ C \texttt{,} P $ ==
+            | $ C $ ==
+            ;; % chktex 26
+            $C$ == ::= % chktex 26
+            | $ \texttt{(} C \texttt{)} $ == % chktex 9 chktex 10
+            | $ \texttt{nill} $ ==
+            | $ s \texttt{.} C $ ==
+            | $ C \texttt{+} C $ ==
+            | $ \texttt{?} r \texttt{?.} C $ ==
+            | $ \texttt{<} i \texttt{,} C \texttt{>.} C $ ==
+            | $ x $ ==
+            ;; % chktex 26
+            Where \\ & \(s\) -> {is a set,\\ see\ \ref{bnf_set}} ==
+            ;; % chktex 26
+            \(r\) -> {is a reaction,\\ see\ \ref{bnf_reaction}} ==
+            ;; % chktex 26
+            \(i\) :in: \(\mathbb{N}\) == % chktex 26
+            ;; % chktex 26
+            \(x\) -> is a variable name ==
+            ;; % chktex 26
+          \end{bnf}
+          \captionsetup{type=table, name=\textbf{Syntax}}
+          \caption{Syntax for Process}\label{bnf_process}
+        \end{minipage}
+        \begin{minipage}{.48\textwidth}
+          \begin{bnf} (relation = {::=|:in:|->},
+            comment = {==},
+            relation-sym-map = % chktex 36
+            {
+              {::=} = {\ensuremath{\Coloneqq}},
+              {->} = {},
+              {:in:} = {\ensuremath{\in}},
+            },)
+            $PositiveP$ == ::= % chktex 26
+            | $\texttt{[} P \texttt{]}$ == % chktex 9
+            ;; % chktex 26
+            $P$ == ::= % chktex 26
+            | $ C \texttt{,} P $ ==
+            | $ C $ ==
+            ;; % chktex 26
+            $C$ == ::= % chktex 26
+            | $ \texttt{(} C \texttt{)} $ == % chktex 9 chktex 10
+            | $ \texttt{nill} $ ==
+            | $ ps \texttt{.} C $ ==
+            | $ C \texttt{+} C $ ==
+            | $ \texttt{?} pr \texttt{?.} C $ ==
+            | $ \texttt{<} i \texttt{,} C \texttt{>.} C $ ==
+            | $ x $ ==
+            ;; % chktex 26
+            Where \\ & \(ps\) -> {is a positive set,\\ see\ \ref{bnf_positive_set}} ==
+            ;; % chktex 26
+            \(pr\) -> {is a positive reaction,\\ see\ \ref{bnf_positive_reaction}} ==
+            ;; % chktex 26
+            \(i\) :in: \(\mathbb{N}\) == % chktex 26
+            ;; % chktex 26
+            \(x\) -> is a variable name ==
+            ;; % chktex 26
+          \end{bnf}
+          \captionsetup{type=table, name=\textbf{Syntax}}
+          \caption{Syntax for Positive Process}\label{bnf_positive_process}
+        \end{minipage}
+      \end{minipage}
+    \end{subsection}
+
+
+    \begin{subsection}{Choices}
+      Since one RS process may have more than one possible next system when evaluating, there is a need to express all possible choices for next states.
+      The structure choices represents all those possible continuations, associating a set with a process. The set signifies all the entities that are provided by the context by choosing that context.
+      One particular operation called \texttt{shuffle} is needed: given two choices structures \( c_1 \) and \( c_2 \) where \(c_i : \texttt{set} \rightharpoonup \texttt{process}, i \in \{1, 2\}\), it generates a new choices structure \(c'\) such that \(\forall s_1 \in \mathit{domain}(c_1) . (\forall s_2 \in \mathit{domain}(c_2) . \mathit{domain}(c') \ni (s_1 \cup s_2) \land c'(s_1 \cup s_2) = \texttt{concat}(c_1(s_1), c_2(s_2)) ) \). Intuitively it is all the possible combinations of two parallel processes.
+    \end{subsection}
+
+
+    \begin{subsection}{Environment}
+      An environment can be thought as an association between variable names and processes.
+      The basic interface requires the following methods:
+
+      \begin{itemize}
+      \item \(\texttt{get}(a, k: \texttt{entity}) \to \texttt{process}\), which returns the process associated with the variable \(k\);
+      \item \(\texttt{all\_elements}(a) \to \texttt{set}\), which returns all the entities used in any of the processes;
+      \item \(\texttt{unfold}(a, \mathit{context}: \texttt{process}, \mathit{s}: \texttt{set}) \to \texttt{choices}^{?}\), which returns the list of choices for the context, given the process definitions environment and is used to generate the next systems with the SOS rules.
+      \end{itemize}
+
+      Some methods are automatically implemented for all \(\texttt{BasicEnvironment}\): \(\texttt{lollipops\_decomposed}\), \(\texttt{lollipops\_prefix\_len\_loop\_decomposed}\), \(\texttt{lollipops\_only\_loop\_decomposed}\), \(\texttt{lollipops\_decomposed\_named}\), \(\texttt{lollipops\_prefix\_len\_loop\_decomposed\_named}\), and \(\texttt{lollipops\_only\_loop\_decomposed\_named}\).
+      They all try to find a loop and return some information about the found loop. The \(\texttt{\_named}\) variants require a variable symbol for which in the environment there is an association to a process with the form \( X = Q.\texttt{rec}(X)\), where \(Q\) is a set.\vspace{1em}
+
+      \begin{minipage}{\textwidth}
+        \centering
+        \begin{minipage}{.9\textwidth}
+          \begin{bnf} (relation = {::=|:in:|->},
+            comment = {==},
+            relation-sym-map = % chktex 36
+            {
+              {::=} = {\ensuremath{\Coloneqq}},
+              {->} = {},
+              {:in:} = {\ensuremath{\in}},
+            },)
+            $Environment$ == ::= % chktex 26
+            | $\texttt{[} E \texttt{]}$ == % chktex 9
+            ;; % chktex 26
+            $E$ == ::= % chktex 26
+            | $ x = c \texttt{,} E $ ==
+            | $ x = c $ ==
+            ;; % chktex 26
+            Where \\ & \(c\) -> {is a process, see\ \ref{bnf_process}} ==
+            ;; % chktex 26
+            \(x\) -> is a variable name ==
+            ;; % chktex 26
+          \end{bnf}
+          \captionsetup{type=table, name=\textbf{Syntax}}
+          \caption{Syntax for Environment}\label{bnf_environment}
+        \end{minipage}\vspace{1em}
+
+        \begin{minipage}{.9\textwidth}
+          \begin{bnf} (relation = {::=|:in:|->},
+            comment = {==},
+            relation-sym-map = % chktex 36
+            {
+              {::=} = {\ensuremath{\Coloneqq}},
+              {->} = {},
+              {:in:} = {\ensuremath{\in}},
+            },)
+            $Positive Environment$ == ::= % chktex 26
+            | $\texttt{[} E \texttt{]}$ == % chktex 9
+            ;; % chktex 26
+            $E$ == ::= % chktex 26
+            | $ x = pc \texttt{,} E $ ==
+            | $ x = pc $ ==
+            ;; % chktex 26
+            Where \\ & \(pc\) -> {is a positive process, see\ \ref{bnf_positive_process}} ==
+            ;; % chktex 26
+            \(x\) -> is a variable name ==
+            ;; % chktex 26
+          \end{bnf}
+          \captionsetup{type=table, name=\textbf{Syntax}}
+          \caption{Syntax for Positive Environment}\label{bnf_positive_environment}
+        \end{minipage}
+      \end{minipage}
+    \end{subsection}
+
+
+    \begin{subsection}{System}
+      The basic interface for systems is only the following methods:
+
+      \begin{itemize}
+      \item \(\texttt{to\_transitions\_iterator}(sys) \to \texttt{iterator over (label, system)}\)
+      \item \(\texttt{to\_slicing\_iterator}(sys) \to \texttt{iterator over (label, system)}\)
+      \item \(\texttt{context\_elements}(sys) \to \texttt{set}\)
+      \item \(\texttt{products\_elements}(sys) \to \texttt{set}\)
+      \end{itemize}
+
+      The method \(\texttt{to\_transitions\_iterator}\) should return an iterator over all the possible evaluations of the system. Likewise \(\texttt{to\_slicing\_iterator}\) should return an iterator over the same outgoing edges, but with information that support the creation of a trace to be used for slicing.
+
+      The two methods \(\texttt{context\_elements}\) and \(\texttt{products\_elements}\) should return the set of entities that are related to the context and the one related to the reactions. Since it may be a computationally expensive calculation, the result is cached in the structures.
+      Since there may be errors when deciding what constitutes an element belonging to the context, methods are also present to override the default values.
+
+      Other methods are implemented for all structures that satisfy the previous interface:
+
+      \begin{itemize}
+      \item \(\texttt{unfold}(\mathit{sys}) \to \texttt{choices}^{?}\), which, by calling the same method of the environment, returns the list of choices for the context;
+      \item \(\texttt{run}(\mathit{sys}) \to \texttt{[system]}^{?}\), which computes the sequence of systems for the leftmost execution;
+      \item \(\texttt{digraph}(\mathit{sys}) \to \texttt{graph}^{?}\), which computes the graph generated by the execution of the system;
+      \item \(\texttt{target}(\mathit{sys}) \to \texttt{(integer, set)}^{?}\), which returns the state in one of the terminal states and the number of steps to arrive at the last state;
+      \item \(\texttt{slice\_trace}(\mathit{sys}) \to \texttt{trace}^{?}\), which generates, similarly to \(\texttt{run}\), a trace appropriate to run slicing calculations over;
+      \item \(\texttt{lollipops}(\mathit{sys}) \to \texttt{[([set], [set])]}\), similar to the method \(\texttt{lollipops\_decomposed}\) provided by \(\texttt{environment}\).
+      \end{itemize}
+
+      \begin{minipage}{\textwidth}
+        \centering
+        \begin{bnf} (relation = {::=|:in:|->},
+          comment = {==},
+          relation-sym-map = % chktex 36
+          {
+            {::=} = {\ensuremath{\Coloneqq}},
+            {->} = {},
+            {:in:} = {\ensuremath{\in}},
+          },)
+          $System$ == ::= % chktex 26
+          | {$\texttt{Environment:} e$ \\ $ \texttt{Initial Entities:} s$ \\ $ \texttt{Context:} c$ \\ $ \texttt{Reactions: (} R \texttt{)}$} == % chktex 26 chktex 9
+          ;; % chktex 26
+          $R$ == ::= % chktex 26
+          | {$r \texttt{;} R$} ==
+          | {$\epsilon$}
+          ;; % chktex 26
+          Where \\ & \(e\) -> {is an environment, see\ \ref{bnf_environment}} ==
+          ;; % chktex 26
+          \(s\) -> is a set, see\ \ref{bnf_set} ==
+          ;; % chktex 26
+          \(c\) -> is a Process, see\ \ref{bnf_process} ==
+          ;; % chktex 26
+          \(r\) -> is a reaction, see\ \ref{bnf_reaction} ==
+          ;; % chktex 26
+          \(\epsilon\) -> is the empty string
+          ;; % chktex 26
+        \end{bnf}
+        \captionsetup{type=table, name=\textbf{Syntax}}
+        \caption{Syntax for System}
+      \end{minipage}
+    \end{subsection}
+
+    \begin{subsection}{Label}
+      The label structure holds the information about how entities are used in the production of a system and are the labels on the edges of the graphs. Since the only use is to hold data, no meaningful method is required.
+
+      \begin{minipage}{\textwidth}
+        \centering
+        \begin{minipage}{.9\textwidth}
+          \begin{bnf} (relation = {::=|:in:|->},
+            comment = {==},
+            relation-sym-map = % chktex 36
+            {
+              {::=} = {\ensuremath{\Coloneqq}},
+              {->} = {},
+              {:in:} = {\ensuremath{\in}},
+            },)
+            $Label$ == ::= % chktex 26
+            | {$\texttt{[Entities:} s\texttt{,}$\\$\texttt{Context:} s\texttt{,}$\\$\texttt{Reactants:} s\texttt{,}$\\$\texttt{ReactantsAbsent:} s\texttt{,}$\\$\texttt{Inhibitors:} s\texttt{,}$\\$\texttt{InhibitorsPresent:} s\texttt{,}$\\$\texttt{Products:} s \texttt{]}$} == % chktex 9
+            ;; % chktex 26
+            Where \\ & \(s\) -> {is a set, see\ \ref{bnf_set}} ==
+            ;; % chktex 26
+          \end{bnf}
+          \captionsetup{type=table, name=\textbf{Syntax}}
+          \caption{Syntax for Label}\label{bnf_label}
+        \end{minipage}\vspace{1em}
+
+        \begin{minipage}{.9\textwidth}
+          \begin{bnf} (relation = {::=|:in:|->},
+            comment = {==},
+            relation-sym-map = % chktex 36
+            {
+              {::=} = {\ensuremath{\Coloneqq}},
+              {->} = {},
+              {:in:} = {\ensuremath{\in}},
+            },)
+            $Label$ == ::= % chktex 26
+            | {$\texttt{[Entities:} ps\texttt{,}$\\$\texttt{Context:} ps\texttt{,}$\\$\texttt{Reactants:} ps\texttt{,}$\\$\texttt{ReactantsAbsent:} ps\texttt{,}$\\$\texttt{Inhibitors:} ps\texttt{,}$\\$\texttt{InhibitorsPresent:} ps\texttt{,}$\\$\texttt{Products:} ps \texttt{]}$} == % chktex 9
+            ;; % chktex 26
+            Where \\ & \(ps\) -> {is a positive set, see\ \ref{bnf_positive_set}} ==
+            ;; % chktex 26
+          \end{bnf}
+          \captionsetup{type=table, name=\textbf{Syntax}}
+          \caption{Syntax for Positive Environment}\label{bnf_positive_label}
+        \end{minipage}
+      \end{minipage}
+    \end{subsection}
+
+    \begin{subsection}{Graph}
+      The project uses \href{https://github.com/petgraph/petgraph}{petgraph} as graph data structure library. \textit{petgraph} provides several graph types, but the only one used is \(\texttt{Graph}\), since it provided the best performance during testing. The library provides methods for converting the graph structures into \href{https://graphviz.org/doc/info/lang.html}{Dot Language} and \href{http://graphml.graphdrawing.org/}{GraphML File Format}. The Dot methods where found to be not powerful enough and where partially rewritten in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/dot.rs}{dot.rs}.
+
+      Custom formatting of the graphs was a key requirement, so domain specific languages are provided to customize the appearance of the generated formats.
+      Four structures are provided:
+
+      \begin{itemize}
+      \item \(\texttt{NodeDisplay}\), to specify the text displayed on each node;
+      \item \(\texttt{EdgeDisplay}\), to specify the text displayed on each edge;
+      \item \(\texttt{NodeColor}\), to specify the color of each node;
+      \item \(\texttt{EdgeColor}\), to specify the color of each edge.
+      \end{itemize}
+
+      Follows the BNF for each of the languages:
+
+      \begin{minipage}{\textwidth}
+        \centering
+        \begin{bnf}(relation-sym-map = % chktex 36
+          {
+            {::=} = {\ensuremath{\Coloneqq}},
+            {->} = {},
+            {:in:} = {\ensuremath{\in}},
+          },)
+          $NodeDisplay$ : ::= % chktex 26
+          | $E$ : % chktex 26
+          | $E\ \texttt{"}\mathit{s}\texttt{"}\ NodeDisplay$ : % chktex 26 chktex 18
+          ;; % chktex 26
+          $E$ : ::= % chktex 26
+          | $\texttt{Hide}$ : % chktex 26
+          | $\texttt{Entities}$ : % chktex 26
+          | $\texttt{MaskEntities}\ S$ : % chktex 26
+          | $\texttt{ExcludeEntities}\ S$ : % chktex 26
+          | $\texttt{Context}$ : % chktex 26
+          | $\texttt{UncommonEntities}$ : % chktex 26
+          | $\texttt{MaskUncommonEntities}\ S$ : % chktex 26
+          ;; % chktex 26
+          Where \\ & \(S\) -> is a sets of entities : % chktex 26
+          ;; % chktex 26
+          \(s\) -> is a possibly empty string : % chktex 26
+          ;; % chktex 26
+        \end{bnf}
+        \captionsetup{type=table, name=\textbf{Syntax}}
+        \caption{Syntax for \(\texttt{NodeDisplay}\)}\label{bnf_node_display}
+      \end{minipage}\vspace{1em}
+
+      $\texttt{Hide}$ ignores the content of the node and prints the empty string, $\texttt{Entities}$ prints the list of entities currently available in the system,  $\texttt{MaskEntities}\ S$ prints the list of entities masked by a specified set \(S\), $\texttt{ExcludeEntities}\ S$ prints the list of entities except for the entities specified by the set \(S\), $\texttt{Context}$ prints the context of the system, $\texttt{UncommonEntities}$ prints only the entities that are not shared between all the nodes in the graph, $\texttt{MaskUncommonEntities}\ S$ prints the entities not shared between all the nodes in the graph and masked by a specified set \(S\).
+
+      \begin{minipage}{\textwidth}
+        \begin{bnf}(relation-sym-map = % chktex 36
+          {
+            {::=} = {\ensuremath{\Coloneqq}},
+            {->} = {},
+            {:in:} = {\ensuremath{\in}},
+          },)
+          $EdgeDisplay$ : ::= % chktex 26
+          | $E$ : % chktex 26
+          | $E\ \texttt{"}\mathit{s}\texttt{"}\ EdgeDisplay$ : % chktex 26 chktex 18
+          ;; % chktex 26
+          $E$ : ::= % chktex 26
+          | $\texttt{Hide}$ : % chktex 26
+          | $\texttt{Products}$ : % chktex 26
+          | $\texttt{MaskProducts}\ S$ : % chktex 26
+          | $\texttt{UncommonProducts}$ : % chktex 26
+          | $\texttt{UncommonMaskProducts}\ S$ : % chktex 26
+          | $\texttt{Entities}$ : % chktex 26
+          | $\texttt{MaskEntities}\ S$ : % chktex 26
+          | $\texttt{UncommonEntities}$ : % chktex 26
+          | $\texttt{UncommonMaskEntities}\ S$ : % chktex 26
+          | $\texttt{Context}$ : % chktex 26
+          | $\texttt{MaskContext}\ S$ : % chktex 26
+          | $\texttt{UncommonContext}$ : % chktex 26
+          | $\texttt{UncommonMaskContext}\ S$ : % chktex 26
+          | $\texttt{Union}$ : % chktex 26
+          | $\texttt{MaskUnion}\ S$ : % chktex 26
+          | $\texttt{UncommonUnion}$ : % chktex 26
+          | $\texttt{UncommonMaskUnion}\ S$ : % chktex 26
+          | $\texttt{Difference}$ : % chktex 26
+          | $\texttt{MaskDifference}\ S$ : % chktex 26
+          | $\texttt{UncommonDifference}$ : % chktex 26
+          | $\texttt{UncommonMaskDifference}\ S$ : % chktex 26
+          | $\texttt{EntitiesDeleted}$ : % chktex 26
+          | $\texttt{MaskEntitiesDeleted}\ S$ : % chktex 26
+          | $\texttt{UncommonEntitiesDeleted}$ : % chktex 26
+          | $\texttt{UncommonMaskEntitiesDeleted}\ S$ : % chktex 26
+          | $\texttt{EntitiesAdded}$ : % chktex 26
+          | $\texttt{MaskEntitiesAdded}\ S$ : % chktex 26
+          | $\texttt{UncommonEntitiesAdded}$ : % chktex 26
+          | $\texttt{UncommonMaskEntitiesAdded}\ S$ : % chktex 26
+          ;; % chktex 26
+          Where \\ & \(S\) -> is a sets of entities : % chktex 26
+          ;; % chktex 26
+          \(s\) -> is a possibly empty string : % chktex 26
+          ;; % chktex 26
+        \end{bnf}
+        \captionsetup{type=table, name=\textbf{Syntax}}
+        \caption{Syntax for \(\texttt{EdgeDisplay}\)}\label{bnf_edge_display}
+      \end{minipage}\vspace{1em}
+
+      Four version of each base option is available: normal, \(\texttt{Mask}\) which masks the normal set of entities with a specified set, \(\texttt{Uncommon}\) which considers only the entities that are not shared between all edges of the graph, and \(\texttt{UncommonMask}\) which combines the two functionalities. The base options return the corresponding entities available in the label.
+
+      \begin{minipage}{\textwidth}
+        \begin{bnf}(relation-sym-map = % chktex 36
+          {
+            {::=} = {\ensuremath{\Coloneqq}},
+            {->} = {},
+            {:in:} = {\ensuremath{\in}},
+          },)
+          $NodeColor$ : ::= % chktex 26
+          | $\texttt{!} \texttt{"}\ C\ \texttt{"}$ : % chktex 26 chktex 18
+          | $E\ \texttt{\textbar}\texttt{\textbar}\ NodeColor$ : % chktex 26
+          ;; % chktex 26
+          $E$ : ::= % chktex 26
+          | $\texttt{Entities}\ \mathit{op}\ S\ \texttt{?} \texttt{"}C\texttt{"}$ : % chktex 26 chktex 18
+          | $\texttt{Context.Nill}\ \texttt{?} \texttt{"}C\texttt{"}$ : % chktex 26 chktex 18
+          | $\texttt{Context.RecursiveIdentifier}\ \texttt{(}\ x\ \texttt{)} \texttt{?} \texttt{"}C\texttt{"}$ : % chktex 26 chktex 18 chktex 9
+          | $\texttt{Context.EntitySet}\ \mathit{op}\ S\ \texttt{?} \texttt{"}C\texttt{"}$ : % chktex 26 chktex 18
+          | $\texttt{Context.NonDeterministicChoice}\ \texttt{?} \texttt{"}C\texttt{"}$ : % chktex 26 chktex 18
+          | $\texttt{Context.Summation}\ \texttt{?} \texttt{"}C\texttt{"}$ : % chktex 26 chktex 18
+          | $\texttt{Context.WaitEntity}\ \texttt{?} \texttt{"}C\texttt{"}$ : % chktex 26 chktex 18
+          ;; % chktex 26
+          $op$ : ::= % chktex 26
+          | $\texttt{==}$ : or $\texttt{=}$ % chktex 26
+          | $\texttt{<}$ : or ⊂ % chktex 26
+          | $\texttt{<=}$ : or ⊆ % chktex 26
+          | $\texttt{>}$ : or ⊃ % chktex 26
+          | $\texttt{>=}$ : or ⊇ % chktex 26
+          ;; % chktex 26
+          Where \\ & \(C\) -> {is a string that specifies the color\\ of the node} : % chktex 26
+          ;; % chktex 26
+          \(S\) -> is a sets of entities : % chktex 26
+          ;; % chktex 26
+          \(x\) -> is a variable : % chktex 26
+          ;; % chktex 26
+        \end{bnf}
+        \captionsetup{type=table, name=\textbf{Syntax}}
+        \caption{Syntax for \(\texttt{NodeColor}\)}\label{bnf_node_color}
+      \end{minipage}\vspace{1em}
+
+      The \(\texttt{NodeColor}\) structure assigns the first correct color to the node. The structure can be thought of as a list of pairs; each pair has an entry that evaluated returns true or false, and an entry that holds the desired color of the node.
+      To find the correct color, the list is scanned until the first pair that returns true and the color is assigned. If no pair returns true, a default value is assigned, specified after \(\texttt{!}\). The possible functions expressible by the grammar are the ones expressed by \(E\) and query either the entities available or the current context.
+
+      \begin{minipage}{\textwidth}
+        \begin{bnf}(relation-sym-map = % chktex 36
+          {
+            {::=} = {\ensuremath{\Coloneqq}},
+            {->} = {},
+            {:in:} = {\ensuremath{\in}},
+          },)
+          $EdgeColor$ : ::= % chktex 26
+          | $\texttt{!} \texttt{"}\ C\ \texttt{"}$ : % chktex 26 chktex 18
+          | $E\ \texttt{\textbar}\texttt{\textbar}\ EdgeColor$ : % chktex 26
+          ;; % chktex 26
+          $E$ : ::= % chktex 26
+          | $\texttt{Entities}\ \mathit{op}\ S\ \texttt{?} \texttt{"}C\texttt{"}$ : % chktex 26 chktex 18
+          | $\texttt{Context}\ \mathit{op}\ S\ \texttt{?} \texttt{"}C\texttt{"}$ : % chktex 26 chktex 18
+          | $\texttt{T}\ \mathit{op}\ S\ \texttt{?} \texttt{"}C\texttt{"}$ : % chktex 26 chktex 18
+          | $\texttt{Reactants}\ \mathit{op}\ S\ \texttt{?} \texttt{"}C\texttt{"}$ : % chktex 26 chktex 18
+          | $\texttt{AbsentReactants}\ \mathit{op}\ S\ \texttt{?} \texttt{"}C\texttt{"}$ : % chktex 26 chktex 18
+          | $\texttt{Inhibitors}\ \mathit{op}\ S\ \texttt{?} \texttt{"}C\texttt{"}$ : % chktex 26 chktex 18
+          | $\texttt{PresentInhibitors}\ \mathit{op}\ S\ \texttt{?} \texttt{"}C\texttt{"}$ : % chktex 26 chktex 18
+          | $\texttt{Products}\ \mathit{op}\ S\ \texttt{?} \texttt{"}C\texttt{"}$ : % chktex 26 chktex 18
+          ;; % chktex 26
+          $op$ : ::= % chktex 26
+          | $\texttt{==}$ : or $\texttt{=}$ % chktex 26
+          | $\texttt{<}$ : or ⊂ % chktex 26
+          | $\texttt{<=}$ : or ⊆ % chktex 26
+          | $\texttt{>}$ : or ⊃ % chktex 26
+          | $\texttt{>=}$ : or ⊇ % chktex 26
+          ;; % chktex 26
+          Where \\ & \(C\) -> {is a string that specifies the color\\ of the node} : % chktex 26
+          ;; % chktex 26
+          \(S\) -> is a sets of entities : % chktex 26
+          ;; % chktex 26
+          \(x\) -> is a variable : % chktex 26
+          ;; % chktex 26
+        \end{bnf}
+        \captionsetup{type=table, name=\textbf{Syntax}}
+        \caption{Syntax for \(\texttt{EdgeColor}\)}\label{bnf_edge_color}
+      \end{minipage}\vspace{1em}
+
+
+      \(\texttt{EdgeColor}\) behaves in a similar manner as \(\texttt{NodeColor}\), except the base structure is a \(\texttt{Label}\), so every field is a \(\texttt{Set}\).
+    \end{subsection}
+
+    \begin{subsection}{Slicing Trace}
+      Only one structure for slicing trace is provided, but is made to work with both RS and Positive RS with generics. The only method they have is \(\texttt{slice}(\mathit{trace}, \mathit{marking}: \texttt{set}) \to \texttt{trace}^{?}\) which returns, if successful, a new sliced trace.
+    \end{subsection}
+
+    \begin{subsection}{Bisimilarity and Bisimulation}
+      In the workspace \(\texttt{bisimilarity}\) the algorithms by Kanellakis and Smolka, and Paige and Tarjan are implemented over generic graphs. Instead of an implementation over graphs with generic parameters, the input have to implement generic traits from the \(\texttt{petgraph}\) library, making it possible to use with different types of graph, for example spare graphs or matrix graphs.
+
+      One key feature was the ability to control via a domain specific language the labels on the edges of the graphs. The developed language is able to also specify values over nodes such that nodes with equal value may be collapsed into one node with outgoing and incoming edges inherited from the original nodes. The code for the typechecking and execution is available in the library \(\texttt{assert}\).
+
+      The language has way to define subroutines or functions, has no while loop and limited for loop construction, so that the execution always terminates.
+
+      \begin{minipage}{\textwidth}
+        \begin{bnf}(relation-sym-map = % chktex 36
+          {
+            {::=} = {\ensuremath{\Coloneqq}},
+            {->} = {},
+            {:in:} = {\ensuremath{\in}},
+          },
+          comment = {==})
+          $Assert$ == ::= % chktex 26
+          | $\texttt{label} \texttt{\{} Tree \texttt{\}}$ == {$\texttt{label}$ is replaced by other\\ strings to differentiate\\ languages}
+          ;; % chktex 26
+
+          $Tree$ == ::= % chktex 26
+          | $Tree \texttt{;} Tree$ == % chktex 26
+          | $\texttt{if}\ E\ \texttt{then \{} Tree \texttt{\};} $ == % chktex 26
+          | {$\texttt{if}\ E\ \texttt{then \{} Tree \texttt{\}}$ \\ $\texttt{else \{} Tree \texttt{\};} $} == % chktex 26
+          | $\texttt{let}\ x\ \texttt{=}\ E \texttt{;}$ == % chktex 26
+          | $\texttt{let}\ x \texttt{.} Qualifier\ \texttt{=}\ E \texttt{;}$ == % chktex 26
+          | $\texttt{return}\ E \texttt{;}$ == % chktex 26
+          | $\texttt{for}\ x\ \texttt{in}\ Range\ \texttt{\{} Tree \texttt{\};}$ == % chktex 26
+          ;; % chktex 26
+
+          $E$ == ::= % chktex 26
+          | $unaryP \texttt{(} E \texttt{)}$ == % chktex 26 chktex 9
+          | $E \texttt{.} unaryS $ == % chktex 26
+          | $\texttt{(} E\ binary\ E \texttt{)}$ == % chktex 26 chktex 9
+          | $binaryP \texttt{(} E \texttt{,} E \texttt{)}$ == % chktex 26 chktex 9
+          | $Term$ == % chktex 26
+          ;; % chktex 26
+
+          $Term$ == ::= % chktex 26
+          | $\texttt{true}$ == % chktex 26
+          | $\texttt{false}$ == % chktex 26
+          | $x$ == % chktex 26
+          | $i$ == % chktex 26
+          | $l$ == % chktex 26
+          | $set$ == % chktex 26
+          | $\texttt{'} s \texttt{'}$ == element % chktex 26
+          | $\texttt{"} s \texttt{"}$ == string % chktex 26 chktex 18
+          | $\texttt{(} E \texttt{)}$ == % chktex 26 chktex 9
+          ;; % chktex 26
+
+          $Range$ == ::= % chktex 26
+          | $\texttt{\{} E \texttt{\}}$ == iterate over set % chktex 26
+          | $\texttt{\{} E \texttt{..} E \texttt{\}}$ == iterate over integer range % chktex 26
+          ;; % chktex 26
+          Where \\ & \(S\) -> is a sets of entities == % chktex 26
+          ;; % chktex 26
+          \(i\) :in: $\mathbb{Z}$ == % chktex 26
+          ;; % chktex 26
+          \(x\) -> is a variable name == % chktex 26
+          ;; % chktex 26
+          \(l\) -> is a label, see\ \ref{bnf_set} == % chktex 26
+          ;; % chktex 26
+          \(set\) -> is a set, see\ \ref{bnf_set} == % chktex 26
+          ;; % chktex 26
+          \(s\) -> is a string == % chktex 26
+          ;; % chktex 26
+        \end{bnf}
+        \captionsetup{type=table, name=\textbf{Syntax}}
+        \caption{Syntax for \(\texttt{Assert}\)}\label{bnf_assert}
+      \end{minipage}\vspace{1em}
+
+      Continues on the next page.
+
+      \begin{minipage}{\textwidth}
+        \begin{bnf}(relation-sym-map = % chktex 36
+          {
+            {::=} = {\ensuremath{\Coloneqq}},
+            {->} = {},
+            {:in:} = {\ensuremath{\in}},
+          },
+          comment = {==})
+          $unaryP$ == ::= % chktex 26
+          | $\texttt{empty}$ == % chktex 26
+          | $\texttt{length}$ == % chktex 26
+          | $\texttt{tostr}$ == % chktex 26
+          | $\texttt{toel}$ == string to element % chktex 26
+          | $\texttt{Entities}$ == % chktex 26
+          | $\texttt{Context}$ == % chktex 26
+          | $\texttt{Reactants}$ == % chktex 26
+          | $\texttt{ReactantsAbsent}$ == % chktex 26
+          | $\texttt{Inhibitors}$ == % chktex 26
+          | $\texttt{InhibitorsPresent}$ == % chktex 26
+          | $\texttt{Products}$ == % chktex 26
+          | $\texttt{AvailableEntities}$ == % chktex 26
+          | $\texttt{AllReactants}$ == % chktex 26
+          | $\texttt{AllInhibitors}$ == % chktex 26
+          | $\texttt{SystemEntities}$ == % chktex 26
+          | $\texttt{SystemContext}$ == % chktex 26
+          | $\texttt{source}$ == source of edge % chktex 26
+          | $\texttt{target}$ == target of edge % chktex 26
+          | $\texttt{neightbours}$ == node's neighbours % chktex 26
+          | $\texttt{system}$ == node's system % chktex 26
+          ;; % chktex 26
+
+          $binary$ == ::= % chktex 26
+          | $\texttt{\&\&}$ == logical and, set intersection % chktex 26
+          | $\texttt{\textbar\textbar}$ == logical or, set union % chktex 26
+          | $\texttt{\^{}\^{}}$ == logical xor, set xor % chktex 26
+          | $\texttt{<}$ == less, set inclusion % chktex 26
+          | $\texttt{<=}$ == less equal, set inclusion or equal % chktex 26
+          | $\texttt{>}$ == greater, reverse set inclusion % chktex 26
+          | $\texttt{>=}$ == greater equal, reverse set inclusion or equal % chktex 26
+          | $\texttt{=}\texttt{=}$ == % chktex 26
+          | $\texttt{!=}$ == % chktex 26
+          | $\texttt{+}$ == % chktex 26
+          | $\texttt{*}$ == % chktex 26
+          | $\texttt{\^{}}$ == % chktex 26
+          | $\texttt{/}$ == quotient % chktex 26
+          | $\texttt{\%}$ == reminder % chktex 26
+          | $\texttt{::}$ == concatenation % chktex 26
+          ;; % chktex 26
+
+          $binaryP$ == ::= % chktex 26
+          | $\texttt{substr}$ == logical and % chktex 26
+          | $\texttt{min}$ == logical or % chktex 26 chktex 35
+          | $\texttt{max}$ == logical xor % chktex 26 chktex 35
+          | $\texttt{commonsubstr}$ == less or set inclusion % chktex 26
+          ;; % chktex 26
+
+          $unaryS$ == ::= % chktex 26
+          | $\texttt{Entities}$ == % chktex 26
+          | $\texttt{length}$ == % chktex 26
+          | $\texttt{tostr}$ == % chktex 26
+          | $\texttt{toel}$ == % chktex 26
+          ;; % chktex 26
+        \end{bnf}
+        \captionsetup{type=table, name=\textbf{Syntax}}
+        \ContinuedFloat{}
+        \caption{Syntax for \(\texttt{Assert}\) (Continued)}
+      \end{minipage}\vspace{1em}
+
+      The template language requires two structures to function relating to the input of the language: a type structure and a value structure. The trait \(\texttt{SpecialVariables}\) holds all the necessary functions that need to be implemented for the special variables to function. Finally the generic language can have the two functions \(\texttt{typecheck}\) and \(\texttt{execute}\) implemented.
+
+      The language is very limited and is only designed for simple algorithms since there is no scoping. Typechecking consists in only asserting acceptable types for unary and binary functions, range declaration and for all return statements to return the same type.
+
+      A version for Positive RS is also provided and reflects the previous grammar with basic types replaced with their positive versions.
+    \end{subsection}
+    
+    \begin{subsection}{Grammar and Separated Grammar}
+      Two workspaces are provided for parsing the structures above. \(\texttt{Grammar}\) creates only one endpoint that parses a system and a list of instructions. Those instructions are then executed via the library \(\texttt{execution}\). A simple CLI has been implemented in the workspace \(\texttt{analysis}\), with proper error formatting for LALRPOP errors.
+    \end{subsection}
+  \end{section}
+
+  \begin{section}{ReactionSystemsGUI}
+    During development of ReactionSystems, a need for a more intuitive interaction with the structures presented itself. Since the all the operations on the types where already limited and 
+    structured, a visual programming language was chosen as the best fit.
+    
+    The library \href{https://github.com/trevyn/egui_node_graph2}{\(\texttt{egui\_node\_graph2}\)} was chosen since it offered customizability, performance and ease of programming. The library unfortunately lacked compatibility with the most recent version of \href{https://github.com/emilk/egui}{\(\texttt{egui}\)}, so it is included as a workspace and modified to fit better the need of the project. This way a couple of bugs present in the original code could be fixed.
+
+    \(\texttt{egui\_node\_graph2}\) is based on the library \(\texttt{egui}\), which is an immediate mode GUI. % chktex 13
+    It differentiate itself from retained mode GUIs by having all the elements specified at every frame; this eases programming at the expense of performance. The trade-off is favorable since most of the computation will be on the algorithms over RS and the number of elements of the UI will remain small in most cases.
+
+    All the functions previously described are available as ``nodes'' in the GUI program. Each takes one or more inputs, colored by type, and prevents wrong types from connecting, reducing user error when connecting similarly colored types.
+
+    Since at every step all of the GUI is recalculated, a robust cache structure is needed.
+    The cache developed keeps track of the modified nodes and only recomputes if necessary, exploiting the structure of the graph.
+
+    The library \(\texttt{egui\_node\_graph2}\) was also chosen for its ability to create a web application directly from Rust code. The web application is limited; there is no interaction with the file system and no true multi-threading. These limitations are imposed by WebAssembly itself, not by the transpilation from Rust.
+
+    The native application executes the expressed instructions in a separate thread and returns the result to the GUI thread to be displayed. Thus the web application may ``freeze'' and become unresponsive with long calculations.
+
+    Both native and web applications have the ability to save the current state and resume. The saved state is stored in the browser cache in the web application and in special directories in the native one:
+    \begin{itemize}
+    \item Linux: \(\texttt{/home/UserName/.local/share/Reaction-Systems}\)
+    \item macOS:\ \(\texttt{/Users/UserName/Library/Application Support/Reaction-Systems}\)
+    \item Windows: \(\texttt{C:\textbackslash{}Users\textbackslash{}UserName\textbackslash{}AppData\textbackslash{}Roaming\textbackslash{}Reaction-Systems\textbackslash{}data}\)
+    \end{itemize}
+
+    The native application also has the ability to save and load the state from a file.
+
+    The user can request the result of a computation by interacting with the button ``\textit{Set active}'' under most of the windows. A panel on the right of the screen appears with the computed result. The nodes ``Save string to file'' and ``Save SVG'' instead have a button ``\textit{Write}'' that writes to file the result. The node ``Read a file'' has an extra button ``\textit{Update file}'' that reads again the file from disk since a filewatcher has not been implemented.
+
+    Since the generated graphs were often times immediately converted to DOT files and rendered to SVG, a native renderer is included that can create PNG images of the supplied graph. This reduces greatly the time switching between software to achieve the same result.
+  \end{section}
+\end{chapter}

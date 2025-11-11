@@ -9,7 +9,16 @@
 ]{geometry}
 \geometry{a4paper}
 
-\usepackage[utf8]{inputenc} %% use UTF-8, maybe not needed since 2018
+\usepackage{fontspec}
+\directlua{
+  luaotfload.add_fallback ("fallbacktest",
+  {
+    "freeserif:mode=harf;script=dev2;color=000000;",
+  })
+}
+
+\setmainfont{latinmodernroman}[RawFeature={fallback=fallbacktest}]
+
 \usepackage[italian,main=english]{babel} %% language
 
 \pagestyle{headings}
@@ -25,7 +34,7 @@
 \usepackage[
   backend=biber,
   style=numeric,
-  sorting=ynt
+  bibencoding=utf8,
 ]{biblatex} %% for citations
 \addbibresource{document.bib}
 
@@ -36,7 +45,7 @@
 \usepackage{float}
 \usepackage{amssymb} %% math symbols
 \usepackage{amsmath} %% math matrix etc
-\usepackage{minted} %% code block
+% \usepackage{minted} %% code block
 \usepackage{tabularray} %% better tables
 \usepackage{booktabs} %% rules for tables
 \usepackage{mathrsfs}
@@ -49,6 +58,7 @@
 \usepackage{stmaryrd}
 \usepackage{ebproof}
 \usepackage{xfrac}
+\usepackage{caption}
 
 %% plot packages
 \usepackage{pgfplots} %% plots used with \begin{tikzpicture}
@@ -207,7 +217,3 @@
 \end{document}
 
 %% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - %%
-
-%%% Local Variables:
-%%% TeX-command-extra-options: "-shell-escape"
-%%% End:

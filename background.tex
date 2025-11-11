@@ -1,7 +1,7 @@
 \begin{chapter}{Background}
   \begin{section}{Reaction Systems}
     Reaction Systems are a qualitative model inspired by biochemical processes.
-    The behavior is described by reactions, each of them requiring some reactants \(R\) and requiring the absence of inhibitors \(I\) to produce some product elements \(P\).
+    The behavior is described by reactions, each of them requiring some reactants \(R\) and requiring the absence of inhibitors \(I\) to produce some product elements \(P\). ``Elements'' and ``entities'' will be used interchangeably to refer to elements of these sets.
 
     \begin{definition}[Reaction]
       A reaction is a triplet a \(= (R, I, P)\), where \(R, I, P\) are finite sets with \(R \cap I = \emptyset\) and \(R, I, P \neq \emptyset\). If \(S\) is a set such that \(R, I, P \subseteq S\), then a is a reaction in \(S\).
@@ -81,7 +81,7 @@
 
   \end{section}
 
-  \begin{section}{SOS rules for reaction systems}
+  \begin{section}{SOS rules for reaction systems}\label{SOS_rules_section}
     The behavior of a RS could be defined as a discrete time interactive process: a finite context sequence describes the entities provided by the environment at each step, the current state is determined by the union of the entities coming from the environment with those produced from the previous step and the state sequence is determined by applying all and only the enabled reactions to the set of entities available in the current state.
 
     Given the context sequence, the semantics of RSs is uniquely determined and can be represented as a finite, deterministic and labeled or unlabeled transition system.
@@ -103,7 +103,7 @@
         | $(R, I, P)$ : reaction % chktex 26
         | $D$ : set of entities % chktex 26
         | $K$ : context process % chktex 26
-        | $M \vert M$ : % chktex 26
+        | $M \vert M$ : parallel composition % chktex 26
         ;; % chktex 26
         $K$ : ::= % chktex 26
         | \textbf{$0$} : nil context % chktex 26
@@ -143,49 +143,49 @@
     \begin{figure}[!h]
       \centering
       \begin{prooftree}
-        \Hypo{ \vphantom{K \left[ \sfrac{ \texttt{rec} X.K }{ X } \right] \xrightarrow{\langle W \triangleright R, I, P \rangle} K'} } % chktex 1
-        \Infer1[(Ent)]{D \xrightarrow{\langle D\ \triangleright\ \emptyset, \emptyset, \emptyset \rangle} \emptyset} % chktex 1
+        \hypo{ \vphantom{K \left[ \sfrac{ \texttt{rec} X.K }{ X } \right] \xrightarrow{\langle W \triangleright R, I, P \rangle} K'} } % chktex 1
+        \infer1[(Ent)]{D \xrightarrow{\langle D\ \triangleright\ \emptyset, \emptyset, \emptyset \rangle} \emptyset} % chktex 1
       \end{prooftree}\hspace{1em}
       \begin{prooftree}
-        \Hypo{ \vphantom{K \left[ \sfrac{ \texttt{rec} X.K }{ X } \right] \xrightarrow{\langle W \triangleright R, I, P \rangle} K'} } % chktex 1
-        \Infer1[(Ctx)]{C.K \xrightarrow{ \langle C\ \triangleright\ \emptyset, \emptyset, \emptyset \rangle } K} % chktex 1
+        \hypo{ \vphantom{K \left[ \sfrac{ \texttt{rec} X.K }{ X } \right] \xrightarrow{\langle W \triangleright R, I, P \rangle} K'} } % chktex 1
+        \infer1[(Ctx)]{C.K \xrightarrow{ \langle C\ \triangleright\ \emptyset, \emptyset, \emptyset \rangle } K} % chktex 1
       \end{prooftree}\hspace{1em}
       \begin{prooftree}
-        \Hypo{ K \left[ \sfrac{ \texttt{rec} X.K }{ X } \right] \xrightarrow{\langle W \triangleright R, I, P \rangle} K' } % chktex 1
-        \Infer1[(Rec)]{ \texttt{rec} X.K \xrightarrow{\langle W\ \triangleright\ R, I, P \rangle} K' } % chktex 1
+        \hypo{ K \left[ \sfrac{ \texttt{rec} X.K }{ X } \right] \xrightarrow{\langle W \triangleright R, I, P \rangle} K' } % chktex 1
+        \infer1[(Rec)]{ \texttt{rec} X.K \xrightarrow{\langle W\ \triangleright\ R, I, P \rangle} K' } % chktex 1
       \end{prooftree}\vspace{2em}
 
       \begin{prooftree}
-        \Hypo{ K_1 \xrightarrow{\langle W \triangleright R, I, P \rangle} K_1' } % chktex 1
-        \Infer1[(Suml)]{ K_1 + K_2 \xrightarrow{\langle W\ \triangleright\ R, I, P \rangle} K_1' } % chktex 1
+        \hypo{ K_1 \xrightarrow{\langle W \triangleright R, I, P \rangle} K_1' } % chktex 1
+        \infer1[(Suml)]{ K_1 + K_2 \xrightarrow{\langle W\ \triangleright\ R, I, P \rangle} K_1' } % chktex 1
       \end{prooftree}\hspace{1em}
       \begin{prooftree}
-        \Hypo{ K_2 \xrightarrow{\langle W \triangleright R, I, P \rangle} K_2' } % chktex 1
-        \Infer1[(Sumr)]{ K_1 + K_2 \xrightarrow{\langle W\ \triangleright\ R, I, P \rangle} K_2' } % chktex 1
+        \hypo{ K_2 \xrightarrow{\langle W \triangleright R, I, P \rangle} K_2' } % chktex 1
+        \infer1[(Sumr)]{ K_1 + K_2 \xrightarrow{\langle W\ \triangleright\ R, I, P \rangle} K_2' } % chktex 1
       \end{prooftree}\vspace{2em}
 
       \begin{prooftree}
-        \Hypo{ \vphantom{J \cup Q \neq \emptyset} } % chktex 1
-        \Infer1[(Pro)]{ (R, I, P) \xrightarrow{\langle \emptyset\ \triangleright\ R, I, P \rangle} (R, I, P) \vert P } % chktex 1
+        \hypo{ \vphantom{J \cup Q \neq \emptyset} } % chktex 1
+        \infer1[(Pro)]{ (R, I, P) \xrightarrow{\langle \emptyset\ \triangleright\ R, I, P \rangle} (R, I, P) \vert P } % chktex 1
       \end{prooftree}\hspace{1em}
       \begin{prooftree}
-        \Hypo{ J \subseteq I } % chktex 1
-        \Hypo{ Q \subseteq R } % chktex 1
-        \Hypo{ J \cup Q \neq \emptyset } % chktex 1
-        \Infer3[(Inh)]{ (R, I, P) \xrightarrow{\langle \emptyset\ \triangleright\ R, I, P \rangle} (R, I, P) \vert P } % chktex 1
+        \hypo{ J \subseteq I } % chktex 1
+        \hypo{ Q \subseteq R } % chktex 1
+        \hypo{ J \cup Q \neq \emptyset } % chktex 1
+        \infer3[(Inh)]{ (R, I, P) \xrightarrow{\langle \emptyset\ \triangleright\ R, I, P \rangle} (R, I, P) \vert P } % chktex 1
       \end{prooftree}\vspace{2em}
 
       \begin{prooftree}
-        \Hypo{ M_1 \xrightarrow{\langle W_1 \triangleright R_1, I_1, P_1 \rangle} M_1' } % chktex 1
-        \Hypo{ M_2 \xrightarrow{\langle W_2 \triangleright R_2, I_2, P_2 \rangle} M_2' } % chktex 1
-        \Hypo{ (W_1 \cup W_2 \cup R_1 \cup R_2) \cap (I_1 \cup I_2) } % chktex 1
-        \Infer3[(Par)]{ M_1 \vert M_2 \xrightarrow{\langle W_1 \cup W_2\ \triangleright\ R_1 \cup R_2, I_1 \cup I_2, P_1 \cup P_2 \rangle} M_1' \vert M_2' } % chktex 1
+        \hypo{ M_1 \xrightarrow{\langle W_1 \triangleright R_1, I_1, P_1 \rangle} M_1' } % chktex 1
+        \hypo{ M_2 \xrightarrow{\langle W_2 \triangleright R_2, I_2, P_2 \rangle} M_2' } % chktex 1
+        \hypo{ (W_1 \cup W_2 \cup R_1 \cup R_2) \cap (I_1 \cup I_2) } % chktex 1
+        \infer3[(Par)]{ M_1 \vert M_2 \xrightarrow{\langle W_1 \cup W_2\ \triangleright\ R_1 \cup R_2, I_1 \cup I_2, P_1 \cup P_2 \rangle} M_1' \vert M_2' } % chktex 1
       \end{prooftree}\vspace{2em}
 
       \begin{prooftree}
-        \Hypo{ M \xrightarrow{\langle W \triangleright R, I, P \rangle} M' } % chktex 1
-        \Hypo{ R \subseteq W } % chktex 1
-        \Infer2[(Sys)]{ [M] \xrightarrow{\langle W\ \triangleright\ R, I, P \rangle} [M'] } % chktex 1
+        \hypo{ M \xrightarrow{\langle W \triangleright R, I, P \rangle} M' } % chktex 1
+        \hypo{ R \subseteq W } % chktex 1
+        \infer2[(Sys)]{ [M] \xrightarrow{\langle W\ \triangleright\ R, I, P \rangle} [M'] } % chktex 1
       \end{prooftree}
 
       \caption{SOS semantics of the reaction system process}\label{SOS_semantics}
@@ -339,7 +339,7 @@
       Let \(\pi\) and \(\pi'\) be two partitions of \(S\).\ \(\pi'\) is a refinement of \(\pi\) if for each block \(B' \in \pi'\) there exists some block \(B \in \pi\) such that \(B'\subseteq B\).
 
       \begin{paragraph}{The algorithm of Kanellakis and Smolka\cite{Aceto_Ingolfsdottir_Srba_2011}}
-        
+
         Given a transition system \(T = (S, Act, \to, I, AP, L)\), let \(\pi = \{B_0, \ldots, B_k\}, k \geq 0\) be a partition of the set of states \(S\). The algorithm due to Kanellakis and Smolka is based on the notion of splitter.
 
         \begin{definition}[Splitter]
@@ -414,7 +414,7 @@
 
         The algorithm uses the function \texttt{split}\((B, \alpha, \pi)\) which given a partition \(\pi\), a block \(B \in \pi\) and an action \(\alpha\), splits \(B\) with respect to each block in \(\pi\) and action \(\alpha\).
 
-        \begin{theorem}{Kanellakis and Smolka}
+        \begin{theorem}[Kanellakis and Smolka]
           When applied to a finite labeled transition system with \(n\) states and \(m\) transitions, the algorithm of Kanellakis and Smolka computes the partition corresponding to bisimilarity in time \(O(n \cdot m)\).
         \end{theorem}
 
@@ -465,7 +465,7 @@
         In order to implement the algorithm efficiently, it is useful to reduce the problem to that of considering a labeled transition system without deadlocked states, meaning without states with no outgoing edge. This can be done easily by preprocessing the initial partition \(\pi_{intial}\) by splitting each block \(B \in \pi_{initial}\) into:
         \begin{align*}
           B_1 &= B \cap pre(S)\quad\text{and}\\
-          B_2 &= B \ pre(S).
+          B_2 &= B \setminus pre(S).
         \end{align*}
 
         \(B_2\) will never be split again by the refinement algorithm. Therefore run the refinement algorithm starting from the partition \(\pi_{initial}' = \{B_1 | B \in \pi_{initial}\}\).
@@ -620,15 +620,9 @@
         \end{subparagraph}
 
       \end{paragraph}
-      
+
     \end{subsection}
 
   \end{section}
-  
+
 \end{chapter}
-
-
-%%% Local Variables:
-%%% TeX-command-extra-options: "-shell-escape"
-%%% TeX-master: "document.tex"
-%%% End:
