@@ -812,16 +812,16 @@
 
       A version for Positive RS is also provided and reflects the previous grammar with basic types replaced with their positive versions.
     \end{subsection}
-    
+
     \begin{subsection}{Grammar and Separated Grammar}
       Two workspaces are provided for parsing the structures above. \(\texttt{Grammar}\) creates only one endpoint that parses a system and a list of instructions. Those instructions are then executed via the library \(\texttt{execution}\). A simple CLI has been implemented in the workspace \(\texttt{analysis}\), with proper error formatting for LALRPOP errors.
     \end{subsection}
   \end{section}
 
   \begin{section}{ReactionSystemsGUI}
-    During development of ReactionSystems, a need for a more intuitive interaction with the structures presented itself. Since the all the operations on the types where already limited and 
+    During development of ReactionSystems, a need for a more intuitive interaction with the structures presented itself. Since the all the operations on the types where already limited and
     structured, a visual programming language was chosen as the best fit.
-    
+
     The library \href{https://github.com/trevyn/egui_node_graph2}{\(\texttt{egui\_node\_graph2}\)} was chosen since it offered customizability, performance and ease of programming. The library unfortunately lacked compatibility with the most recent version of \href{https://github.com/emilk/egui}{\(\texttt{egui}\)}, so it is included as a workspace and modified to fit better the need of the project. This way a couple of bugs present in the original code could be fixed.
 
     \(\texttt{egui\_node\_graph2}\) is based on the library \(\texttt{egui}\), which is an immediate mode GUI. % chktex 13
@@ -843,7 +843,27 @@
     \item Windows: \(\texttt{C:\textbackslash{}Users\textbackslash{}UserName\textbackslash{}AppData\textbackslash{}Roaming\textbackslash{}Reaction-Systems\textbackslash{}data}\)
     \end{itemize}
 
-    The native application also has the ability to save and load the state from a file.
+    The native application also has the ability to save and load the state from a file. The files have by default the extension ``\(\texttt{.ron}\)''. The web version has no ability to interact with the file system due to a limitation of \(\texttt{webassembly}\).
+
+    \begin{figure}
+      \centering
+      \begin{bytefield}[endianness=little, bitwidth=0.3em]{64}
+        \bitheader{0, 8, 16, 24, 32, 40, 48, 56, 63} \\
+        \bitbox[bgcolor=lightgreen]{64}{Version Number} \\
+        \begin{rightwordgroup}{Size}
+          \bitbox{64}[bgcolor=lightgreen]{State Length} \\
+          \bitbox{64}[bgcolor=lightgreen]{Translator Length} \\
+          \bitbox{64}[bgcolor=lightgreen]{Cache Length}
+        \end{rightwordgroup} \\
+
+        \wordbox{2}{State} \\
+        \wordbox{2}{Translator} \\
+        \wordbox{2}{Cache} \\
+      \end{bytefield}
+      \caption{Save file structure}\label{save_file_structure}
+    \end{figure}
+
+    The file structure can be seen in figure\ \ref{save_file_structure}, where ``state'' refers to the state of the GUI, ``translator'' refers to the \(\texttt{Translator}\) structure used to encode entities names into fixed sized integers, and ``cache'' refers to the cache structure for the GUI.\ Version number is a little-endian \(\texttt{u64}\) that encodes the version number of the application; if different from the version of the application, a warning will be issued, but the application will try and load the state anyway. Each ``length'' field is a little-endian \(\texttt{u64}\) and indicates the length in bytes of the corresponding field.
 
     The user can request the result of a computation by interacting with the button ``\textit{Set active}'' under most of the windows. A panel on the right of the screen appears with the computed result. The nodes ``Save string to file'' and ``Save SVG'' instead have a button ``\textit{Write}'' that writes to file the result. The node ``Read a file'' has an extra button ``\textit{Update file}'' that reads again the file from disk since a filewatcher has not been implemented.
 
