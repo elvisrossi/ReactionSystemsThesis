@@ -58,7 +58,7 @@
       \caption{Basic structures and relationships between them}\label{basic_structures}
     \end{figure}
 
-    \begin{subsection}{Entities}
+    \begin{subsection}{Entities and Translator}
       Entities are the most basic data structure that a RS need to keep track of. They don't have a specified interface and are instead treated only in sets.
 
       Positive elements are also defined and have a state, either \texttt{Positive} or \texttt{Negative}.
@@ -686,50 +686,50 @@
           ;; % chktex 26
 
           $Tree$ == ::= % chktex 26
-          | $Tree \texttt{;} Tree$ == % chktex 26
-          | $\texttt{if}\ E\ \texttt{then \{} Tree \texttt{\};} $ == % chktex 26
-          | {$\texttt{if}\ E\ \texttt{then \{} Tree \texttt{\}}$ \\ $\texttt{else \{} Tree \texttt{\};} $} == % chktex 26
-          | $\texttt{let}\ x\ \texttt{=}\ E \texttt{;}$ == % chktex 26
-          | $\texttt{let}\ x \texttt{.} Qualifier\ \texttt{=}\ E \texttt{;}$ == % chktex 26
-          | $\texttt{return}\ E \texttt{;}$ == % chktex 26
-          | $\texttt{for}\ x\ \texttt{in}\ Range\ \texttt{\{} Tree \texttt{\};}$ == % chktex 26
+          | $Tree \texttt{;} Tree$ ==
+          | $\texttt{if}\ E\ \texttt{then \{} Tree \texttt{\};} $ ==
+          | {$\texttt{if}\ E\ \texttt{then \{} Tree \texttt{\}}$ \\ $\texttt{else \{} Tree \texttt{\};} $} ==
+          | $\texttt{let}\ x\ \texttt{=}\ E \texttt{;}$ ==
+          | $\texttt{let}\ x \texttt{.} Qualifier\ \texttt{=}\ E \texttt{;}$ ==
+          | $\texttt{return}\ E \texttt{;}$ ==
+          | $\texttt{for}\ x\ \texttt{in}\ Range\ \texttt{\{} Tree \texttt{\};}$ ==
           ;; % chktex 26
 
           $E$ == ::= % chktex 26
-          | $unaryP \texttt{(} E \texttt{)}$ == % chktex 26 chktex 9
-          | $E \texttt{.} unaryS $ == % chktex 26
-          | $\texttt{(} E\ binary\ E \texttt{)}$ == % chktex 26 chktex 9
-          | $binaryP \texttt{(} E \texttt{,} E \texttt{)}$ == % chktex 26 chktex 9
-          | $Term$ == % chktex 26
+          | $unaryP \texttt{(} E \texttt{)}$ == % chktex 9
+          | $E \texttt{.} unaryS $ ==
+          | $\texttt{(} E\ binary\ E \texttt{)}$ == % chktex 9
+          | $binaryP \texttt{(} E \texttt{,} E \texttt{)}$ == % chktex 9
+          | $Term$ ==
           ;; % chktex 26
 
           $Term$ == ::= % chktex 26
-          | $\texttt{true}$ == % chktex 26
-          | $\texttt{false}$ == % chktex 26
-          | $x$ == % chktex 26
-          | $i$ == % chktex 26
-          | $l$ == % chktex 26
-          | $set$ == % chktex 26
-          | $\texttt{'} s \texttt{'}$ == element % chktex 26
-          | $\texttt{"} s \texttt{"}$ == string % chktex 26 chktex 18
-          | $\texttt{(} E \texttt{)}$ == % chktex 26 chktex 9
+          | $\texttt{true}$ ==
+          | $\texttt{false}$ ==
+          | $x$ ==
+          | $i$ ==
+          | $l$ ==
+          | $set$ ==
+          | $\texttt{'} s \texttt{'}$ == element
+          | $\texttt{"} s \texttt{"}$ == string % chktex 18
+          | $\texttt{(} E \texttt{)}$ == % chktex 9
           ;; % chktex 26
 
           $Range$ == ::= % chktex 26
-          | $\texttt{\{} E \texttt{\}}$ == iterate over set % chktex 26
-          | $\texttt{\{} E \texttt{..} E \texttt{\}}$ == iterate over integer range % chktex 26
+          | $\texttt{\{} E \texttt{\}}$ == iterate over set
+          | $\texttt{\{} E \texttt{..} E \texttt{\}}$ == iterate over integer range
           ;; % chktex 26
-          Where \\ & \(S\) -> is a sets of entities == % chktex 26
+          Where \\ & \(S\) -> is a sets of entities, see\ \ref{bnf_set} ==
           ;; % chktex 26
           \(i\) :in: $\mathbb{Z}$ == % chktex 26
           ;; % chktex 26
-          \(x\) -> is a variable name == % chktex 26
+          \(x\) -> is a variable name ==
           ;; % chktex 26
-          \(l\) -> is a label, see\ \ref{bnf_set} == % chktex 26
+          \(l\) -> is a label, see\ \ref{bnf_set} ==
           ;; % chktex 26
-          \(set\) -> is a set, see\ \ref{bnf_set} == % chktex 26
+          \(set\) -> is a set, see\ \ref{bnf_set} ==
           ;; % chktex 26
-          \(s\) -> is a string == % chktex 26
+          \(s\) -> is a string ==
           ;; % chktex 26
         \end{bnf}
         \captionsetup{type=table, name=\textbf{Syntax}}
@@ -747,58 +747,58 @@
           },
           comment = {==})
           $unaryP$ == ::= % chktex 26
-          | $\texttt{empty}$ == % chktex 26
-          | $\texttt{length}$ == % chktex 26
-          | $\texttt{tostr}$ == % chktex 26
-          | $\texttt{toel}$ == string to element % chktex 26
-          | $\texttt{Entities}$ == % chktex 26
-          | $\texttt{Context}$ == % chktex 26
-          | $\texttt{Reactants}$ == % chktex 26
-          | $\texttt{ReactantsAbsent}$ == % chktex 26
-          | $\texttt{Inhibitors}$ == % chktex 26
-          | $\texttt{InhibitorsPresent}$ == % chktex 26
-          | $\texttt{Products}$ == % chktex 26
-          | $\texttt{AvailableEntities}$ == % chktex 26
-          | $\texttt{AllReactants}$ == % chktex 26
-          | $\texttt{AllInhibitors}$ == % chktex 26
-          | $\texttt{SystemEntities}$ == % chktex 26
-          | $\texttt{SystemContext}$ == % chktex 26
-          | $\texttt{source}$ == source of edge % chktex 26
-          | $\texttt{target}$ == target of edge % chktex 26
-          | $\texttt{neightbours}$ == node's neighbours % chktex 26
-          | $\texttt{system}$ == node's system % chktex 26
+          | $\texttt{empty}$ ==
+          | $\texttt{length}$ ==
+          | $\texttt{tostr}$ ==
+          | $\texttt{toel}$ == string to element
+          | $\texttt{Entities}$ ==
+          | $\texttt{Context}$ ==
+          | $\texttt{Reactants}$ ==
+          | $\texttt{ReactantsAbsent}$ ==
+          | $\texttt{Inhibitors}$ ==
+          | $\texttt{InhibitorsPresent}$ ==
+          | $\texttt{Products}$ ==
+          | $\texttt{AvailableEntities}$ ==
+          | $\texttt{AllReactants}$ ==
+          | $\texttt{AllInhibitors}$ ==
+          | $\texttt{SystemEntities}$ ==
+          | $\texttt{SystemContext}$ ==
+          | $\texttt{source}$ == source of edge
+          | $\texttt{target}$ == target of edge
+          | $\texttt{neightbours}$ == node's neighbours
+          | $\texttt{system}$ == node's system
           ;; % chktex 26
 
           $binary$ == ::= % chktex 26
-          | $\texttt{\&\&}$ == logical and, set intersection % chktex 26
-          | $\texttt{\textbar\textbar}$ == logical or, set union % chktex 26
-          | $\texttt{\^{}\^{}}$ == logical xor, set xor % chktex 26
-          | $\texttt{<}$ == less, set inclusion % chktex 26
-          | $\texttt{<=}$ == less equal, set inclusion or equal % chktex 26
-          | $\texttt{>}$ == greater, reverse set inclusion % chktex 26
-          | $\texttt{>=}$ == greater equal, reverse set inclusion or equal % chktex 26
-          | $\texttt{=}\texttt{=}$ == % chktex 26
-          | $\texttt{!=}$ == % chktex 26
-          | $\texttt{+}$ == % chktex 26
-          | $\texttt{*}$ == % chktex 26
-          | $\texttt{\^{}}$ == % chktex 26
-          | $\texttt{/}$ == quotient % chktex 26
-          | $\texttt{\%}$ == reminder % chktex 26
-          | $\texttt{::}$ == concatenation % chktex 26
+          | $\texttt{\&\&}$ == logical and, set intersection
+          | $\texttt{\textbar\textbar}$ == logical or, set union
+          | $\texttt{\^{}\^{}}$ == logical xor, set xor
+          | $\texttt{<}$ == less, set inclusion
+          | $\texttt{<=}$ == less equal, set inclusion or equal
+          | $\texttt{>}$ == greater, reverse set inclusion
+          | $\texttt{>=}$ == greater equal, reverse set inclusion or equal
+          | $\texttt{=}\texttt{=}$ ==
+          | $\texttt{!=}$ ==
+          | $\texttt{+}$ ==
+          | $\texttt{*}$ ==
+          | $\texttt{\^{}}$ ==
+          | $\texttt{/}$ == quotient
+          | $\texttt{\%}$ == reminder
+          | $\texttt{::}$ == concatenation
           ;; % chktex 26
 
           $binaryP$ == ::= % chktex 26
-          | $\texttt{substr}$ == logical and % chktex 26
-          | $\texttt{min}$ == logical or % chktex 26 chktex 35
-          | $\texttt{max}$ == logical xor % chktex 26 chktex 35
-          | $\texttt{commonsubstr}$ == less or set inclusion % chktex 26
+          | $\texttt{substr}$ == logical and
+          | $\texttt{min}$ == logical or % chktex 35
+          | $\texttt{max}$ == logical xor % chktex 35
+          | $\texttt{commonsubstr}$ == less or set inclusion
           ;; % chktex 26
 
           $unaryS$ == ::= % chktex 26
-          | $\texttt{Entities}$ == % chktex 26
-          | $\texttt{length}$ == % chktex 26
-          | $\texttt{tostr}$ == % chktex 26
-          | $\texttt{toel}$ == % chktex 26
+          | $\texttt{Entities}$ ==
+          | $\texttt{length}$ ==
+          | $\texttt{tostr}$ ==
+          | $\texttt{toel}$ ==
           ;; % chktex 26
         \end{bnf}
         \captionsetup{type=table, name=\textbf{Syntax}}
@@ -815,6 +815,45 @@
 
     \begin{subsection}{Grammar and Separated Grammar}
       Two workspaces are provided for parsing the structures above. \(\texttt{Grammar}\) creates only one endpoint that parses a system and a list of instructions. Those instructions are then executed via the library \(\texttt{execution}\). A simple CLI has been implemented in the workspace \(\texttt{analysis}\), with proper error formatting for LALRPOP errors.
+    \end{subsection}
+
+    \begin{subsection}{Experiments and Frequency}\label{experiment}
+      An experiment is a list of weights and a list of sets of same length. The sets are used as entities given in addition to the context entities when computing the RS.\ The resulting trace is then synthesized into relative frequencies. The methods offered by \(\texttt{Frequency}\) and \(\texttt{PositiveFrequency}\) are:
+
+      \begin{itemize}
+      \item \(\texttt{naive\_frequency}(sys: \texttt{system}) \to \texttt{frequency}^{?}\), which computes the relative frequency of each entity in all traversed states, assuming the computation is finite;
+      \item \(\texttt{loop\_frequency}(sys: \texttt{system}, symbol: \texttt{IdType}) \to \texttt{frequency}\), which computes the relative frequency of each entity in each state of the encountered loop, assuming the system stabilizes in a loop;
+      \item \(\texttt{limit\_frequency}(experiment: \texttt{[set]}, reactions: \texttt{[reaction]}, entities: \texttt{set}) \to \texttt{frequency}^{?}\), which computes the relative frequency of each entity in the states of the last loop by providing repeatedly the sets in the experiment until the system stabilizes in a loop;
+      \item \(\texttt{fast\_frequency}(experiment: \texttt{[set]}, reactions: \texttt{[reaction]}, entities: \texttt{set}, weights: \texttt{[int]}) \to \texttt{frequency}^{?}\), which computes the weighted relative frequency of each entity in any of the loops.
+      \end{itemize}
+
+      \begin{minipage}{\textwidth}
+        \begin{bnf}(relation-sym-map = % chktex 36
+          {
+            {::=} = {\ensuremath{\Coloneqq}},
+            {->} = {},
+            {:in:} = {\ensuremath{\in}},
+          },
+          comment = {==})
+          $Experiment$ == ::= % chktex 26
+          | $\texttt{Weights : } W \texttt{ Sets : } S$ ==
+          ;; % chktex 26
+          $W$ == ::= % chktex 26
+          | $ i \texttt{, } W$ ==
+          | $ \epsilon $ ==
+          ;; % chktex 26
+          $S$ == ::= % chktex 26
+          | $ s \texttt{, } S$ ==
+          | $ \epsilon $ ==
+          ;; % chktex 26
+          Where \\ & \(s\) -> is a sets of entities, see\ \ref{bnf_set} ==
+          ;; % chktex 26
+          \(i\) :in: $\mathbb{Z}$ == % chktex 26
+          ;; % chktex 26
+        \end{bnf}
+        \captionsetup{type=table, name=\textbf{Syntax}}
+        \caption{Syntax for Experiment}
+      \end{minipage}
     \end{subsection}
   \end{section}
 
@@ -849,7 +888,7 @@
       \centering
       \begin{bytefield}[endianness=little, bitwidth=0.3em]{64}
         \bitheader{0, 8, 16, 24, 32, 40, 48, 56, 63} \\
-        \bitbox[bgcolor=lightgreen]{64}{Version Number} \\
+        \bitbox{64}[bgcolor=lightgreen]{Version Number} \\
         \begin{rightwordgroup}{Size}
           \bitbox{64}[bgcolor=lightgreen]{State Length} \\
           \bitbox{64}[bgcolor=lightgreen]{Translator Length} \\

@@ -1,0 +1,54 @@
+\begin{chapter}{Development}
+  \begin{section}{ReactionSystems}
+    \begin{subsection}{Entities and Translator}
+      Entities are declared in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/element.rs}{element.rs} and the \(\texttt{Translator}\) struct is implemented in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/translator.rs}{translator.rs}.
+
+      Entities have type \(\texttt{IdType}\) and are represented as \(\texttt{u32}\). Representing arbitrarily named entities with integers has the immediate benefit of faster code execution, but need additional support for the encoding and decoding. Also it does not permit easy merging of different systems. This is because two elements with the same string might be assigned to a different integer and would need to be re-encoded. The ReactionSystemsGUI solves this problem by having only one \(\texttt{Translator}\) class for all entities and systems.
+
+      Positive RS have the property that if all the entities are declared in the initial state, in all subsequent states the entities will all be defined either positive or negative. This property can be exploited in the representation of a Positive RS, however the implementation disregards this fact and simply assigns either positive or negative to each positive entity.
+
+      The struct \(\texttt{Translator}\) is formed by two maps, one from strings to \(\texttt{IdType}\) and the inverse, and by a counter for the last used id. It is essential for this class to be serializable, so that the state of ReactionSystemsGUI might save it when necessary. The struct is also used to form the structure \(\texttt{Formatter}\), which is used to format all structures that implement \(\texttt{PrintableWithTranslator}\).
+
+      For example the implementation of \(\texttt{PrintableWithTranslator}\) for \(\texttt{Set}\) is the following:
+
+\begin{minted}[linenos, mathescape]{rust}
+impl PrintableWithTranslator for Set {
+    fn print(
+        &self,
+        f: &mut fmt::Formatter,
+        translator: &Translator,
+    ) -> fmt::Result {
+        write!(f, "{{")?;
+        let mut it = self.iter().peekable();
+        while let Some(el) = it.next() {
+            if it.peek().is_none() {
+                write!(f, "{}", Formatter::from(translator, el))?;
+            } else {
+                write!(f, "{}, ", Formatter::from(translator, el))?;
+            }
+        }
+        write!(f, "}}")
+    }
+}
+\end{minted}
+
+      The structure \(\texttt{Translator}\) is only borrowed because it is never modified when printing, so only one is needed for all of the print. On lines 11 and 13 instead of directly printing \(\texttt{el}\), we first construct another \(\texttt{Formatter}\) struct and require only for that struct to implement \(\texttt{std::fmt::Display}\). This gives modularity and flexibility to the display system.
+    \end{subsection}
+
+    \begin{subsection}{Set}
+      The structure \(\texttt{set}\) is a key component for all functions in the library. It is implemented as a \href{https://doc.rust-lang.org/std/collections/struct.BTreeSet.html}{binary tree set}. Binary trees were chosen instead of hash sets for various reasons: binary trees support hashing of the whole tree, hash sets do not; the penalty for retrieval of individual elements is offset by the performance gain for set operations like union or intersection.
+    \end{subsection}
+
+    \begin{subsection}{Tests}
+      During the development of the library some tests were developed in order to test behavior in the changing code. They can be run with \(\texttt{cargo test}\). Test coverage is not high, but is present in for pieces of code that might break more easily. Tests are usually present in a separate file as the structure declaration and are named ``*\_test.rs'', so that they might be easily recognized.
+
+      In addition to automated tests, some example inputs are provided in the folder \href{https://github.com/elvisrossi/ReactionSystems/tree/master/testing}{{\tt testing}}. The extension \(\texttt{.system}\) symbolizes system and associated instructions; the extension \(\texttt{.experiment}\) symbolizes an experiment, see\ \ref{experiment}.
+
+
+    \end{subsection}
+  \end{section}
+
+  \begin{section}{ReactionSystemsGUI}
+
+  \end{section}
+\end{chapter}
