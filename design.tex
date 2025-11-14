@@ -431,6 +431,8 @@
         \captionsetup{type=table, name=\textbf{Syntax}}
         \caption{Syntax for System}
       \end{minipage}
+
+      While writing systems, occurs often to forget an element or swap elements names. This type of user error is particularly difficult to spot since most element names are not easily recognizable and the system grammar is particularly dense in information. A useful method to mitigate these problems is provided: \(\texttt{statistics}\). For the structure \(\texttt{System}\) a static analysis of the entities of the system is run and various parameters are checked and reported.
     \end{subsection}
 
     \begin{subsection}{Label}
@@ -478,7 +480,7 @@
       \end{minipage}
     \end{subsection}
 
-    \begin{subsection}{Graph}
+    \begin{subsection}{Graph}\label{design_graph}
       The project uses \href{https://github.com/petgraph/petgraph}{petgraph} as graph data structure library. \textit{petgraph} provides several graph types, but the only one used is \(\texttt{Graph}\), since it provided the best performance during testing. The library provides methods for converting the graph structures into \href{https://graphviz.org/doc/info/lang.html}{Dot Language} and \href{http://graphml.graphdrawing.org/}{GraphML File Format}. The Dot methods where found to be not powerful enough and where partially rewritten in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/dot.rs}{dot.rs}.
 
       Custom formatting of the graphs was a key requirement, so domain specific languages are provided to customize the appearance of the generated formats.
@@ -666,7 +668,7 @@
       Only one structure for slicing trace is provided, but is made to work with both RS and Positive RS with generics. The only method they have is \(\texttt{slice}(\mathit{trace}, \mathit{marking}: \texttt{set}) \to \texttt{trace}^{?}\) which returns, if successful, a new sliced trace.
     \end{subsection}
 
-    \begin{subsection}{Bisimilarity and Bisimulation}
+    \begin{subsection}{Bisimilarity and Bisimulation}\label{bisimilarity_design}
       In the workspace \(\texttt{bisimilarity}\) the algorithms by Kanellakis and Smolka, and Paige and Tarjan are implemented over generic graphs. Instead of an implementation over graphs with generic parameters, the input have to implement generic traits from the \(\texttt{petgraph}\) library, making it possible to use with different types of graph, for example spare graphs or matrix graphs.
 
       One key feature was the ability to control via a domain specific language the labels on the edges of the graphs. The developed language is able to also specify values over nodes such that nodes with equal value may be collapsed into one node with outgoing and incoming edges inherited from the original nodes. The code for the typechecking and execution is available in the library \(\texttt{assert}\).
