@@ -1,10 +1,12 @@
 \begin{chapter}{Design}
-  Two sub-problems where identified during the design: simulating the behavior of Reaction Systems, RS processes and other operations on LTS, and interacting with the user in a intuitive manner. The programming language chosen was \href{https://rust-lang.org/}{Rust}, since it offered good performance and ease of development.
+  Two sub-problems where identified during the design: simulating the behavior of Reaction Systems, RS processes and other operations on LTS, and interacting with the user in a intuitive manner. The programming language chosen was Rust\cite{rust_2025}, since it offered good performance and ease of development.
   Two Git repositories are provided: \href{https://github.com/elvisrossi/ReactionSystems}{github.com/elvisrossi/ReactionSystems} and \href{https://github.com/elvisrossi/ReactionSystemsGUI}{github.com/elvisrossi/ReactionSystemsGUI}.
 
   The ReactionSystems project follows a modular architecture and clear design principles to mirror the theoretical model; it implements procedures over RS as pure rust functions and is structured as a library. It also provides a crude Command Line Interface for some of the functions provided.
   The code is organized in workspaces in order to reduce compilation time and aid code reuse.
-  In the second Git repository a native and web application is implemented in Rust and in \href{https://webassembly.org/}{webassembly} generated from Rust code. The web application consists of only static files and as such may be served by a simple HTTP server.
+  In the second Git repository a native and web application is implemented in Rust and in webassembly\cite{WebAssemblyCoreSpecification2} generated from Rust code. The web application consists of only static files and as such may be served by a simple HTTP server.
+
+  In the signature of the functions, types will be displayed in teletype font. The decorator \({}^{?}\) will be used for both option types and for result types without distinction.
 
   \begin{section}{ReactionSystems}
     The design is structured to faithfully implement the reaction system formalism while remaining flexible.
@@ -12,7 +14,7 @@
     Since the language Rust supports object-oriented programming via traits, but lacks generic inheritance, the design of the basic building blocks of RSs are designed around this limitation.
     Usually a basic trait is provided for each of them and an extension of the trait is implemented for all structures that implement the basic trait.
 
-    Since it is not practical for a user to specify the structures in Rust, a syntax for the basic structures has been specified. This syntax tries to remain as much as possible compatible with ones from previous software. To develop the parser, \href{https://github.com/lalrpop/lalrpop}{LALRPOP} was chosen as the parser generator framework. LALRPOP code is transpiled to Rust code via macros and then compiled to machine code.
+    Since it is not practical for a user to specify the structures in Rust, a syntax for the basic structures has been specified. This syntax tries to remain as much as possible compatible with ones from previous software. To develop the parser, LALRPOP\cite{Burgener2025} was chosen as the parser generator framework. LALRPOP code is transpiled to Rust code via macros and then compiled to machine code.
 
     \begin{figure}[!h]
       \centering
@@ -98,7 +100,7 @@
 
       \begin{minipage}{\textwidth}
         \centering
-        \begin{minipage}{.48\textwidth}
+        \begin{minipage}[b][][b]{.38\textwidth}
           \centering
           \begin{bnf}(relation-sym-map = % chktex 36
             {
@@ -108,19 +110,21 @@
             },)
             $Set$ : ::= % chktex 26
             | $\texttt{\{} S \texttt{\}}$ : % chktex 26
-            | $\texttt{\{} \texttt{\}}$ : % chktex 26
             ;; % chktex 26
             $S$ : ::= % chktex 26
             | $s\ \texttt{,}\ S$ : % chktex 26
             | $s$ : % chktex 26
+            | $\epsilon$ : % chktex 26
             ;; % chktex 26
             Where \\ & \(s\) -> is a string : % chktex 26
+            ;; % chktex 26
+            $\epsilon$ -> is the empty string : % chktex 26
             ;; % chktex 26
           \end{bnf}
           \captionsetup{type=table, name=\textbf{Syntax}}
           \caption{Syntax for Set}\label{bnf_set}
         \end{minipage}%
-        \begin{minipage}{.48\textwidth}
+        \begin{minipage}[b][][b]{.58\textwidth}
           \centering
           \begin{bnf}(relation-sym-map = % chktex 36
             {
@@ -128,19 +132,21 @@
               {->} = {},
               {:in:} = {\ensuremath{\in}},
             },)
-            $PositiveSet$ : ::= % chktex 26
+            {\small $PositiveSet$} : ::= % chktex 26
             | $\texttt{\{} S \texttt{\}}$ : % chktex 26
-            | $\texttt{\{} \texttt{\}}$ : % chktex 26
             ;; % chktex 26
             $S$ : ::= % chktex 26
             | $\mathit{state}\ s\ \texttt{,}\ S$ : % chktex 26
             | $\mathit{state}\ s$ : % chktex 26
+            | $\epsilon$ : % chktex 26
             ;; % chktex 26
             $state$ : ::= % chktex 26
             | $\texttt{+}$ : % chktex 26
             | $\texttt{-}$ : % chktex 26
             ;; % chktex 26
             Where \\ & \(s\) -> is a string : % chktex 26
+            ;; % chktex 26
+            $\epsilon$ -> is the empty string : % chktex 26
             ;; % chktex 26
           \end{bnf}
           \captionsetup{type=table, name=\textbf{Syntax}}
@@ -167,7 +173,7 @@
 
       \begin{minipage}{\textwidth}
         \centering
-        \begin{minipage}{.48\textwidth}
+        \begin{minipage}{\textwidth}
           \centering
           \begin{bnf} (relation = {::=|:in:|->},
             comment = {==},
@@ -186,9 +192,9 @@
           \end{bnf}
           \captionsetup{type=table, name=\textbf{Syntax}}
           \caption{Syntax for Reaction}\label{bnf_reaction}
-        \end{minipage}\vspace{1em}
+        \end{minipage}\vspace{2em}
 
-        \begin{minipage}{.48\textwidth}
+        \begin{minipage}{\textwidth}
           \centering
           \begin{bnf} (relation = {::=|:in:|->},
             comment = {==},
@@ -221,7 +227,7 @@
       \end{itemize}
 
       \begin{minipage}{\textwidth}
-        \begin{minipage}{.48\textwidth}
+        \begin{minipage}[b][][b]{.48\textwidth}
           \begin{bnf} (relation = {::=|:in:|->},
             comment = {==},
             relation-sym-map = % chktex 36
@@ -258,7 +264,7 @@
           \captionsetup{type=table, name=\textbf{Syntax}}
           \caption{Syntax for Process}\label{bnf_process}
         \end{minipage}
-        \begin{minipage}{.48\textwidth}
+        \begin{minipage}[b][][b]{.48\textwidth}
           \begin{bnf} (relation = {::=|:in:|->},
             comment = {==},
             relation-sym-map = % chktex 36
@@ -316,8 +322,19 @@
       \item \(\texttt{unfold}(a, \mathit{context}: \texttt{process}, \mathit{s}: \texttt{set}) \to \texttt{choices}^{?}\), which returns the list of choices for the context, given the process definitions environment and is used to generate the next systems with the SOS rules.
       \end{itemize}
 
-      Some methods are automatically implemented for all \(\texttt{BasicEnvironment}\): \(\texttt{lollipops\_decomposed}\), \(\texttt{lollipops\_prefix\_len\_loop\_decomposed}\), \(\texttt{lollipops\_only\_loop\_decomposed}\), \(\texttt{lollipops\_decomposed\_named}\), \(\texttt{lollipops\_prefix\_len\_loop\_decomposed\_named}\), and \(\texttt{lollipops\_only\_loop\_decomposed\_named}\).
-      They all try to find a loop and return some information about the found loop. The \(\texttt{\_named}\) variants require a variable symbol for which in the environment there is an association to a process with the form \( X = Q.\texttt{rec}(X)\), where \(Q\) is a set.\vspace{1em}
+      These methods are automatically implemented for all \(\texttt{BasicEnvironment}\):
+      \begin{itemize}
+        \item \(\texttt{lollipops\_decomposed}\),
+        \item \(\texttt{lollipops\_decomposed\_named}\),
+        \item \(\texttt{lollipops\_prefix\_len\_loop\_decomposed}\),
+        \item \(\texttt{lollipops\_prefix\_len\_loop\_decomposed\_named}\),
+        \item \(\texttt{lollipops\_only\_loop\_decomposed}\),
+        \item \(\texttt{lollipops\_only\_loop\_decomposed\_named}\).
+      \end{itemize}
+      They all try to find a loop and return some information about the found loop. The \(\texttt{\_named}\) variants require a variable symbol for which in the environment there is an association to a process with the form \( X = Q.\texttt{rec}(X) = Q.X\), where \(Q\) is a set and \(X\) is a variable name. The others instead finds all the symbols that satisfy the constraint and uses them all.
+      Function \(\texttt{lollipops\_decomposed}\) returns the trace of sets for the prefix and the trace of sets for the loop for each recursive variable.\\
+      \(\texttt{lollipops\_prefix\_len\_loop\_decomposed}\) returns the length of the prefix and the trace of the loop for each recursive variable.
+      \(\texttt{lollipops\_only\_loop\_decomposed}\) returns the trace of the loop for each recursive variable.\vspace{1em}
 
       \begin{minipage}{\textwidth}
         \centering
@@ -336,10 +353,13 @@
             $E$ == ::= % chktex 26
             | $ x = c \texttt{,} E $ ==
             | $ x = c $ ==
+            | $ \epsilon $ ==
             ;; % chktex 26
             Where \\ & \(c\) -> {is a process, see\ \ref{bnf_process}} ==
             ;; % chktex 26
             \(x\) -> is a variable name ==
+            ;; % chktex 26
+            \(\epsilon\) -> is the empty string ==
             ;; % chktex 26
           \end{bnf}
           \captionsetup{type=table, name=\textbf{Syntax}}
@@ -361,10 +381,13 @@
             $E$ == ::= % chktex 26
             | $ x = pc \texttt{,} E $ ==
             | $ x = pc $ ==
+            | $ \epsilon $ ==
             ;; % chktex 26
             Where \\ & \(pc\) -> {is a positive process, see\ \ref{bnf_positive_process}} ==
             ;; % chktex 26
             \(x\) -> is a variable name ==
+            ;; % chktex 26
+            \(\epsilon\) -> is the empty string ==
             ;; % chktex 26
           \end{bnf}
           \captionsetup{type=table, name=\textbf{Syntax}}
@@ -374,12 +397,12 @@
     \end{subsection}
 
 
-    \begin{subsection}{System}
+    \begin{subsection}{System}\label{design_system}
       The basic interface for systems is only the following methods:
 
       \begin{itemize}
-      \item \(\texttt{to\_transitions\_iterator}(sys) \to \texttt{iterator over (label, system)}\)
-      \item \(\texttt{to\_slicing\_iterator}(sys) \to \texttt{iterator over (label, system)}\)
+      \item \(\texttt{to\_transitions\_iterator}(sys) \to \texttt{iterator}\text{ that yields }\texttt{(label, system)}\)
+      \item \(\texttt{to\_slicing\_iterator}(sys) \to \texttt{iterator}\text{ that yields }\\\hspace*{0pt}\hfill \texttt{(set, set, [int], system)}\)
       \item \(\texttt{context\_elements}(sys) \to \texttt{set}\)
       \item \(\texttt{products\_elements}(sys) \to \texttt{set}\)
       \end{itemize}
@@ -387,7 +410,7 @@
       The method \(\texttt{to\_transitions\_iterator}\) should return an iterator over all the possible evaluations of the system. Likewise \(\texttt{to\_slicing\_iterator}\) should return an iterator over the same outgoing edges, but with information that support the creation of a trace to be used for slicing.
 
       The two methods \(\texttt{context\_elements}\) and \(\texttt{products\_elements}\) should return the set of entities that are related to the context and the one related to the reactions. Since it may be a computationally expensive calculation, the result is cached in the structures.
-      Since there may be errors when deciding what constitutes an element belonging to the context, methods are also present to override the default values.
+      The heuristic that decides which elements belong to the context and which belong to the reactions might give incorrect results, so methods are provided that override the calculated values.
 
       Other methods are implemented for all structures that satisfy the previous interface:
 
@@ -395,9 +418,10 @@
       \item \(\texttt{unfold}(\mathit{sys}) \to \texttt{choices}^{?}\), which, by calling the same method of the environment, returns the list of choices for the context;
       \item \(\texttt{run}(\mathit{sys}) \to \texttt{[system]}^{?}\), which computes the sequence of systems for the leftmost execution;
       \item \(\texttt{digraph}(\mathit{sys}) \to \texttt{graph}^{?}\), which computes the graph generated by the execution of the system;
-      \item \(\texttt{target}(\mathit{sys}) \to \texttt{(integer, set)}^{?}\), which returns the state in one of the terminal states and the number of steps to arrive at the last state;
+      \item \(\texttt{target}(\mathit{sys}) \to \texttt{(integer, set)}^{?}\), which returns the state in one of the terminal states and the number of steps to arrive at the last state;\label{function_target}
       \item \(\texttt{slice\_trace}(\mathit{sys}) \to \texttt{trace}^{?}\), which generates, similarly to \(\texttt{run}\), a trace appropriate to run slicing calculations over;
-      \item \(\texttt{lollipops}(\mathit{sys}) \to \texttt{[([set], [set])]}\), similar to the method \(\texttt{lollipops\_decomposed}\) provided by \(\texttt{environment}\).
+      \item \(\texttt{lollipops}(\mathit{sys}) \to \texttt{[([set], [set])]}\), similar to the method\\\(\texttt{lollipops\_decomposed}\) provided by \(\texttt{environment}\).
+      \item \(\texttt{lollipops\_only\_loop\_named}(\mathit{sys}, el: \texttt{element}) \to \texttt{[[set]]}^{?}\), similar to the method provided by \(\texttt{environment}\), returns the sequence of entities in the loop individuated by the variable name \(el\) in the environment.
       \end{itemize}
 
       \begin{minipage}{\textwidth}
@@ -436,7 +460,7 @@
     \end{subsection}
 
     \begin{subsection}{Label}
-      The label structure holds the information about how entities are used in the production of a system and are the labels on the edges of the graphs. Since the only use is to hold data, no meaningful method is required.
+      The label structure holds the information about how entities are used in the production of a system and are the labels on the edges of the graphs. Since the only use is to hold data, no meaningful method is required.\vspace{2em}
 
       \begin{minipage}{\textwidth}
         \centering
@@ -481,7 +505,7 @@
     \end{subsection}
 
     \begin{subsection}{Graph}\label{design_graph}
-      The project uses \href{https://github.com/petgraph/petgraph}{petgraph} as graph data structure library. \textit{petgraph} provides several graph types, but the only one used is \(\texttt{Graph}\), since it provided the best performance during testing. The library provides methods for converting the graph structures into \href{https://graphviz.org/doc/info/lang.html}{Dot Language} and \href{http://graphml.graphdrawing.org/}{GraphML File Format}. The Dot methods where found to be not powerful enough and where partially rewritten in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/dot.rs}{dot.rs}.
+      The project uses petgraph\cite{Borgna2025} as graph data structure library. \textit{petgraph} provides several graph types, but the only one used is \(\texttt{Graph}\), since it provided the best performance during testing. The library has methods for converting the graph structures into {Dot Language}\cite{graphviz_2025} and {GraphML File Format}\cite{graphml_2025}. The Dot methods where found to be not powerful enough and where partially rewritten in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/dot.rs}{dot.rs}.
 
       Custom formatting of the graphs was a key requirement, so domain specific languages are provided to customize the appearance of the generated formats.
       Four structures are provided:
@@ -493,7 +517,7 @@
       \item \(\texttt{EdgeColor}\), to specify the color of each edge.
       \end{itemize}
 
-      Follows the BNF for each of the languages:
+      Follows the BNF for each of the languages:\vspace{2em}
 
       \begin{minipage}{\textwidth}
         \centering
@@ -767,6 +791,7 @@
           | $\texttt{SystemContext}$ ==
           | $\texttt{source}$ == source of edge
           | $\texttt{target}$ == target of edge
+          | $\texttt{label}$ == label of an edge
           | $\texttt{neightbours}$ == node's neighbours
           | $\texttt{system}$ == node's system
           ;; % chktex 26
@@ -778,7 +803,7 @@
           | $\texttt{<}$ == less, set inclusion
           | $\texttt{<=}$ == less equal, set inclusion or equal
           | $\texttt{>}$ == greater, reverse set inclusion
-          | $\texttt{>=}$ == greater equal, reverse set inclusion or equal
+          | $\texttt{>=}$ == {greater equal,\\reverse set inclusion or equal}
           | $\texttt{=}\texttt{=}$ ==
           | $\texttt{!=}$ ==
           | $\texttt{+}$ ==
@@ -790,10 +815,10 @@
           ;; % chktex 26
 
           $binaryP$ == ::= % chktex 26
-          | $\texttt{substr}$ == logical and
-          | $\texttt{min}$ == logical or % chktex 35
-          | $\texttt{max}$ == logical xor % chktex 35
-          | $\texttt{commonsubstr}$ == less or set inclusion
+          | $\texttt{substr}$ ==
+          | $\texttt{min}$ == % chktex 35
+          | $\texttt{max}$ == % chktex 35
+          | $\texttt{commonsubstr}$ ==
           ;; % chktex 26
 
           $unaryS$ == ::= % chktex 26
@@ -807,6 +832,16 @@
         \ContinuedFloat{}
         \caption{Syntax for \(\texttt{Assert}\) (Continued)}
       \end{minipage}\vspace{1em}
+
+      Four different languages are provided as modules in the workspace \(\texttt{Assert}\):
+      \begin{itemize}
+      \item \(\texttt{relabel}\)
+      \item \(\texttt{grouping}\)
+      \item \(\texttt{positive\_relabel}\)
+      \item \(\texttt{positive\_grouping}\)
+      \end{itemize}
+
+      \(\texttt{relabel}\) has, in its syntax, the first token equal to \(\texttt{label}\), has as special variables \(\texttt{label}\) and \(\texttt{edge}\) that function as input, with \(\texttt{edge.label} == \texttt{label}\). It's used for grouping labels before calculating bisimilarity. \(\texttt{grouping}\) has, in its syntax, the first token equal to \(\texttt{node}\), has as special variables \(\texttt{entities}\) and \(\texttt{node}\) that function as input, with \(\texttt{node.system.SystemEntities} == \texttt{entities}\). It's used for grouping nodes. \(\texttt{positive\_relabel}\) and \(\texttt{positive\_grouping}\) have as first token \(\texttt{label}\) and \(\texttt{node}\) respectively and behave in a similar manner compared to their respective functions over RS.%
 
       The template language requires two structures to function relating to the input of the language: a type structure and a value structure. The trait \(\texttt{SpecialVariables}\) holds all the necessary functions that need to be implemented for the special variables to function. Finally the generic language can have the two functions \(\texttt{typecheck}\) and \(\texttt{execute}\) implemented.
 
@@ -823,10 +858,10 @@
       An experiment is a list of weights and a list of sets of same length. The sets are used as entities given in addition to the context entities when computing the RS.\ The resulting trace is then synthesized into relative frequencies. The methods offered by \(\texttt{Frequency}\) and \(\texttt{PositiveFrequency}\) are:
 
       \begin{itemize}
-      \item \(\texttt{naive\_frequency}(sys: \texttt{system}) \to \texttt{frequency}^{?}\), which computes the relative frequency of each entity in all traversed states, assuming the computation is finite;
+      \item \(\texttt{naive\_frequency}(sys: \texttt{system}) \to \texttt{frequency}^{?}\), which computes the relative frequency of each entity in all traversed states, assuming the computation is finite;\label{function_naive_frequency}
       \item \(\texttt{loop\_frequency}(sys: \texttt{system}, symbol: \texttt{IdType}) \to \texttt{frequency}\), which computes the relative frequency of each entity in each state of the encountered loop, assuming the system stabilizes in a loop;
       \item \(\texttt{limit\_frequency}(experiment: \texttt{[set]}, reactions: \texttt{[reaction]}, entities: \texttt{set}) \to \texttt{frequency}^{?}\), which computes the relative frequency of each entity in the states of the last loop by providing repeatedly the sets in the experiment until the system stabilizes in a loop;
-      \item \(\texttt{fast\_frequency}(experiment: \texttt{[set]}, reactions: \texttt{[reaction]}, entities: \texttt{set}, weights: \texttt{[int]}) \to \texttt{frequency}^{?}\), which computes the weighted relative frequency of each entity in any of the loops.
+      \item \(\texttt{fast\_frequency}(experiment: \texttt{[set]}, reactions: \texttt{[reaction]}, entities: \texttt{set},\\ weights: \texttt{[int]}) \to \texttt{frequency}^{?}\), which computes the weighted relative frequency of each entity in any of the loops.
       \end{itemize}
 
       \begin{minipage}{\textwidth}
@@ -841,21 +876,125 @@
           | $\texttt{Weights : } W \texttt{ Sets : } S$ ==
           ;; % chktex 26
           $W$ == ::= % chktex 26
-          | $ i \texttt{, } W$ ==
+          | $ i \texttt{, } W $ ==
+          | $ i $ ==
           | $ \epsilon $ ==
           ;; % chktex 26
           $S$ == ::= % chktex 26
-          | $ s \texttt{, } S$ ==
+          | $ s \texttt{, } S $ ==
+          | $ s $ ==
           | $ \epsilon $ ==
           ;; % chktex 26
           Where \\ & \(s\) -> is a sets of entities, see\ \ref{bnf_set} ==
           ;; % chktex 26
           \(i\) :in: $\mathbb{Z}$ == % chktex 26
           ;; % chktex 26
+          \(\epsilon\) -> is the empty string == % chktex 26
+          ;; % chktex 26
         \end{bnf}
         \captionsetup{type=table, name=\textbf{Syntax}}
         \caption{Syntax for Experiment}
       \end{minipage}
+    \end{subsection}
+
+    \begin{subsection}{Instructions}
+      The command line interface provided by the workspace \(\texttt{analysis}\) expects as input a path to a file with a RS and some instructions, reads the file, executes the instructions and returns the result in the forms specified. The syntax for specifying instructions is as follows:\vspace{1em}
+
+      \begin{minipage}{\textwidth}
+        \begin{bnf}(relation-sym-map = % chktex 36
+          {
+            {::=} = {\ensuremath{\Coloneqq}},
+            {->} = {},
+            {:in:} = {\ensuremath{\in}},
+          },
+          comment = {==})
+          $Instructions$ == ::= % chktex 26
+          | $System\ \mathit{Is}$ ==
+          | $\texttt{Deserialize (} path \texttt{) } \mathit{Is}$ == % chktex 9
+          ;; % chktex 26
+
+          $\mathit{Is}$ == ::= % chktex 26
+          | $ I, \mathit{Is} $ ==
+          | $ I $ ==
+          | $ \epsilon $ ==
+          ;; % chktex 26
+
+          Where \\ & \(\epsilon\) -> is the empty string ==
+          ;; % chktex 26
+        \end{bnf}
+        \captionsetup{type=table, name=\textbf{Syntax}}
+        \caption{Syntax for Instructions}
+      \end{minipage}
+
+      \begin{minipage}{\textwidth}
+        \begin{bnf}(relation-sym-map = % chktex 36
+          {
+            {::=} = {\ensuremath{\Coloneqq}},
+            {->} = {},
+            {:in:} = {\ensuremath{\in}},
+          },
+          comment = {==})
+
+          $I$ == ::= % chktex 26
+          | $ \texttt{Stats > } so $ ==
+          | $ \texttt{Target > } so $ ==
+          | $ \texttt{Target ( Limit :} i \texttt{ ) > } so $ == % chktex 9
+          | $ \texttt{Run > } so $ ==
+          | $ \texttt{Run ( Limit :} i \texttt{ ) > } so $ == % chktex 9
+          | $ \texttt{Loop (} el \texttt{) > } so $ == % chktex 9
+          | $ \texttt{Frequency > } so $ ==
+          | $ \texttt{LimitFrequency ("} path \texttt{") > } so $ == % chktex 9 chktex 18
+          | $ \texttt{FastFrequency ("} path \texttt{") > } so $ == % chktex 9 chktex 18
+          | $ \texttt{Digraph > } gso $ ==
+          | $ \texttt{Digraph } group \texttt{ > } \mathit{gso} $ ==
+          | $ \texttt{Bisimilarity ("} path \texttt{") relabel } relabel \texttt{ > } so $ == % chktex 9 chktex 18
+          ;; % chktex 26
+
+          $\mathit{gso}$ == ::= % chktex 26
+          | $g\ \texttt{\textbar}\ \mathit{gso}$ ==
+          | $g$ ==
+          ;; % chktex 26
+
+          $g$ == ::= % chktex 26
+          | { $\texttt{Dot}$\\ $\texttt{\textbar}\ NodeDisplay$\\ $\texttt{\textbar}\ EdgeDisplay$\\ $\texttt{\textbar}\ NodeColor$\\ $\texttt{\textbar}\ EdgeColor$\\ $\texttt{>}\ so$ } ==
+          | { $\texttt{GraphML}$\\ $\texttt{\textbar}\ NodeDisplay$\\ $\texttt{\textbar}\ EdgeDisplay$\\ $\texttt{>}\ so$ } ==
+          | $\texttt{Serialize("} path \texttt{")}$ == % chktex 9 chktex 18
+          ;; % chktex 26
+
+          $so$ == ::= % chktex 26
+          | $\texttt{Print}; so$ ==
+          | $\texttt{Print}$ ==
+          | $\texttt{Save ("} path \texttt{")}; so$ == % chktex 9 chktex 18
+          | $\texttt{Save ("} path \texttt{")}$ == % chktex 9 chktex 18
+          ;; % chktex 26
+
+          Where \\ & \(path\) -> is a path to a file ==
+          ;; % chktex 26
+          \(NodeDisplay\) -> follows the syntax from\ \ref{bnf_node_display} ==
+          ;; % chktex 26
+          \(EdgeDisplay\) -> follows the syntax from\ \ref{bnf_edge_display} ==
+          ;; % chktex 26
+          \(NodeColor\) -> follows the syntax from\ \ref{bnf_node_color} ==
+          ;; % chktex 26
+          \(EdgeColor\) -> follows the syntax from\ \ref{bnf_edge_color} ==
+          ;; % chktex 26
+          \(group\) -> is a group function with syntax from\ \ref{bnf_assert} ==
+          ;; % chktex 26
+          \(relabel\) -> is a relabel function with syntax from\ \ref{bnf_assert} ==
+          ;; % chktex 26
+          \(i\) :in: $\mathbb{N}$ == % chktex 26
+          ;; % chktex 26
+          \(el\) -> is a string that symbolizes an element ==
+          ;; % chktex 26
+          \(path\) -> is a path to a file ==
+          ;; % chktex 26
+        \end{bnf}
+        \captionsetup{type=table, name=\textbf{Syntax}}
+        \ContinuedFloat{}
+        \caption{Syntax for Instructions (Continued)}
+      \end{minipage}
+
+      The instruction \(\texttt{Stats}\) returns static information and statistics about the system. \(\texttt{Target}\) and \(\texttt{Run}\) return the results of the function with the same name defined in section\ \ref{function_target}. \(\texttt{Loop}\) returns the result of the function \(\texttt{lollipops\_only\_loop\_named}\) described in the same section. \(\texttt{Frequency}\) returns the results of \(\texttt{naive\_frequency}\) as described in section\ \ref{function_naive_frequency}. \(\texttt{LimitFrequency}\) and \(\texttt{FastFrequency}\) require a path to an experiment, with syntax described in\ \ref{experiment}, and they return the result of \(\texttt{limit\_frequency}\) and \(\texttt{fast\_frequency}\) respectively. \(\texttt{Digraph}\) may take a function \(group\) that groups together nodes that have the same output, described in section\ \ref{bisimilarity_design}. The graphs can be either saved as a Dot or GraphML file or serialized directly. \(\texttt{Bisimilarity}\) takes a path to another instruction file, whose instructions are ignored, and returns if the two systems are bisimilar. The results can be saved to a file or print to screen or both.
     \end{subsection}
   \end{section}
 
@@ -863,7 +1002,8 @@
     During development of ReactionSystems, a need for a more intuitive interaction with the structures presented itself. Since the all the operations on the types where already limited and
     structured, a visual programming language was chosen as the best fit.
 
-    The library \href{https://github.com/trevyn/egui_node_graph2}{\(\texttt{egui\_node\_graph2}\)} was chosen since it offered customizability, performance and ease of programming. The library unfortunately lacked compatibility with the most recent version of \href{https://github.com/emilk/egui}{\(\texttt{egui}\)}, so it is included as a workspace and modified to fit better the need of the project. This way a couple of bugs present in the original code could be fixed.
+    The library {\(\texttt{egui\_node\_graph2}\)}\cite{egui_node_graph22024} was chosen since it offered customizability, performance and ease of programming. The library unfortunately lacked compatibility with the most recent version of {\(\texttt{egui}\)}\cite{Ernerfeldt2025}, so it is included as a workspace and modified to fit better the need of the project.
+    This way a couple of visual bugs present in the original code have also been fixed.
 
     \(\texttt{egui\_node\_graph2}\) is based on the library \(\texttt{egui}\), which is an immediate mode GUI. % chktex 13
     It differentiate itself from retained mode GUIs by having all the elements specified at every frame; this eases programming at the expense of performance. The trade-off is favorable since most of the computation will be on the algorithms over RS and the number of elements of the UI will remain small in most cases.

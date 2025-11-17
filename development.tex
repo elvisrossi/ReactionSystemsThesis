@@ -36,7 +36,7 @@ impl PrintableWithTranslator for Set {
     \end{subsection}
 
     \begin{subsection}{Set}
-      The structure \(\texttt{set}\), implemented in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/set.rs}{set.rs}, is a key component for all functions in the library. It is realized as a \href{https://doc.rust-lang.org/std/collections/struct.BTreeSet.html}{binary tree set}. Binary trees were chosen instead of hash sets for various reasons: binary trees support hashing of the whole tree, hash sets do not; the penalty for retrieval of individual elements is offset by the performance gain for set operations like union or intersection.
+      The structure \(\texttt{set}\), implemented in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/set.rs}{set.rs}, is a key component for all functions in the library. It is realized as a {binary tree set}\cite{btree_2025}. Binary trees were chosen instead of hash sets for various reasons: binary trees support hashing of the whole tree, hash sets do not; the penalty for retrieval of individual elements is offset by the performance gain for set operations like union or intersection.
     \end{subsection}
 
     \begin{subsection}{Reaction}
@@ -44,17 +44,19 @@ impl PrintableWithTranslator for Set {
     \end{subsection}
 
     \begin{subsection}{Process, Choices and Environment}
-      Context processes, available in \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/process.rs}{process.rs}, have been implemented as trees. Each pointer to the next process is an \href{https://doc.rust-lang.org/std/sync/struct.Arc.html}{\(\texttt{Arc}\)} so that they may be used in concurrent applications, like ReactionSystemsGUI.\ There is no need for interior mutability, so no mutex or semaphore is used. The name of variables used to identify environment processes are converted like entities from strings to integers and they are handled by \(\texttt{Translator}\), since there no reason was found to distinguish them.
+      Context processes, available in \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/process.rs}{process.rs}, have been implemented as trees. Each pointer to the next process is an {\(\texttt{Arc}\)}\cite{arc_2025} so that they may be used in concurrent applications, like ReactionSystemsGUI.\ There is no need for interior mutability, so no mutex or semaphore is used. The name of variables used to identify environment processes are converted like entities from strings to integers and they are handled by \(\texttt{Translator}\), since there no reason was found to distinguish them.
 
       The structure \(\texttt{Choices}\) is available in \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/choices.rs}{choices.rs}; \(\texttt{Environment}\) is available in file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/environment.rs}{environment.rs}.
 
       \(\texttt{Environment}\) has been implemented as a binary tree like sets, in order to be able to hash them; even tho no set operations are needed, the performance penalty is small enough.
     \end{subsection}
 
-    \begin{subsection}{System}
+    \begin{subsection}{System}\label{development_system}
       Systems are implemented in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/system.rs}{system.rs}. Systems are composed by an environment, a set of initial entities, a process and a vector of reaction rules. Two other private fields are used: \(\texttt{context\_elements}\) and \(\texttt{products\_elements}\). They hold the set of entities that concern context and the ones that concert the products, such that their union is equal to all the entities available to the system and their intersection is the empty set. These two fields are not public since their computation may be particularly expensive, but is not needed for most of the calculations. So it would be wasteful to compute when creating the system and would be unwieldy to cache the result in every function that uses the results. The choice was to make \(\texttt{System}\) as a structure with interior mutability. This property is checked by the Rust compiler and forbids one from using the structure in hash maps or binary trees. But since we know that these two fields are completely determined by the other four, we ignore them when calculating the hash and assure the compiler of their stability in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/clippy.toml}{clippy.toml}, where it is specified that both \(\texttt{System}\) and \(\texttt{PositiveSystem}\) are to be ignored.
 
       Since the automatic assignment to context or product element can be erroneous, nodes to overwrite these values are available in ReactionSystemsGUI.\
+
+      The two key functions \(\texttt{to\_transition\_iterator}\) and \(\texttt{to\_slicing\_iterator}\) specify that they return an iterator, a lazy structure with a \(\texttt{next}\) method for obtaining the following value. This is to allow for a more efficient implementation in cases where not all states are needed.
     \end{subsection}
 
     \begin{subsection}{Label}
@@ -92,7 +94,7 @@ pub type PositiveSystemGraph =
     Graph<PositiveSystem, PositiveLabel, Directed, u32>;
 \end{minted}
 
-      in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/graph.rs}{graph.rs}, where \(\texttt{Graph}\) is from the library \href{https://docs.rs/petgraph/latest/petgraph/graph/struct.Graph.html}{petgraph}. This was done to leverage the traits provided already by the external library.
+      in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/graph.rs}{graph.rs}, where \(\texttt{Graph}\) is from the library {petgraph}\cite{Borgna2025}. This was done to leverage the traits provided already by the external library.
       \(\texttt{Graph}\texttt{<N, E, Ty, Ix>}\) takes four generic parameters:
       \begin{itemize}
       \item Associated data \(N\) for nodes and \(E\) for edges, called weights. The associated data can be of arbitrary type;
@@ -110,17 +112,11 @@ pub type PositiveSystemGraph =
       The four structures --- \(\texttt{NodeDisplay}\), \(\texttt{EdgeDisplay}\), \(\texttt{NodeColor}\), and \(\texttt{EdgeColor}\) --- all have the \(\texttt{generate}\) and \(\texttt{generate\_positive}\) methods, which convert the relative structure into an executable function that can be used when creating Dot or GraphML documents. No unified trait has been defined since the functions returned have different types and the use for this trait may be limited.
     \end{subsection}
 
-    \begin{subsection}{Tests}
-      During the development of the library some tests were developed in order to test behavior in the changing code. They can be run with \(\texttt{cargo test}\). Test coverage is not high, but is present in for pieces of code that might break more easily. Tests are usually present in a separate file as the structure declaration and are named ``*\_test.rs'', so that they might be easily recognized.
-
-      In addition to automated tests, some example inputs are provided in the folder \href{https://github.com/elvisrossi/ReactionSystems/tree/master/testing}{{\tt testing}}. The extension \(\texttt{.system}\) symbolizes system and associated instructions; the extension \(\texttt{.experiment}\) symbolizes an experiment, see\ \ref{experiment}.
-    \end{subsection}
-
     \begin{subsection}{Slicing Trace}
       Since traces are only lists of states, often no type associated with them is provided; some trace types are present in \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/trace.rs}{trace.rs}.
-      Of particular interest is the structure \(\texttt{SlicingTrace<S, R, Sys>}\).
+      Of particular interest is the structure\\\(\texttt{SlicingTrace<S, R, Sys>}\).
       Instead of using traits, it was more convenient to use generic type parameters for the slices structures.
-      For both RS and Positive RS the method \(\texttt{slice}\) faithfully implements the algorithm described in subsection\ \ref{slicing}.
+      For both RS and Positive RS the method \(\texttt{slice}\) faithfully implements the algorithm described in section\ \ref{slicing}.
       A new slice structure is returned because often the previous slice might get reused as input to other slicings. This occurs in a minor performance penalty if only one slice is requested.
     \end{subsection}
 
@@ -229,7 +225,7 @@ struct CacheInternals {
     Nodes are organized in categories and can be added with right click of the mouse.
     The canvas can be zoomed and panned, helping the user organize the nodes.
 
-    An peculiar node is the ``String to SVG'' one. It takes a Dot file as string as an input and outputs an SVG value. The string is first parsed as an Dot file using the library \href{https://docs.rs/layout-rs/latest/layout/}{layout}, then the resulting graph is converted to a tree that represents an SVG.\ Then it is converted into string to be able to be parsed again by the library \href{https://docs.rs/resvg/latest/resvg/}{resvg}. Finally an image buffer is allocated and the tree is rendered on the pixel map. Since egui library is not optimized to display arbitrary images, the pixel map is then converted to texture so that it may be cached more easily. To save on space the texture is not serialized and is recomputed when needed. The result can be either displayed on screen or saved as a PNG image.
+    An peculiar node is the ``String to SVG'' one. It takes a Dot file as string as an input and outputs an SVG value. The string is first parsed as an Dot file using the library {layout}\cite{Rotem2025}, then the resulting graph is converted to a tree that represents an SVG.\ Then it is converted into string to be able to be parsed again by the library {resvg}\cite{Stampfl2025}. Finally an image buffer is allocated and the tree is rendered on the pixel map. Since egui library is not optimized to display arbitrary images, the pixel map is then converted to texture so that it may be cached more easily. To save on space the texture is not serialized and is recomputed when needed. The result can be either displayed on screen or saved as a PNG image.
 
     The code for the render of SVG files is implemented in \href{https://github.com/elvisrossi/ReactionSystemsGUI/blob/main/reaction_systems_gui/src/svg.rs}{svg.rs}.
 
@@ -242,14 +238,14 @@ cargo build -p "reaction\_systems\_gui" --release --all-features
     --lib --target wasm32-unknown-unknown
 \end{minted}
 
-    that builds for the target wasm32. Then using \href{https://github.com/wasm-bindgen/wasm-bindgen}{wasm-bindgen} we create the appropriate bindings with the command
+    that builds for the target wasm32. Then using {wasm-bindgen}\cite{wasm-bindgen2025} we create the appropriate bindings with the command
 
 \begin{minted}{sh}
 wasm-bindgen "[..]/reaction\_systems\_gui.wasm" --out-dir docs
     --no-modules --no-typescript
 \end{minted}
 
-    As an additional step we optimize using \(\texttt{wasm-opt}\) from the library \href{https://github.com/WebAssembly/binaryen}{binaryen} with
+    As an additional step we optimize using \(\texttt{wasm-opt}\) from the library {binaryen}\cite{binaryen_2025} with
 
 \begin{minted}{sh}
 wasm-opt "[..]/reaction\_systems\_gui\_bg.wasm" -O2 --fast-math

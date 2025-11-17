@@ -11,13 +11,13 @@
 
 \usepackage{fontspec}
 \directlua{
-  luaotfload.add_fallback ("fallbacktest",
+  luaotfload.add_fallback ("fallbackscript",
   {
     "freeserif:mode=harf;script=dev2;color=000000;",
   })
 }
 
-\setmainfont{latinmodernroman}[RawFeature={fallback=fallbacktest}]
+\setmainfont{latinmodernroman}[RawFeature={fallback=fallbackscript}]
 
 \usepackage[italian,main=english]{babel} %% language
 
@@ -215,6 +215,8 @@
 \input{development}
 \input{validation}
 \input{conclusion}
+
+\printbibliography%
 
 \end{document}
 

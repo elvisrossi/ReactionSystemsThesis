@@ -41,12 +41,11 @@
       We call \(\tau \defeq W_0, \ldots, W_n\) the state sequence, where \(W_i \defeq C_i \cup D_i\) for all \(i \in [0, n]\).
     \end{definition}
 
-    %% TODO figure 1 from 2001 a tour of reaction systems
-    % \begin{tikzpicture}[node distance=5mm]
-    %   \node (dot)   [terminal]                     {.};
-    %   \node (digit) [terminal,base right=of dot]   {digit};
-    %   \node (E)     [terminal,base right=of digit] {E};
-    % \end{tikzpicture}
+    \begin{figure}[h]
+      \def\svgwidth{\linewidth}
+      \import{figures}{reaction_system.pdf_tex}
+      \caption{Interactive process of a reaction system.}
+    \end{figure}
 
     Note that \(C_i\) and \(D_i\) do not have to be disjointed.
 
@@ -73,10 +72,10 @@
 
       where reactions \(a\) cause the bits to be restrained in the next state if there is no operation, reactions \(b\) implement the increment operation by flipping the least significant zero to one, reactions \(c\) let the more significant bits remain, reactions \(d\) implements the decrement operation by flipping to one the bits when there is no one at a lower position, and reactions \(e\) let the more significant bits remain.
 
-      The complete RS \(\mathcal{B}_n\) is defined as follows: \(\mathcal{B}_n = \left(S_n, B_n\right)\) where \(S_n = \{p_0, p_1, \ldots, p_{n-1}\} \cup \{dec, inc\}\) and \(B_n = \{a_j, b_j, d_j | 0 \leq k < n\} \cup \{c_{j, k}, e_{j, k} | 0 \leq l < k < n\}\).
+      The complete RS \(\mathcal{B}_n\) is defined as follows: \(\mathcal{B}_n = \left(S_n, B_n\right)\) where\[S_n = \{p_0, p_1, \ldots, p_{n-1}\} \cup \{dec, inc\}\] and \[B_n = \{a_j, b_j, d_j | 0 \leq k < n\} \cup \{c_{j, k}, e_{j, k} | 0 \leq l < k < n\}\]
 
       To illustrate the system in action consider the sequence of contexts:
-      \(C_0 = \{p1, p3\}, C_1 = \emptyset, C_2 = \{inc\}, C_3 = \{inc\}, C_4 = \{dec\}, C_5 = \{dec, inc\}\). This gives the result sequence \(\delta = \emptyset.\{p1, p3\}.\{p1, p3\}.\{p0, p1, p3\}.\{p2, p3\}.\{p0, p1, p3\}.\emptyset\) and state sequence \(\tau = \{p1, p3\}.\{p1, p3\}.\{p1, p3, inc\}.\{p0, p1, p3, inc\}.\{p2, p3, dec\}.\{p0, p1, p3, dec, inc\}.\emptyset\) that in binary representation is \(\{1010\}.\{1010\}.\{1010\}.\{1011\}.\{1100\}.\{1011\}.\{0000\}\) by ignoring \(inc\) and \(dec\).
+      \(C_0 = \{p1, p3\},\\C_1 = \emptyset, C_2 = \{inc\}, C_3 = \{inc\}, C_4 = \{dec\}, C_5 = \{dec, inc\}\). This gives the result sequence \(\delta = \emptyset.\{p1, p3\}.\{p1, p3\}.\{p0, p1, p3\}.\{p2, p3\}.\{p0, p1, p3\}.\emptyset\) and state sequence\\\(\tau = \{p1, p3\}.\{p1, p3\}.\{p1, p3, inc\}.\{p0, p1, p3, inc\}.\{p2, p3, dec\}.\{p0, p1, p3, dec, inc\}.\emptyset\)\\that in binary representation is \(\{1010\}.\{1010\}.\{1010\}.\{1011\}.\{1100\}.\{1011\}.\{0000\}\) by ignoring \(inc\) and \(dec\).
     \end{subsection}
 
     \begin{subsection}{Simple loops}
@@ -86,7 +85,7 @@
 
       These loops are called \textit{lollipops}.
 
-      For example by providing the set \(\{inc\}\) as the context at each step of the system from Example\ \ref{binary_counter}, we obtain the loop: \(\{p1, p3\}.\{p0, p1, p3\}.\{p3, p2\}.\{p0, p3, p2\}.\{p1, p3, p2\}.\{p0, p1, p3, p2\}.\{\}.\{p0\}.\{p1\}.\{p0, p1\}.\{p2\}.\{p0, p2\}.\{p1, p2\}.\{p0, p1, p2\}.\{p3\}.\{p0, p3\}\).
+      For example by providing the set \(\{inc\}\) as the context at each step of the system from Example\ \ref{binary_counter}, we obtain the loop: \(\{p1, p3\}.\{p0, p1, p3\}.\{p2, p3\}.\{p0, p2, p3\}.\{p1, p2, p3\}.\\\{p0, p1, p2, p3\}.\{\}.\{p0\}.\{p1\}.\{p0, p1\}.\{p2\}.\{p0, p2\}.\{p1, p2\}.\{p0, p1, p2\}.\{p3\}.\{p0, p3\}\).
     \end{subsection}
   \end{section}
 
@@ -117,7 +116,7 @@
         $K$ : ::= % chktex 26
         | \textbf{$0$} : nil context % chktex 26
         | $X$ : process variable % chktex 26
-        | $C.X$ : set of entities followed by context % chktex 26
+        | $C.X$ : {set of entities\\followed by context} % chktex 26
         | $K + K$ : non deterministic choice % chktex 26
         | $\texttt{rec} X . K$ : recursive operator % chktex 26
         ;; % chktex 26
@@ -324,7 +323,7 @@
         \end{enumerate}
       \end{itemize}
 
-      \(TS_1\) and \(TS_2\) are bisimulation-equivalent (bisimilar), denoted \(TS_1 ~ TS_2\), if there exists a bisimulation \(\mathcal{R}\) for \((TS_1, TS_2)\).
+      \(TS_1\) and \(TS_2\) are bisimulation-equivalent (bisimilar), denoted \(TS_1 \sim TS_2\), if there exists a bisimulation \(\mathcal{R}\) for \((TS_1, TS_2)\).
     \end{definition}
 
     Where \(Post(s)\) is the set of successors of \(s\) defined as
@@ -427,7 +426,7 @@
           When applied to a finite labeled transition system with \(n\) states and \(m\) transitions, the algorithm of Kanellakis and Smolka computes the partition corresponding to bisimilarity in time \(O(n \cdot m)\).
         \end{theorem}
 
-        Proof of correctness relies on the fact that when \(changed\) is false, there is no splitter for any of the blocks in \(\pi\). Moreover, if we denote by \(\pi_i\) the partition after the \(i\)-iteration of the main loop, we have \(~ \subseteq ~_i \subseteq \pi_i\). Thus the algorithm terminates with \(\pi = ~\).
+        Proof of correctness relies on the fact that when \(changed\) is false, there is no splitter for any of the blocks in \(\pi\). Moreover, if we denote by \(\pi_i\) the partition after the \(i\)-iteration of the main loop, we have \(\sim \subseteq \sim_i \subseteq \pi_i\). Thus the algorithm terminates with \(\pi = \sim\).
       \end{paragraph}
 
 
