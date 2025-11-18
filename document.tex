@@ -76,6 +76,7 @@
 \usepackage{makecell} %% for multiple lines in cell of table
 \usepackage{cancel}
 \usepackage{pgfornament} %% ornaments
+\usepackage{makeidx}
 
 %% load last
 \usepackage[hidelinks]{hyperref} %% links for table of contents, load last
@@ -249,9 +250,13 @@
 }
 \date{\today}
 
+\makeindex
+
 %% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - %%
 
 \begin{document}
+
+\tableofcontents
 
 \input{introduction}
 \input{background}
