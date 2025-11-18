@@ -1,3 +1,18 @@
 \begin{chapter}{Conclusion}
-  
+  Reaction Systems were originally conceived as a theoretical framework to model biochemical processes in living cells. Applying RS theory to practical modeling tasks has been non-trivial. The behavior of a RS can exhibit complex dynamics due to the non-monotonic role of inhibitors. In practice the number of entities and reactions can be large, making manual reasoning unfeasible without proper automated support.
+
+  This thesis contributes to bridging the gap between RS theory and practical use by providing a concrete software realization of the formalism. The software is available in the repositories ReactionSystems\cite{ReactionSystemsGit} and ReactionSystemsGUI\cite{ReactionSystemsGUIGit}.
+
+  \begin{section}{Summary of Contributions}
+    \begin{itemize}
+    \item New RS Modeling Platform: This thesis introduced a new software platform for Reaction Systems modeling, analysis and design, implemented in the Rust programming language for high performance and reliability. The software provides both a command-line interface (CLI), native graphical user interface (GUI) and a web based one. This enables users to model RSs either through text-based commands or in an interactive visual environment.
+
+    \item Comprehensive Feature Set: The tool supports a rich set of features: simulation of RS, bisimulation of RSs, trace slicing, graph generation with multiple output formats like Dot, GraphML and SVG, loop analysis, automated conversion between types of RS.\ These features collectively offer a comprehensive toolkit for analyzing RS behavior.
+
+    \item Performance and Design: The implementation in Rust allows to maximize performance, ensure safety and permit compositionality of future expansions. This eliminates prior memory issues with implementations in Prolog and dramatically improves execution speed. For example generating state-graph visualizations (Dot graphs) is now up to 7 times faster than before. Beyond performance, the software’s architecture was designed for clarity and extensibility: the RS grammar is kept independent of internal data structures to simplify maintenance, and core components use Rust traits to support modular extension.
+    \end{itemize}
+  \end{section}
+
+  Future work may extend current models by a more in-depth performance analysis and optimization; may extend the methods available in the GUI;\ may provide new Reaction Systems types, like Quantitative Reaction Systems\cite{Mitrana_Păun_Petre_Prelipcean_2025} or Multiset Reaction Systems\cite{Bottoni_Mitrana_Petre_2025}; may provide methods to convert different structures like boolean networks into RS;\ or may provide additional test coverage of the current code.
+
 \end{chapter}

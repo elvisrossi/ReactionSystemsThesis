@@ -1,7 +1,7 @@
 \begin{chapter}{Development}
   \begin{section}{ReactionSystems}
     \begin{subsection}{Entities and Translator}
-      Entities are declared in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/element.rs}{element.rs} and the \(\texttt{Translator}\) struct is implemented in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/translator.rs}{translator.rs}.
+      Entities are declared in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/element.rs}{\(\texttt{element.rs}\)} and the \(\texttt{Translator}\) struct is implemented in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/translator.rs}{\(\texttt{translator.rs}\)}.
 
       Entities have type \(\texttt{IdType}\) and are represented as \(\texttt{u32}\). Representing arbitrarily named entities with integers has the immediate benefit of faster code execution, but need additional support for the encoding and decoding. Also it does not permit easy merging of different systems. This is because two elements with the same string might be assigned to a different integer and would need to be re-encoded. The ReactionSystemsGUI solves this problem by having only one \(\texttt{Translator}\) class for all entities and systems.
 
@@ -36,23 +36,23 @@ impl PrintableWithTranslator for Set {
     \end{subsection}
 
     \begin{subsection}{Set}
-      The structure \(\texttt{set}\), implemented in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/set.rs}{set.rs}, is a key component for all functions in the library. It is realized as a {binary tree set}\cite{btree_2025}. Binary trees were chosen instead of hash sets for various reasons: binary trees support hashing of the whole tree, hash sets do not; the penalty for retrieval of individual elements is offset by the performance gain for set operations like union or intersection.
+      The structure \(\texttt{set}\), implemented in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/set.rs}{\(\texttt{set.rs}\)}, is a key component for all functions in the library. It is realized as a {binary tree set}\cite{btree_2025}. Binary trees were chosen instead of hash sets for various reasons: binary trees support hashing of the whole tree, hash sets do not; the penalty for retrieval of individual elements is offset by the performance gain for set operations like union or intersection.
     \end{subsection}
 
     \begin{subsection}{Reaction}
-      A reaction is a collection of sets, reactants, inhibitors and products for RS and just reactants and products for Positive RS.\ Since converting between reactions and positive reactions is meaningless for single reactions, we provide a method called \[\texttt{into\_positive\_reactions}(reactions: \texttt{[reactions]}) \to \texttt{[positive reactions]}\] that takes a vector of reactions and calculates the prohibiting set and minimizes. The code is available in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/reaction.rs}{reactions.rs}.
+      A reaction is a collection of sets, reactants, inhibitors and products for RS and just reactants and products for Positive RS.\ Since converting between reactions and positive reactions is meaningless for single reactions, we provide a method called \[\texttt{into\_positive\_reactions}(reactions: \texttt{[reactions]}) \to \texttt{[positive reactions]}\] that takes a vector of reactions and calculates the prohibiting set and minimizes. The code is available in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/reaction.rs}{\(\texttt{reactions.rs}\)}.
     \end{subsection}
 
     \begin{subsection}{Process, Choices and Environment}
-      Context processes, available in \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/process.rs}{process.rs}, have been implemented as trees. Each pointer to the next process is an {\(\texttt{Arc}\)}\cite{arc_2025} so that they may be used in concurrent applications, like ReactionSystemsGUI.\ There is no need for interior mutability, so no mutex or semaphore is used. The name of variables used to identify environment processes are converted like entities from strings to integers and they are handled by \(\texttt{Translator}\), since there no reason was found to distinguish them.
+      Context processes, available in \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/process.rs}{\(\texttt{process.rs}\)}, have been implemented as trees. Each pointer to the next process is an {\(\texttt{Arc}\)}\cite{arc_2025} so that they may be used in concurrent applications, like ReactionSystemsGUI.\ There is no need for interior mutability, so no mutex or semaphore is used. The name of variables used to identify environment processes are converted like entities from strings to integers and they are handled by \(\texttt{Translator}\), since there no reason was found to distinguish them.
 
-      The structure \(\texttt{Choices}\) is available in \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/choices.rs}{choices.rs}; \(\texttt{Environment}\) is available in file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/environment.rs}{environment.rs}.
+      The structure \(\texttt{Choices}\) is available in \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/choices.rs}{\(\texttt{choices.rs}\)}; \(\texttt{Environment}\) is available in file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/environment.rs}{\(\texttt{environment.rs}\)}.
 
       \(\texttt{Environment}\) has been implemented as a binary tree like sets, in order to be able to hash them; even tho no set operations are needed, the performance penalty is small enough.
     \end{subsection}
 
     \begin{subsection}{System}\label{development_system}
-      Systems are implemented in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/system.rs}{system.rs}. Systems are composed by an environment, a set of initial entities, a process and a vector of reaction rules. Two other private fields are used: \(\texttt{context\_elements}\) and \(\texttt{products\_elements}\). They hold the set of entities that concern context and the ones that concert the products, such that their union is equal to all the entities available to the system and their intersection is the empty set. These two fields are not public since their computation may be particularly expensive, but is not needed for most of the calculations. So it would be wasteful to compute when creating the system and would be unwieldy to cache the result in every function that uses the results. The choice was to make \(\texttt{System}\) as a structure with interior mutability. This property is checked by the Rust compiler and forbids one from using the structure in hash maps or binary trees. But since we know that these two fields are completely determined by the other four, we ignore them when calculating the hash and assure the compiler of their stability in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/clippy.toml}{clippy.toml}, where it is specified that both \(\texttt{System}\) and \(\texttt{PositiveSystem}\) are to be ignored.
+      Systems are implemented in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/system.rs}{\(\texttt{system.rs}\)}. Systems are composed by an environment, a set of initial entities, a process and a vector of reaction rules. Two other private fields are used: \(\texttt{context\_elements}\) and \(\texttt{products\_elements}\). They hold the set of entities that concern context and the ones that concert the products, such that their union is equal to all the entities available to the system and their intersection is the empty set. These two fields are not public since their computation may be particularly expensive, but is not needed for most of the calculations. So it would be wasteful to compute when creating the system and would be unwieldy to cache the result in every function that uses the results. The choice was to make \(\texttt{System}\) as a structure with interior mutability. This property is checked by the Rust compiler and forbids one from using the structure in hash maps or binary trees. But since we know that these two fields are completely determined by the other four, we ignore them when calculating the hash and assure the compiler of their stability in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/clippy.toml}{\(\texttt{clippy.toml}\)}, where it is specified that both \(\texttt{System}\) and \(\texttt{PositiveSystem}\) are to be ignored.
 
       Since the automatic assignment to context or product element can be erroneous, nodes to overwrite these values are available in ReactionSystemsGUI.\
 
@@ -60,7 +60,7 @@ impl PrintableWithTranslator for Set {
     \end{subsection}
 
     \begin{subsection}{Label}
-      Labels have been implemented in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/label.rs}{label.rs}. Since their primary function is to hold redundant but useful data for other computations, they do not need any algorithms to be implemented directly in their interface.
+      Labels have been implemented in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/label.rs}{\(\texttt{label.rs}\)}. Since their primary function is to hold redundant but useful data for other computations, they do not need any algorithms to be implemented directly in their interface.
 
       The structure for a label is:
 
@@ -94,7 +94,7 @@ pub type PositiveSystemGraph =
     Graph<PositiveSystem, PositiveLabel, Directed, u32>;
 \end{minted}
 
-      in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/graph.rs}{graph.rs}, where \(\texttt{Graph}\) is from the library {petgraph}\cite{Borgna2025}. This was done to leverage the traits provided already by the external library.
+      in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/graph.rs}{\(\texttt{graph.rs}\)}, where \(\texttt{Graph}\) is from the library {petgraph}\cite{Borgna2025}. This was done to leverage the traits provided already by the external library.
       \(\texttt{Graph}\texttt{<N, E, Ty, Ix>}\) takes four generic parameters:
       \begin{itemize}
       \item Associated data \(N\) for nodes and \(E\) for edges, called weights. The associated data can be of arbitrary type;
@@ -104,16 +104,16 @@ pub type PositiveSystemGraph =
 
       The index type was chosen to be u32 to balance performance with maximum size of the graph.
 
-      The library already provides methods to export the graphs in Dot and GraphML formats, but the Dot export did not meet all the requirements and has been partially rewritten in \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/dot.rs}{dot.rs}. The biggest difference is in the function \(\texttt{graph\_fmt}\), which has been simplified and made more ergonomic for specifying color of text and background.
+      The library already provides methods to export the graphs in Dot and GraphML formats, but the Dot export did not meet all the requirements and has been partially rewritten in \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/dot.rs}{\(\texttt{dot.rs}\)}. The biggest difference is in the function \(\texttt{graph\_fmt}\), which has been simplified and made more ergonomic for specifying color of text and background.
 
       As described in subsection\ \ref{design_graph}, four structures for specifying the display properties of the Dot and GraphML format have been designed.
-      The implementation closely follows the design description, but results in a lot of boilerplate code that can be seen in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/format_helpers.rs}{format\_helpers.rs}, helped slightly by custom macros.
+      The implementation closely follows the design description, but results in a lot of boilerplate code that can be seen in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/format_helpers.rs}{\(\texttt{format\_helpers.rs}\)}, helped slightly by custom macros.
 
       The four structures --- \(\texttt{NodeDisplay}\), \(\texttt{EdgeDisplay}\), \(\texttt{NodeColor}\), and \(\texttt{EdgeColor}\) --- all have the \(\texttt{generate}\) and \(\texttt{generate\_positive}\) methods, which convert the relative structure into an executable function that can be used when creating Dot or GraphML documents. No unified trait has been defined since the functions returned have different types and the use for this trait may be limited.
     \end{subsection}
 
     \begin{subsection}{Slicing Trace}
-      Since traces are only lists of states, often no type associated with them is provided; some trace types are present in \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/trace.rs}{trace.rs}.
+      Since traces are only lists of states, often no type associated with them is provided; some trace types are present in \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/trace.rs}{\(\texttt{trace.rs}\)}.
       Of particular interest is the structure\\\(\texttt{SlicingTrace<S, R, Sys>}\).
       Instead of using traits, it was more convenient to use generic type parameters for the slices structures.
       For both RS and Positive RS the method \(\texttt{slice}\) faithfully implements the algorithm described in section\ \ref{slicing}.
@@ -122,8 +122,8 @@ pub type PositiveSystemGraph =
 
 
     \begin{subsection}{Bisimilarity and Bisimulation}
-      The algorithms described in section\ \ref{bisimulation} are implemented in the files in the folder \href{https://github.com/elvisrossi/ReactionSystems/tree/master/bisimilarity/src}{bisimilarity/src}.
-      They are implemented for arbitrary graphs that satisfy some traits defined in the library petgraph. For example from file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/bisimilarity/src/bisimilarity_kanellakis_smolka.rs}{bisimilarity\_kanellakis\_smolka.rs}:
+      The algorithms described in section\ \ref{bisimulation} are implemented in the files in the folder \href{https://github.com/elvisrossi/ReactionSystems/tree/master/bisimilarity/src}{\(\texttt{bisimilarity/src}\)}.
+      They are implemented for arbitrary graphs that satisfy some traits defined in the library petgraph. For example from file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/bisimilarity/src/bisimilarity_kanellakis_smolka.rs}{\(\texttt{bisimilarity\_kanellakis\_smolka.rs}\)}:
 
 \begin{minted}{Rust}
 pub fn bisimilarity<'a, G>(graph_a: &'a G, graph_b: &'a G) -> bool
@@ -133,11 +133,11 @@ where
     G::EdgeWeight: std::cmp::Eq + std::hash::Hash + Clone,
 \end{minted}
 
-      The generic parameter \(\texttt{G}\) has to satify \(\texttt{IntoNodeReferences + IntoEdges}\) but is not constrained to be a \(\texttt{Graph}\) and could be for example a \(\texttt{StableGraph}\) or a \(\texttt{GraphMap}\). In this way code portability is maximized.
+      The generic parameter \(\texttt{G}\) has to satisfy \(\texttt{IntoNodeReferences + IntoEdges}\) but is not constrained to be a \(\texttt{Graph}\) and could be for example a \(\texttt{StableGraph}\) or a \(\texttt{GraphMap}\). In this way code portability is maximized.
     \end{subsection}
 
     \begin{subsection}{Assert}
-      As described in\ \ref{bisimilarity_design}, a custom language has been developed for the purpose of modifying the graphs. The code is available in the folder \href{https://github.com/elvisrossi/ReactionSystems/tree/master/assert/src}{assert/src}.
+      As described in\ \ref{bisimilarity_design}, a custom language has been developed for the purpose of modifying the graphs. The code is available in the folder \href{https://github.com/elvisrossi/ReactionSystems/tree/master/assert/src}{\(\texttt{assert/src}\)}.
       The implemented language can be seen as just one function that will be executed on each node or edge of the graph.
       The return value of the function will be used to group or relabel the input values.
       For this purpose a structured statically-typed interpreted language with global variables declarations. The choices make evaluating the language very lightweight and since the programs are usually very short, its not detrimental to the user experience.
@@ -176,10 +176,10 @@ node {
     \end{subsection}
 
     \begin{subsection}{Grammar}
-      The code for the unified grammar is available in the folder \href{https://github.com/elvisrossi/ReactionSystems/tree/master/grammar/src}{grammar/src} and the code for the separated grammar is available in the folder \href{https://github.com/elvisrossi/ReactionSystems/tree/master/grammar_separated/src}{grammar\_separated/src}.
+      The code for the unified grammar is available in the folder \href{https://github.com/elvisrossi/ReactionSystems/tree/master/grammar/src}{\(\texttt{grammar/src}\)} and the code for the separated grammar is available in the folder \href{https://github.com/elvisrossi/ReactionSystems/tree/master/grammar_separated/src}{\(\texttt{grammar\_separated/src}\)}.
       The parser generator code has been placed in separate workspaces so that compilation time may be reduced. The Rust compiler sequentially compiles each file in the same workspace, and if one file is modified, all other files must be re-linked. By separating into different workspaces the computation is parallelized and modifying a file results only in the workspace being recompiled. The workspaces for the grammar are particularly slow to compile and required this treatment.
 
-      LALRPOP library allows for user specific errors to be declared. Only two have been employed, \(\texttt{NumberTooBigUsize}\) and \(\texttt{NumberTooBigi64}\), since the default error messaging was adequate. Custom error display has been implemented in file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/analysis/src/helper.rs}{helper.rs} which creates error messages with color and that highlight the erroneous part of the input.
+      LALRPOP library allows for user specific errors to be declared. Only two have been employed, \(\texttt{NumberTooBigUsize}\) and \(\texttt{NumberTooBigi64}\), since the default error messaging was adequate. Custom error display has been implemented in file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/analysis/src/helper.rs}{\(\texttt{helper.rs}\)} which creates error messages with color and that highlight the erroneous part of the input.
       For example the specification of the example in subsection\ \ref{binary_counter} is the following:
 
 \begin{minted}{text}
@@ -227,9 +227,9 @@ struct CacheInternals {
 
     An peculiar node is the ``String to SVG'' one. It takes a Dot file as string as an input and outputs an SVG value. The string is first parsed as an Dot file using the library {layout}\cite{Rotem2025}, then the resulting graph is converted to a tree that represents an SVG.\ Then it is converted into string to be able to be parsed again by the library {resvg}\cite{Stampfl2025}. Finally an image buffer is allocated and the tree is rendered on the pixel map. Since egui library is not optimized to display arbitrary images, the pixel map is then converted to texture so that it may be cached more easily. To save on space the texture is not serialized and is recomputed when needed. The result can be either displayed on screen or saved as a PNG image.
 
-    The code for the render of SVG files is implemented in \href{https://github.com/elvisrossi/ReactionSystemsGUI/blob/main/reaction_systems_gui/src/svg.rs}{svg.rs}.
+    The code for the render of SVG files is implemented in \href{https://github.com/elvisrossi/ReactionSystemsGUI/blob/main/reaction_systems_gui/src/svg.rs}{\(\texttt{svg.rs}\)}.
 
-    The entry point for the native application is in the file \href{https://github.com/elvisrossi/ReactionSystemsGUI/blob/main/reaction_systems_gui/src/main.rs}{main.rs} and the entry point for the web application is \href{https://github.com/elvisrossi/ReactionSystemsGUI/blob/main/reaction_systems_gui/src/web.rs}{web.rs}. To interface with webassembly, only three functions are strictly needed: \(\texttt{new}\), \(\texttt{start}\) and \(\texttt{destroy}\). These functions are translated to wasm and used as bindings for javascript.
+    The entry point for the native application is in the file \href{https://github.com/elvisrossi/ReactionSystemsGUI/blob/main/reaction_systems_gui/src/main.rs}{\(\texttt{main.rs}\)} and the entry point for the web application is \href{https://github.com/elvisrossi/ReactionSystemsGUI/blob/main/reaction_systems_gui/src/web.rs}{\(\texttt{web.rs}\)}. To interface with WebAssembly, only three functions are strictly needed: \(\texttt{new}\), \(\texttt{start}\) and \(\texttt{destroy}\). These functions are translated to wasm and used as bindings for JavaScript.
 
     To build for web first we invoke the Rust compiler with the command
 
@@ -252,6 +252,6 @@ wasm-opt "[..]/reaction\_systems\_gui\_bg.wasm" -O2 --fast-math
     -o "[..]/reaction\_systems\_gui\_bg.wasm"
 \end{minted}
 
-    The code can then be served statically and used in a html canvas. Bash scripts are provided that automates this process: \href{https://github.com/elvisrossi/ReactionSystemsGUI/blob/main/reaction_systems_gui/build_web.sh}{build\_web.sh} and \href{https://github.com/elvisrossi/ReactionSystemsGUI/blob/main/reaction_systems_gui/start_server.sh}{start\_server.sh}.
+    The code can then be served statically and used in a HTML canvas. Bash scripts are provided that automates this process: \href{https://github.com/elvisrossi/ReactionSystemsGUI/blob/main/reaction_systems_gui/build_web.sh}{\(\texttt{build\_web.sh}\)} and \href{https://github.com/elvisrossi/ReactionSystemsGUI/blob/main/reaction_systems_gui/start_server.sh}{\(\texttt{start\_server.sh}\)}.
   \end{section}
 \end{chapter}

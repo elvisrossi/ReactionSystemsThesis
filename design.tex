@@ -1,10 +1,10 @@
 \begin{chapter}{Design}
   Two sub-problems where identified during the design: simulating the behavior of Reaction Systems, RS processes and other operations on LTS, and interacting with the user in a intuitive manner. The programming language chosen was Rust\cite{rust_2025}, since it offered good performance and ease of development.
-  Two Git repositories are provided: \href{https://github.com/elvisrossi/ReactionSystems}{github.com/elvisrossi/ReactionSystems} and \href{https://github.com/elvisrossi/ReactionSystemsGUI}{github.com/elvisrossi/ReactionSystemsGUI}.
+  Two Git repositories are provided: ReactionSystems\cite{ReactionSystemsGit} and ReactionSystemsGUI\cite{ReactionSystemsGUIGit}.
 
   The ReactionSystems project follows a modular architecture and clear design principles to mirror the theoretical model; it implements procedures over RS as pure rust functions and is structured as a library. It also provides a crude Command Line Interface for some of the functions provided.
   The code is organized in workspaces in order to reduce compilation time and aid code reuse.
-  In the second Git repository a native and web application is implemented in Rust and in webassembly\cite{WebAssemblyCoreSpecification2} generated from Rust code. The web application consists of only static files and as such may be served by a simple HTTP server.
+  In the second Git repository a native and web application is implemented in Rust and in WebAssembly\cite{WebAssemblyCoreSpecification2} generated from Rust code. The web application consists of only static files and as such may be served by a simple HTTP server.
 
   In the signature of the functions, types will be displayed in teletype font. The decorator \({}^{?}\) will be used for both option types and for result types without distinction.
 
@@ -505,7 +505,7 @@
     \end{subsection}
 
     \begin{subsection}{Graph}\label{design_graph}
-      The project uses petgraph\cite{Borgna2025} as graph data structure library. \textit{petgraph} provides several graph types, but the only one used is \(\texttt{Graph}\), since it provided the best performance during testing. The library has methods for converting the graph structures into {Dot Language}\cite{graphviz_2025} and {GraphML File Format}\cite{graphml_2025}. The Dot methods where found to be not powerful enough and where partially rewritten in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/dot.rs}{dot.rs}.
+      The project uses petgraph\cite{Borgna2025} as graph data structure library. \textit{petgraph} provides several graph types, but the only one used is \(\texttt{Graph}\), since it provided the best performance during testing. The library has methods for converting the graph structures into {Dot Language}\cite{graphviz_2025} and {GraphML File Format}\cite{graphml_2025}. The Dot methods where found to be not powerful enough and where partially rewritten in the file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/rsprocess/src/dot.rs}{\(\texttt{dot.rs}\)}.
 
       Custom formatting of the graphs was a key requirement, so domain specific languages are provided to customize the appearance of the generated formats.
       Four structures are provided:
@@ -792,7 +792,7 @@
           | $\texttt{source}$ == source of edge
           | $\texttt{target}$ == target of edge
           | $\texttt{label}$ == label of an edge
-          | $\texttt{neightbours}$ == node's neighbours
+          | $\texttt{neighbours}$ == node's neighbours
           | $\texttt{system}$ == node's system
           ;; % chktex 26
 
@@ -1024,7 +1024,7 @@
     \item Windows: \(\texttt{C:\textbackslash{}Users\textbackslash{}UserName\textbackslash{}AppData\textbackslash{}Roaming\textbackslash{}Reaction-Systems\textbackslash{}data}\)
     \end{itemize}
 
-    The native application also has the ability to save and load the state from a file. The files have by default the extension ``\(\texttt{.ron}\)''. The web version has no ability to interact with the file system due to a limitation of webassembly.
+    The native application also has the ability to save and load the state from a file. The files have by default the extension ``\(\texttt{.ron}\)''. The web version has no ability to interact with the file system due to a limitation of WebAssembly.
 
     \begin{figure}
       \centering

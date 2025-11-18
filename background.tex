@@ -309,7 +309,7 @@
       \(TS\) is called finite if \(S\), \(Act\), and \(AP\) are finite.
     \end{definition}
 
-    The intuitive behavior of a transition system can be described as follows: the transition system start in some initial state \(s_0 \in I\) and evolves according to the transition relation \(\to\). Given \(s\) as the current state, then a transition \(s \xrightarrow{\alpha} s'\) is selected nondeterministically and taken, meaning the action \(\alpha\) is performed and the transition system evolves from state \(s\) into the state \(s'\). The labeling function \(L\) relates a set \(L(s) \in 2^{AP}\) of atomic propositions to any state \(s\). It intuitively stands for exactly those aotmic propositions \(\alpha \in AP\) which are satisfied by state \(s\).
+    The intuitive behavior of a transition system can be described as follows: the transition system start in some initial state \(s_0 \in I\) and evolves according to the transition relation \(\to\). Given \(s\) as the current state, then a transition \(s \xrightarrow{\alpha} s'\) is selected nondeterministically and taken, meaning the action \(\alpha\) is performed and the transition system evolves from state \(s\) into the state \(s'\). The labeling function \(L\) relates a set \(L(s) \in 2^{AP}\) of atomic propositions to any state \(s\). It intuitively stands for exactly those atomic propositions \(\alpha \in AP\) which are satisfied by state \(s\).
 
     \begin{definition}[Bisimulation Equivalence\cite{Baier_Katoen_Larsen_2016}]
       Let \(TS_i = (S_i, Act_i, \to_i, I_i, AP, L_i), i \in \{1,2\}\), be transition systems over AP.\ A bisimulation for \((TS_1, TS_2)\) is a binary relation \(\mathcal{R} \subseteq S_1 \times S_2\) such that:
