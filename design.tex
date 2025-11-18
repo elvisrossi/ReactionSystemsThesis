@@ -60,7 +60,7 @@
       \caption{Basic structures and relationships between them}\label{basic_structures}
     \end{figure}
 
-    \begin{subsection}{Entities and Translator}
+    \begin{subsection}{Entities and Translator}\label{design_entities}
       Entities are the most basic data structure that a RS need to keep track of. They don't have a specified interface and are instead treated only in sets.
 
       Positive elements are also defined and have a state, either \texttt{Positive} or \texttt{Negative}.
@@ -68,7 +68,7 @@
       Since internally entities are represented as integers, a structure that keeps track of assignment between strings and integer is provided (\(\texttt{Translator}\)). This poses a problem with the default methods for formatting available in Rust, since for the trait \(\texttt{Display}\) and \(\texttt{Debug}\) only the structure itself can be used to generate the string. The trait \(\texttt{PrintableWithTranslator}\) and the structure \(\texttt{Formatter}\) solve this issue by incorporating the \(\texttt{Translator}\) into the struct. \(\texttt{Display}\) is then implemented on the generic structure \(\texttt{Translator}\).
     \end{subsection}
 
-    \begin{subsection}{Set}
+    \begin{subsection}{Set}\label{design_set}
       The common procedures required for all sets are:
       \begin{itemize}
       \item \(\texttt{is\_subset}(a, b) \to \texttt{bool}\), which should return true if \(a \subseteq b\);
@@ -156,7 +156,7 @@
     \end{subsection}
 
 
-    \begin{subsection}{Reaction}
+    \begin{subsection}{Reaction}\label{design_reaction}
       The methods required for all reactions are:
 
       \begin{itemize}
@@ -218,7 +218,7 @@
     \end{subsection}
 
 
-    \begin{subsection}{Process}
+    \begin{subsection}{Process}\label{design_process}
       Process structures mirror the structure of RS processes as described in Section\ \ref{SOS_rules_section}. Since there is not much behavior that is shared between implementations and since usually they are used with pattern matching, the trait that describe a basic process is very simple.
       \begin{itemize}
       \item \(\texttt{concat}(a, b) \to \texttt{process}\), which returns a new process \(a \vert b\) flattened with regards to parallel composition;
@@ -312,7 +312,7 @@
     \end{subsection}
 
 
-    \begin{subsection}{Environment}
+    \begin{subsection}{Environment}\label{design_environment}
       An environment can be thought as an association between variable names and processes.
       The basic interface requires the following methods:
 
@@ -324,12 +324,12 @@
 
       These methods are automatically implemented for all \(\texttt{BasicEnvironment}\):
       \begin{itemize}
-        \item \(\texttt{lollipops\_decomposed}\),
-        \item \(\texttt{lollipops\_decomposed\_named}\),
-        \item \(\texttt{lollipops\_prefix\_len\_loop\_decomposed}\),
-        \item \(\texttt{lollipops\_prefix\_len\_loop\_decomposed\_named}\),
-        \item \(\texttt{lollipops\_only\_loop\_decomposed}\),
-        \item \(\texttt{lollipops\_only\_loop\_decomposed\_named}\).
+      \item \(\texttt{lollipops\_decomposed}\),
+      \item \(\texttt{lollipops\_decomposed\_named}\),
+      \item \(\texttt{lollipops\_prefix\_len\_loop\_decomposed}\),
+      \item \(\texttt{lollipops\_prefix\_len\_loop\_decomposed\_named}\),
+      \item \(\texttt{lollipops\_only\_loop\_decomposed}\),
+      \item \(\texttt{lollipops\_only\_loop\_decomposed\_named}\).
       \end{itemize}
       They all try to find a loop and return some information about the found loop. The \(\texttt{\_named}\) variants require a variable symbol for which in the environment there is an association to a process with the form \( X = Q.\texttt{rec}(X) = Q.X\), where \(Q\) is a set and \(X\) is a variable name. The others instead finds all the symbols that satisfy the constraint and uses them all.
       Function \(\texttt{lollipops\_decomposed}\) returns the trace of sets for the prefix and the trace of sets for the loop for each recursive variable.\\
@@ -688,7 +688,7 @@
       \(\texttt{EdgeColor}\) behaves in a similar manner as \(\texttt{NodeColor}\), except the base structure is a \(\texttt{Label}\), so every field is a \(\texttt{Set}\).
     \end{subsection}
 
-    \begin{subsection}{Slicing Trace}
+    \begin{subsection}{Slicing Trace}\label{design_trace}
       Only one structure for slicing trace is provided, but is made to work with both RS and Positive RS with generics. The only method they have is \(\texttt{slice}(\mathit{trace}, \mathit{marking}: \texttt{set}) \to \texttt{trace}^{?}\) which returns, if successful, a new sliced trace.
     \end{subsection}
 
@@ -999,7 +999,7 @@
   \end{section}
 
   \begin{section}{ReactionSystemsGUI}
-    During development of ReactionSystems, a need for a more intuitive interaction with the structures presented itself. Since the all the operations on the types where already limited and
+    During development of ReactionSystems, a need for a more intuitive interaction with the structures presented itself. Since all the operations on the types where already limited and
     structured, a visual programming language was chosen as the best fit.
 
     The library {\(\texttt{egui\_node\_graph2}\)}\cite{egui_node_graph22024} was chosen since it offered customizability, performance and ease of programming. The library unfortunately lacked compatibility with the most recent version of {\(\texttt{egui}\)}\cite{Ernerfeldt2025}, so it is included as a workspace and modified to fit better the need of the project.
@@ -1024,7 +1024,7 @@
     \item Windows: \(\texttt{C:\textbackslash{}Users\textbackslash{}UserName\textbackslash{}AppData\textbackslash{}Roaming\textbackslash{}Reaction-Systems\textbackslash{}data}\)
     \end{itemize}
 
-    The native application also has the ability to save and load the state from a file. The files have by default the extension ``\(\texttt{.ron}\)''. The web version has no ability to interact with the file system due to a limitation of \(\texttt{webassembly}\).
+    The native application also has the ability to save and load the state from a file. The files have by default the extension ``\(\texttt{.ron}\)''. The web version has no ability to interact with the file system due to a limitation of webassembly.
 
     \begin{figure}
       \centering
@@ -1046,8 +1046,154 @@
 
     The file structure can be seen in figure\ \ref{save_file_structure}, where ``state'' refers to the state of the GUI, ``translator'' refers to the \(\texttt{Translator}\) structure used to encode entities names into fixed sized integers, and ``cache'' refers to the cache structure for the GUI.\ Version number is a little-endian \(\texttt{u64}\) that encodes the version number of the application; if different from the version of the application, a warning will be issued, but the application will try and load the state anyway. Each ``length'' field is a little-endian \(\texttt{u64}\) and indicates the length in bytes of the corresponding field.
 
-    The user can request the result of a computation by interacting with the button ``\textit{Set active}'' under most of the windows. A panel on the right of the screen appears with the computed result. The nodes ``Save string to file'' and ``Save SVG'' instead have a button ``\textit{Write}'' that writes to file the result. The node ``Read a file'' has an extra button ``\textit{Update file}'' that reads again the file from disk since a filewatcher has not been implemented.
+    The user can request the result of a computation by interacting with the button ``\textit{Set active}'' under most of the windows. A panel on the right of the screen appears with the computed result. The nodes ``Save string to file'', ``Save SVG'' and ``Save Rasterized SVG''  instead have a button ``\textit{Write}'' that writes to file the result. The node ``Read a file'' has an extra button ``\textit{Update file}'' that reads again the file from disk since a filewatcher has not been implemented.
 
-    Since the generated graphs were often times immediately converted to DOT files and rendered to SVG, a native renderer is included that can create PNG images of the supplied graph. This reduces greatly the time switching between software to achieve the same result.
+    Since the generated graphs were often times immediately converted to DOT files and rendered to SVG, a native renderer is included that can create PNG images of the supplied graph. They are then rendered to screen. This reduces greatly the time switching between software to achieve the same result.
+
+    \begin{table}
+      \centering
+      \fboxrule=0.25mm
+      \begin{tblr}{colspec={Q[c, m]Q[c, l]Q[c, l]}, colsep=3pt}
+        \fcolorbox{black}{color_Error}{\makebox[2mm][l]{\strut}} & \(\texttt{Error}\) & Structure that holds error messages \\
+
+        \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \(\texttt{String}\) & A string \\
+        \fcolorbox{black}{color_Path}{\makebox[2mm][l]{\strut}} & \(\texttt{Path}\) & A path to a file \\
+        \fcolorbox{black}{color_Svg}{\makebox[2mm][l]{\strut}} & \(\texttt{Svg}\) & A structure for creating and rendering SVG \\
+        \fcolorbox{black}{color_PositiveInt}{\makebox[2mm][l]{\strut}} & \(\texttt{PositiveInt}\) & Integer in \(\mathbb{N}\) \\
+        \fcolorbox{black}{color_Symbol}{\makebox[2mm][l]{\strut}} & \(\texttt{Symbol}\) & A single symbol, see section\ \ref{design_entities} \\
+
+        \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}} & \(\texttt{System}\) & see section\ \ref{design_system} \\
+        \fcolorbox{black}{color_Environment}{\makebox[2mm][l]{\strut}} & \(\texttt{Environment}\) & see section\ \ref{design_environment} \\
+        \fcolorbox{black}{color_Set}{\makebox[2mm][l]{\strut}} & \(\texttt{Set}\) & see section\ \ref{design_set} \\
+        \fcolorbox{black}{color_Context}{\makebox[2mm][l]{\strut}} & \(\texttt{Context}\) & see section\ \ref{design_process} \\
+        \fcolorbox{black}{color_Reactions}{\makebox[2mm][l]{\strut}} & \(\texttt{Reactions}\) & see section\ \ref{design_reaction} \\
+
+        \fcolorbox{black}{color_Experiment}{\makebox[2mm][l]{\strut}} & \(\texttt{Experiment}\) & see section\ \ref{experiment} \\
+
+        \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}} & \(\texttt{PositiveSystem}\) & see section\ \ref{design_system} \\
+        \fcolorbox{black}{color_PositiveEnvironment}{\makebox[2mm][l]{\strut}} & \(\texttt{PositiveEnvironment}\) & see section\ \ref{design_environment} \\
+        \fcolorbox{black}{color_PositiveSet}{\makebox[2mm][l]{\strut}} & \(\texttt{PositiveSet}\) & see section\ \ref{design_set} \\
+        \fcolorbox{black}{color_PositiveContext}{\makebox[2mm][l]{\strut}} & \(\texttt{PositiveContext}\) & see section\ \ref{design_process} \\
+        \fcolorbox{black}{color_PositiveReactions}{\makebox[2mm][l]{\strut}} & \(\texttt{PositiveReactions}\) & see section\ \ref{design_reaction} \\
+
+        \fcolorbox{black}{color_Trace}{\makebox[2mm][l]{\strut}} & \(\texttt{Trace}\) & see section\ \ref{design_trace} \\
+        \fcolorbox{black}{color_PositiveTrace}{\makebox[2mm][l]{\strut}} & \(\texttt{PositiveTrace}\) & see section\ \ref{design_trace} \\
+
+        \fcolorbox{black}{color_Graph}{\makebox[2mm][l]{\strut}} & \(\texttt{Graph}\) & see section\ \ref{design_graph} \\
+        \fcolorbox{black}{color_PositiveGraph}{\makebox[2mm][l]{\strut}} & \(\texttt{PositiveGraph}\) & see section\ \ref{design_graph} \\
+
+        \fcolorbox{black}{color_DisplayNode}{\makebox[2mm][l]{\strut}} & \(\texttt{DisplayNode}\) & see section\ \ref{design_graph} \\
+        \fcolorbox{black}{color_DisplayEdge}{\makebox[2mm][l]{\strut}} & \(\texttt{DisplayEdge}\) & see section\ \ref{design_graph} \\
+        \fcolorbox{black}{color_ColorNode}{\makebox[2mm][l]{\strut}} & \(\texttt{ColorNode}\) & see section\ \ref{design_graph} \\
+        \fcolorbox{black}{color_ColorEdge}{\makebox[2mm][l]{\strut}} & \(\texttt{ColorEdge}\) & see section\ \ref{design_graph} \\
+
+        \fcolorbox{black}{color_AssertFunction}{\makebox[2mm][l]{\strut}} & \(\texttt{AssertFunction}\) & see section\ \ref{bisimilarity_design} \\
+        \fcolorbox{black}{color_GroupFunction}{\makebox[2mm][l]{\strut}} & \(\texttt{GroupFunction}\) & see section\ \ref{bisimilarity_design} \\
+        \fcolorbox{black}{color_PositiveAssertFunction}{\makebox[2mm][l]{\strut}} & \(\texttt{PositiveAssertFunction}\) & see section\ \ref{bisimilarity_design} \\
+        \fcolorbox{black}{color_PositiveGroupFunction}{\makebox[2mm][l]{\strut}} & \(\texttt{PositiveGroupFunction}\) & see section\ \ref{bisimilarity_design} \\
+      \end{tblr}
+      \caption{Types in ReactionSystemsGUI with associated color.}\label{types_gui}
+    \end{table}
+
+    \fboxrule=0.25mm
+    \begin{longtblr}[
+      caption={Available nodes in ReactionSystemsGUI with inputs and outputs in color.},
+      label={node_in_out},
+      ]{
+      colspec={Q[b, r]|Q[c, m]|Q[c, m]|Q[b, l]},
+      colsep=2pt,}
+      \(\texttt{String}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & Creates a string \\
+      \(\texttt{Path}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_Path}{\makebox[2mm][l]{\strut}} & Creates a path from a string \\
+      \(\texttt{Read file}\) & \fcolorbox{black}{color_Path}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & Reads a file into a string \\
+      \(\texttt{Save string to file}\) & \fcolorbox{black}{color_Path}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & & Save a string to a file \\
+      \(\texttt{Symbol}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_Symbol}{\makebox[2mm][l]{\strut}} & Creates a symbol from a string \\
+      \(\texttt{Sleep}\) & \fcolorbox{black}{color_PositiveInt}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveInt}{\makebox[2mm][l]{\strut}} & Waits for selected number of seconds \\
+      \(\texttt{Dot file to SVG}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_Svg}{\makebox[2mm][l]{\strut}} & Parses a Dot file string into an SVG \\
+      \(\texttt{Save SVG}\) & \fcolorbox{black}{color_Path}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Svg}{\makebox[2mm][l]{\strut}} & & Saves an SVG \\
+      \(\texttt{Save Rasterized SVG}\) & \fcolorbox{black}{color_Path}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Svg}{\makebox[2mm][l]{\strut}} & & Saves an SVG as a picture \\
+
+      \(\texttt{Create System}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}} & Creates system from string \\
+      \(\texttt{Create Positive System}\) & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}} & Creates positive system from system \\
+      \(\texttt{Compose System}\) & \fcolorbox{black}{color_Environment}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Set}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Context}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Reactions}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}} & {Composes system from\\individual structures} \\
+      \(\texttt{Compose Positive System}\) & \fcolorbox{black}{color_PositiveEnvironment}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveSet}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveContext}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveReactions}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Decompose System}\) & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_Environment}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Set}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Context}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Reactions}{\makebox[2mm][l]{\strut}} & {Decomposes system\\into individual structures} \\
+      \(\texttt{Decompose Positive System}\) & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveEnvironment}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveSet}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveContext}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveReactions}{\makebox[2mm][l]{\strut}} & \\
+
+      \(\texttt{Environment}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_Environment}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Positive Environment}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveEnvironment}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Set}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_Set}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Positive Set}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveSet}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Context}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_Context}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Positive Context}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveContext}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Reactions}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_Reactions}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Positive Reactions}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveReactions}{\makebox[2mm][l]{\strut}} & \\
+
+      \(\texttt{Convert to Positive Environment}\) & \fcolorbox{black}{color_Environment}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveEnvironment}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Convert to Positive Set}\) & \fcolorbox{black}{color_Set}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveSet}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Convert to Positive Context}\) & \fcolorbox{black}{color_Context}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveContext}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Convert to Positive Reactions}\) & \fcolorbox{black}{color_Reactions}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveReactions}{\makebox[2mm][l]{\strut}} & \\
+
+      \(\texttt{Statistics}\) & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
+
+      \(\texttt{Target}\) & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveInt}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Target of Positive RS}\) & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveInt}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Run}\) & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveInt}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Run of Positive RS}\) & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveInt}{\makebox[2mm][l]{\strut}} &  \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Loop}\) & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Symbol}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & {Applies function\\\(\texttt{lollipops\_only\_loop\_named}\) to RS} \\
+      \(\texttt{Loop of Positive RS}\) & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Symbol}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
+
+      \(\texttt{Create Experiment}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_Experiment}{\makebox[2mm][l]{\strut}} & Creates experiment from string \\
+
+      \(\texttt{Frequency}\) & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Frequency of Positive RS}\) & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Limit Frequency}\) & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Experiment}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Limit Frequency of Positive RS}\) & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Experiment}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Fast Frequency}\) & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Experiment}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Fast Frequency of Positive RS}\) & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Experiment}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
+
+      \(\texttt{Graph System}\) & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_Graph}{\makebox[2mm][l]{\strut}} & Creates digraph of RS \\
+      \(\texttt{Graph Positive System}\) & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveGraph}{\makebox[2mm][l]{\strut}} & \\
+
+      \(\texttt{Create Dot file}\) & \fcolorbox{black}{color_Graph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_DisplayNode}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_DisplayEdge}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_ColorNode}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_ColorEdge}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & Creates Dot file from a graph \\
+      {\(\texttt{Create Dot file}\)\\\(\texttt{of Positive System}\)} & \fcolorbox{black}{color_PositiveGraph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_DisplayNode}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_DisplayEdge}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_ColorNode}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_ColorEdge}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Create GraphML file}\) & \fcolorbox{black}{color_Graph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_DisplayNode}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_DisplayEdge}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & Creates GraphML file from a graph \\
+      {\(\texttt{Create GraphML file}\)\\\(\texttt{of Positive System}\)} & \fcolorbox{black}{color_PositiveGraph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_DisplayNode}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_DisplayEdge}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
+
+      \(\texttt{Display node function}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_DisplayNode}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Display edge function}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_DisplayEdge}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Color node function}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_ColorNode}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Color edge function}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_ColorEdge}{\makebox[2mm][l]{\strut}} & \\
+
+      \(\texttt{Bisimilarity Kanellakis \& Smolka}\) & \fcolorbox{black}{color_Graph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Graph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_AssertFunction}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
+      {\(\texttt{Bisimilarity Kanellakis \& Smolka}\)\\\(\texttt{for Positive RS}\)} & \fcolorbox{black}{color_PositiveGraph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveGraph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveAssertFunction}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Bisimilarity Paige \& Tarjan}\) & \fcolorbox{black}{color_Graph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Graph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_AssertFunction}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
+      {\(\texttt{Bisimilarity Paige \& Torjan}\)\\\(\texttt{for Positive RS}\)} & \fcolorbox{black}{color_PositiveGraph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveGraph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveAssertFunction}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
+      {\(\texttt{Bisimilarity Paige \& Tarjan}\)\\\(\texttt{(ignore labels)}\)} & \fcolorbox{black}{color_Graph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Graph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_AssertFunction}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
+      {\(\texttt{Bisimilarity Paige \& Torjan}\)\\\(\texttt{(ignore labels) for Positive RS}\)} & \fcolorbox{black}{color_PositiveGraph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveGraph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveAssertFunction}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
+
+      \(\texttt{Create relabeling edge function}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_AssertFunction}{\makebox[2mm][l]{\strut}} & \\
+      {\(\texttt{Create relabeling edge function}\)\\\(\texttt{for Positive RS}\)} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveAssertFunction}{\makebox[2mm][l]{\strut}} & \\
+
+      \(\texttt{Trace}\) & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveInt}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_Trace}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Positive Trace}\) & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveInt}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveTrace}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Slice Trace}\) & \fcolorbox{black}{color_Trace}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Set}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_Trace}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Positive Slice Trace}\) & \fcolorbox{black}{color_PositiveTrace}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveSet}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveTrace}{\makebox[2mm][l]{\strut}} & \\
+
+      \(\texttt{Trace to string}\) & \fcolorbox{black}{color_Trace}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Positive trace to string}\) & \fcolorbox{black}{color_PositiveTrace}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
+
+      \(\texttt{Overwrite context entities}\) & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Set}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Overwirite reaction entities}\) & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Set}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}} & \\
+      {\(\texttt{Overwrite context entities}\)\\\(\texttt{of Positive System}\)} & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveSet}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}} & \\
+      {\(\texttt{Overwrite reaction entities}\)\\\(\texttt{of Positive System}\)} & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveSet}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}} & \\
+
+      \(\texttt{Create Grouping Function}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_GroupFunction}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Group Nodes}\) & \fcolorbox{black}{color_Graph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_GroupFunction}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_Graph}{\makebox[2mm][l]{\strut}} & \\
+      {\(\texttt{Create Grouping Function}\)\\\(\texttt{for Positive System}\)} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveGroupFunction}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Group Nodes of Positive System}\) & \fcolorbox{black}{color_PositiveGraph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveGroupFunction}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveGraph}{\makebox[2mm][l]{\strut}} & \\
+    \end{longtblr}
+
+    All the types can be seen in table\ \ref{types_gui} that are used for the node's input and output. Each type has a distinct color associated that is used to color the connectors between nodes. All nodes can be seen in table\ \ref{node_in_out}. The second column holds the color of the inputs types used; the third column holds the color of the outputs types.
+
   \end{section}
 \end{chapter}

@@ -8,6 +8,28 @@
   The use of inhibitors induces non-monotonic behaviors that are difficult to analyze.
   Entities can also be provided by an external context sequence to simulate \textit{in silico} biological experiment, expanded by structural operational semantics (SOS) rules to account for several biological experiments. In addition Positive RS, trace slicing, graph generation, bisimulation and more is available through an intuitive visual language with a graphical interface.
 
-  
+  Despite the rich theoretical development of Reaction Systems, practival tools for working with RS models have lagged behind. Numerous versions of Prolog and Python programs have been developed, but have problems regarding performance and usability. Future developments may be hindered by this lack of software by this technological barrier.
 
+
+  This thesis aims to bridge the gab between the theoretical foundations of Reaction Systems and their practical application. To achieve this a new software platform for modeling, analyzing and designing Reaction Systems is proposed.
+
+  \begin{section}{Software Design and Key Features}
+    The core contribution here presented is a new software tool built from the ground up to support Reaction Systems modeling and analysis. Equal emphasis has been placed on performance and user experience. The software is implemented in Rust\cite{rust_2025}, a modern systems programming language chosen for its efficency and reliability.
+    Rust’s strong performance characteristics (memory safety, speed, and concurrency support) help ensure that even larger Reaction System models can be analyzed quickly, while its emphasis on code safety and clarity makes the tool more maintainable in the long term.
+
+    The platform provides two user interfaces to accommodate different user needs. A command-line interface (CLI) is available for quick integration in already existing pipelines. The CLI allows specification of Reaction Systems and instructions over them and is easily expandable to meed the need of the programmer.
+
+    A graphical user interface (GUI) is also available both as standalone native application and as a static web application running on WebAssembly\cite{WebAssemblyCoreSpecification2}. The GUI lowers the learning curve for new users: instead of writing code or scripts, one can construct reactions, run simulations and view results through the same interface through interactive diagrams and controls. By providing both CLI and graphical native/web interfaces, the tool caters to a wide audience.
+
+    Key capabilities of the developed Reaction Systems software include:
+
+    \begin{itemize}
+    \item Graphical interface for modeling and simulation: An interactive GUI that allows users to graphically define RS components and simulate their behavior.
+    \item Trace slicing: tools for examining execution traces in detail. Trace slicing allows a user to isolate and inspect specific segments of a reaction sequence, exploring causality between produced elements or inhibited reactions.
+    \item Bisimulation analysis: support for formal bisimulation analysis, which enables comparing different Reaction Systems models for behavioral equivalence. The methods are not restricted to just analyzing RS, but are available for any graph-like structure.
+    \item Conversion between Reaction Systems and Positive Reactions Systems: to better explore traces and causality, a more suitable model is provided. Conversion between systems is handled automatically and the dafaults can be fine tuned or overridden.
+    \end{itemize}
+
+    Together, these features make the software a comprehensive environment for working with Reaction Systems. The user can construct, simulate and analyze the results through multiple lenses: from observing cyclic behaviors to checking formal equivalences and visualizing interaction networks.
+  \end{section}
 \end{chapter}

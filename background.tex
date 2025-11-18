@@ -213,7 +213,7 @@
       A set \(\textbf{W} \subseteq \textbf{S}\) is non-contradictory if for all entities \(a \in S\) it holds that \(\{a, \bar{a}\} \nsubseteq \textbf{W}\). A non-contradictory state \(\textbf{W} \subseteq \textbf{S}\) is consistent if, for any entity \(a \in S\), either \(a \in \textbf{W}\) or \(\bar{a} \in \textbf{W}\) holds.
     \end{definition}
 
-    \begin{definition}[Positive RS]\label{positive_rs}
+    \begin{definition}[Positive RS\cite{Brodo_Bruni_Falaschi_Gori_Milazzo_2025}]\label{positive_rs}
       A Positive RS is a Reaction System \(\mathcal{A}^+ = (\textbf{S}, A)\) that satisfies the following conditions:
       \begin{enumerate}
       \item Each reaction \(r\) in \(A\) is positive, i.e., \(r = (\textbf{R}, \emptyset, \textbf{P})\) for some non-contradictory sets \(\textbf{R}\) and \(\textbf{P}\).
@@ -287,7 +287,7 @@
 
       Starting from the pair \(\frac{D_{\sigma}}{C_m}\) denoting the user's marking and proceeding backwards, apply iteratively a slicing step that deletes from the partial computation all information not related to \(D_{\sigma}\). The sliced trace will contain only the subsets of entities and reactions which are necessary for deriving the marked entities.
 
-      Since the algorithm\ \ref{slicing_algorithm} can only capture dependencies related to reactants, but ignores the ones related to inhibitors, converting the RS into a Positive RS makes possible the tracking of the absence of entities via negative entities. Minimizing the Positive RS reduces the noise in the output and is thus desirable.
+      Since the algorithm\ \ref{slicing_algorithm}\cite{Brodo_Bruni_Falaschi_Gori_Milazzo_2025} can only capture dependencies related to reactants, but ignores the ones related to inhibitors, converting the RS into a Positive RS makes possible the tracking of the absence of entities via negative entities. Minimizing the Positive RS reduces the noise in the output and is thus desirable.
     \end{subsection}
   \end{section}
 

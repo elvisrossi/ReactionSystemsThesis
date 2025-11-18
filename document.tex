@@ -47,6 +47,7 @@
 \usepackage{amsmath} %% math matrix etc
 \usepackage{minted} %% code block
 \usepackage{tabularray} %% better tables
+\usepackage{tblr-extras}
 \usepackage{booktabs} %% rules for tables
 \usepackage{mathrsfs}
 \usepackage{mathtools}
@@ -69,8 +70,9 @@
 
 %% design packages
 \usepackage{enumitem} %% for lists and enumerating
-\usepackage{color}
-\usepackage{xcolor,colortbl} % xcolor for defining colors, colortbl for table colors
+\usepackage{luacolor}
+\usepackage{xcolor} % xcolor for defining colors, colortbl for table colors
+\usepackage{colortbl} % xcolor for defining colors, colortbl for table colors
 \usepackage{makecell} %% for multiple lines in cell of table
 \usepackage{cancel}
 \usepackage{pgfornament} %% ornaments
@@ -132,6 +134,8 @@
 
 %% PACKAGE tabularray
 \UseTblrLibrary{amsmath}
+\UseTblrLibrary{caption}
+\TblrCaptionBelow%
 
 
 %% PACKAGE color
@@ -196,6 +200,46 @@
 
 \DeclarePairedDelimiter\abs{\lvert}{\rvert}%
 \DeclarePairedDelimiter\doublesq{\llbracket}{\rrbracket}%
+
+
+\definecolor{color_Error}{HTML}{FC2836}
+
+\definecolor{color_String}{HTML}{0E7AFF}
+\definecolor{color_Path}{HTML}{1AC9D8}
+\definecolor{color_Svg}{HTML}{86868B}
+\definecolor{color_PositiveInt}{HTML}{1BD5B6}
+\definecolor{color_Symbol}{HTML}{5A61FF}
+
+\definecolor{color_System}{HTML}{FECF0A}
+\definecolor{color_Environment}{HTML}{FFEDA4}
+\definecolor{color_Set}{HTML}{FFE370}
+\definecolor{color_Context}{HTML}{D9AF00}
+\definecolor{color_Reactions}{HTML}{A78700}
+
+\definecolor{color_Experiment}{HTML}{FD7E25}
+
+\definecolor{color_PositiveSystem}{HTML}{A77753}
+\definecolor{color_PositiveEnvironment}{HTML}{F3D2BA}
+\definecolor{color_PositiveSet}{HTML}{C99D7D}
+\definecolor{color_PositiveContext}{HTML}{875733}
+\definecolor{color_PositiveReactions}{HTML}{683A18}
+
+\definecolor{color_Trace}{HTML}{FC577D}
+\definecolor{color_PositiveTrace}{HTML}{FB003B}
+
+\definecolor{color_Graph}{HTML}{2ECC46}
+\definecolor{color_PositiveGraph}{HTML}{00961A}
+
+\definecolor{color_DisplayNode}{HTML}{B2F4BD}
+\definecolor{color_DisplayEdge}{HTML}{81E793}
+\definecolor{color_ColorNode}{HTML}{3BC553}
+\definecolor{color_ColorEdge}{HTML}{1CB236}
+
+\definecolor{color_AssertFunction}{HTML}{CF00EE}
+\definecolor{color_GroupFunction}{HTML}{750086}
+\definecolor{color_PositiveAssertFunction}{HTML}{35C9FD}
+\definecolor{color_PositiveGroupFunction}{HTML}{02B7F3}
+
 
 %% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - %%
 
