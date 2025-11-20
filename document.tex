@@ -1,4 +1,4 @@
-\documentclass[11pt, twoside, openright]{book}
+\documentclass[11pt, twoside, openright, hidelinks]{book}
 
 %% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - %%
 %%                               Load Packages                               %%
@@ -20,6 +20,8 @@
 \setmainfont{latinmodernroman}[RawFeature={fallback=fallbackscript}]
 
 \usepackage[italian,main=english]{babel} %% language
+
+\usepackage[a-3u,mathxmp]{pdfx}
 
 \pagestyle{headings}
 
@@ -79,7 +81,7 @@
 \usepackage{makeidx}
 
 %% load last
-\usepackage[hidelinks]{hyperref} %% links for table of contents, load last
+\usepackage{hyperref} %% links for table of contents, load last
 \usepackage{bookmark} %% for better table of contents
 
 %% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - %%
