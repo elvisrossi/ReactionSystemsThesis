@@ -1,23 +1,26 @@
 \begin{chapter}{Introduction}
-  Reaction Systems (RSs) are a successful computational framework inspired by biological system.
-  The interaction between biochemical reactions and the functioning of single reactions are based on the mechanisms of facilitation and inhibition, which can be modeled and analyzed using RS.\
+  Reaction System (RS) is a successful computational framework inspired by biological system,
+  first described in\ \cite{Ehrenfeucht_Rozenberg_2004, Ehrenfeucht_Rozenberg_2007}.
+  The interaction between biochemical reactions and the functioning of single reactions is based on the mechanisms of facilitation and inhibition.
+  Facilitation and inhibition are key concepts in molecular biology\ \cite{Clark_Pazdernik_McGehee_2018}: gene promoters, both in lower and higher organisms, function poorly or not at all in the absence of extra proteins known as gene activator proteins, or transcription factors.
+  Other promoters may be inherently active: these are often controlled by a class of gene regulator proteins known as repressors that act to turn genes off.
+  Reaction Systems aims to models cell biology by represent this complex interaction between inducers and genes.
 
-  In this work new software for modeling, analyzing and designing Reaction Systems is designed and developed, with focus on performance and user interface design.
-
-  A Reaction System consists of a set of entities and a set of reactions over them. Each reaction produces some set of entities P (called products) if enabled, meaning if a set R (called reactants) is wholly present and if a set I (called inhibitors) of entities is completely absent.
+  A Reaction System consists of a set of entities and a set of reactions over such entities. Each reaction if enabled produces a set of entities P (called products). A reaction is enabled if its set R (called reactants) is wholly present and if the set I (called inhibitors) of entities is completely absent.
   The use of inhibitors induces non-monotonic behaviors that are difficult to analyze.
-  Entities can also be provided by an external context sequence to simulate \textit{in silico} biological experiment, expanded by structural operational semantics (SOS) rules to account for several biological experiments. In addition Positive RS, trace slicing, graph generation, bisimulation and more is available through an intuitive visual language with a graphical interface.
+  Entities can also be provided by an external context sequence to simulate interaction with an environment, based on a structural operational semantics (SOS) coupled with different transformations and new frameworks aiming at analyzing causal properties that have been developed during the past years\ \cite{Brodo_Bruni_Falaschi_2021, Brodo_Bruni_Falaschi_Gori_Milazzo_Montagna_Pulieri_2024, Brodo_Bruni_Falaschi_Gori_Milazzo_2025}.
+  A comprehensive overview of all the different transformations and techniques implemented in the proposed tool are listed in chapter\ \ref{background_chap}.
 
-  Despite the rich theoretical development of Reaction Systems, practical tools for working with RS models have lagged behind. Numerous versions of Prolog and Python programs have been developed\cite{BioResolve2025}, but have problems regarding performance and usability. Future developments may be hindered by this lack of software by this technological barrier.
+  Despite the rich theoretical development of Reaction Systems, practical tools for working with RS models have lagged behind. Numerous versions of Prolog and Python programs have been developed\cite{BioResolve2025}, but have problems regarding performance and usability.
+  This technological barrier caused by lack of appropriate software may hinder future developments.
 
-
-  This thesis aims to bridge the gab between the theoretical foundations of Reaction Systems and their practical application. To achieve this a new software platform for modeling, analyzing and designing Reaction Systems is proposed.
+  This thesis aims to bridge the gap between the theoretical foundations of Reaction Systems and their practical application. To achieve this a new software platform for modeling, analyzing and designing Reaction Systems is proposed.
 
   \begin{section}{Software Design and Key Features}
-    The core contribution here presented is a new software tool built from the ground up to support Reaction Systems modeling and analysis. Equal emphasis has been placed on performance and user experience. The software is implemented in Rust\cite{rust_2025}, a modern systems programming language chosen for its efficiency and reliability.
-    Rust’s strong performance characteristics (memory safety, speed, and concurrency support) help ensure that even larger Reaction System models can be analyzed quickly, while its emphasis on code safety and clarity makes the tool more maintainable in the long term.
+    The core contribution of this work is a new software tool built from the ground up to support Reaction Systems modeling and analysis. Equal emphasis has been placed on performance and user experience. The software is implemented in Rust\cite{rust_2025}, a modern systems programming language chosen for its efficiency and reliability.
+    Rust’s strong performance characteristics (memory safety, speed, and concurrency support) help to ensure that even larger Reaction System models can be analyzed quickly, while its emphasis on code safety and clarity makes the tool more maintainable in the long term.
 
-    The platform provides two user interfaces to accommodate different user needs. A command-line interface (CLI) is available for quick integration in already existing pipelines. The CLI allows specification of Reaction Systems and instructions over them and is easily expandable to meed the need of the programmer.
+    The platform provides two user interfaces to accommodate different user needs. A command-line interface (CLI) is available for quick integration in already existing pipelines. The CLI allows specification of Reaction Systems and instructions over them and is easily expandable to meet the need of the programmer.
 
     A graphical user interface (GUI) is also available both as standalone native application and as a static web application running on WebAssembly\cite{WebAssemblyCoreSpecification2}. The GUI lowers the learning curve for new users: instead of writing code or scripts, one can construct reactions, run simulations and view results through the same interface through interactive diagrams and controls. By providing both CLI and graphical native/web interfaces, the tool caters to a wide audience.
 
@@ -27,7 +30,7 @@
     \item Graphical interface for modeling and simulation: An interactive GUI that allows users to graphically define RS components and simulate their behavior.
     \item Trace slicing: tools for examining execution traces in detail. Trace slicing allows a user to isolate and inspect specific segments of a reaction sequence, exploring causality between produced elements or inhibited reactions.
     \item Bisimulation analysis: support for formal bisimulation analysis, which enables comparing different Reaction Systems models for behavioral equivalence. The methods are not restricted to just analyzing RS, but are available for any graph-like structure.
-    \item Conversion between Reaction Systems and Positive Reactions Systems: to better explore traces and causality, a more suitable model is provided. Conversion between systems is handled automatically and the dafaults can be fine tuned or overridden.
+    \item Conversion between Reaction Systems and Positive Reactions Systems: to better explore traces and causality, a more suitable model is provided. Conversion between systems is handled automatically and the defaults can be fine tuned or overridden.
     \end{itemize}
 
     Together, these features make the software a comprehensive environment for working with Reaction Systems. The user can construct, simulate and analyze the results through multiple lenses: from observing cyclic behaviors to checking formal equivalences and visualizing interaction networks.
