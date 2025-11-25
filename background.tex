@@ -49,7 +49,7 @@
 
     Note that \(C_i\) and \(D_i\) do not have to be disjointed.
 
-    \(W_0 = C_0\)is called the initial state of \(\pi\). If \(C_i \subseteq D_i\) for all \(i \in [1, n]\) then \(\pi\) is called context-independent. For context-independent interactive process, we can take \(C_i = \emptyset\) for all \(i = [1, n]\) without changing the state sequence.
+    \(W_0 = C_0\) is called the initial state of \(\pi\). If \(C_i \subseteq D_i\) for all \(i \in [1, n]\) then \(\pi\) is called context-independent. For context-independent interactive process, we can take \(C_i = \emptyset\) for all \(i = [1, n]\) without changing the state sequence.
 
     In a context-independent state sequence \(\tau = W_0, \ldots, W_i, W_{i+1}, \ldots, W_n \), during the transition from \(W_i\) to \(W_{i+1}\) all entities from \(W_i -res_{\mathcal{A}}(W_i)\) will not persist. This reflects the assumption of no permanency \hyperref[first_assumption]{(1)}. Thus, if \(\tau\) is not context-independent, an entity from a current state can also be sustained by the context \(C_{i+1}\).
 
@@ -62,20 +62,33 @@
 
       Five sets of reactions describe a binary counter-like behavior:
 
-      \begin{tblr}{colspec={Q[l,m]Q[l,m]Q[l,m]}, colsep=2pt}
-        \(a_j\) &= \((\{p_j\}, {dec, inc}, {p_j})\), &\(\forall j \in [0, n]\)\\
-        \(b_j\) &= \((\{inc, p_0, p_1, \ldots, p_{j-1}\}, {dec, p_j}, {p_j})\), &\(\forall j \in [0, n]\)\\
-        \(c_{j,k}\) &= \((\{inc, p_k\}, {dec, p_j}, {p_k})\), &\(\forall j, k \text{s.t.} 0 \leq j < k < n\)\\
-        \(d_j\) &= \((\{dec\}, {inc, p_0, p_1, \ldots, p_j}, {p_j})\), &\(\forall j \in [0, n]\)\\
-        \(e_{j,k}\) &= \((\{dec, p_j, p_k\}, {inc}, {p_k})\), &\(\forall j, k \text{s.t.} 0 \leq j < k < n\)\\
-      \end{tblr}
+      % \begin{center}
+      %   \begin{tblr}{colspec={Q[l,m]Q[l,m]Q[l,m]}, colsep=2pt}
+      %     \(a_j\) &= \((\{p_j\}, \{dec, inc\}, \{p_j\})\), &\(\forall j \in [0, n]\)\\
+      %     \(b_j\) &= \((\{inc, p_0, p_1, \ldots, p_{j-1}\}, \{dec, p_j\}, \{p_j\})\), &\(\forall j \in [0, n]\)\\
+      %     \(c_{j,k}\) &= \((\{inc, p_k\}, \{dec, p_j\}, \{p_k\})\), &\(\forall j, k \text{s.t.} 0 \leq j < k < n\)\\
+      %     \(d_j\) &= \((\{dec\}, \{inc, p_0, p_1, \ldots, p_j\}, \{p_j\})\), &\(\forall j \in [0, n]\)\\
+      %     \(e_{j,k}\) &= \((\{dec, p_j, p_k\}, \{inc\}, \{p_k\})\), &\(\forall j, k \text{s.t.} 0 \leq j < k < n\)\\
+      %   \end{tblr}
+      % \end{center}
+
+      \begin{center}
+        \begin{tblr}{colspec={Q[l,m]Q[l,m]Q[r,m]Q[c,m]Q[l,m]Q[l,m]}, colsep=2pt}
+          \(a_j\) &= & \((\{p_j\}, \)& \(\{dec, inc\}, \)& \(\{p_j\})\), &\(\forall j \in [0, n]\)\\
+          \(b_j\) &= & \((\{inc, p_0, p_1, \ldots, p_{j-1}\}, \)& \(\{dec, p_j\}, \)& \(\{p_j\})\), &\(\forall j \in [0, n]\)\\
+          \(c_{j,k}\) &= & \((\{inc, p_k\}, \)& \(\{dec, p_j\}, \)& \(\{p_k\})\), &\(\forall j, k \text{ s.t. } 0 \leq j < k < n\)\\
+          \(d_j\) &= & \((\{dec\}, \)& \(\{inc, p_0, p_1, \ldots, p_j\}, \)& \(\{p_j\})\), &\(\forall j \in [0, n]\)\\
+          \(e_{j,k}\) &= & \((\{dec, p_j, p_k\}, \)& \(\{inc\}, \)& \(\{p_k\})\), &\(\forall j, k \text{ s.t. } 0 \leq j < k < n\)\\
+        \end{tblr}
+      \end{center}
+
 
       where reactions \(a\) cause the bits to be restrained in the next state if there is no operation, reactions \(b\) implement the increment operation by flipping the least significant zero to one, reactions \(c\) let the more significant bits remain, reactions \(d\) implements the decrement operation by flipping to one the bits when there is no one at a lower position, and reactions \(e\) let the more significant bits remain.
 
       The complete RS \(\mathcal{B}_n\) is defined as follows: \(\mathcal{B}_n = \left(S_n, B_n\right)\) where\[S_n = \{p_0, p_1, \ldots, p_{n-1}\} \cup \{dec, inc\}\] and \[B_n = \{a_j, b_j, d_j | 0 \leq k < n\} \cup \{c_{j, k}, e_{j, k} | 0 \leq l < k < n\}\]
 
       To illustrate the system in action consider the sequence of contexts:
-      \(C_0 = \{p1, p3\},\\C_1 = \emptyset, C_2 = \{inc\}, C_3 = \{inc\}, C_4 = \{dec\}, C_5 = \{dec, inc\}\). This gives the result sequence \(\delta = \emptyset.\{p1, p3\}.\{p1, p3\}.\{p0, p1, p3\}.\{p2, p3\}.\{p0, p1, p3\}.\emptyset\) and state sequence\\\(\tau = \{p1, p3\}.\{p1, p3\}.\{p1, p3, inc\}.\{p0, p1, p3, inc\}.\{p2, p3, dec\}.\{p0, p1, p3, dec, inc\}.\emptyset\)\\that in binary representation is \(\{1010\}.\{1010\}.\{1010\}.\{1011\}.\{1100\}.\{1011\}.\{0000\}\) by ignoring \(inc\) and \(dec\).
+      \(C_0 = \{p1, p3\},\\C_1 = \emptyset, C_2 = \{inc\}, C_3 = \{inc\}, C_4 = \{dec\}, C_5 = \{dec, inc\}\). This gives the result sequence \(\delta = \emptyset.\{p1, p3\}.\{p1, p3\}.\{p0, p1, p3\}.\{p2, p3\}.\{p0, p1, p3\}.\emptyset\) and state sequence\\\(\tau = \{p1, p3\}.\{p1, p3\}.\{p1, p3, inc\}.\{p0, p1, p3, inc\}.\{p2, p3, dec\}.\{p0, p1, p3, dec, inc\}.\emptyset\)\\that in binary representation is \(\{1010_2\}.\{1010_2\}.\{1010_2\}.\{1011_2\}.\{1100_2\}.\{1011_2\}.\{0000_2\}\) by ignoring \(inc\) and \(dec\).
     \end{subsection}
 
     \begin{subsection}{Simple loops}
@@ -206,7 +219,7 @@
 
 
   \begin{section}{Positive Reaction Systems}
-    A particular kind of Reaction Systems are those without inhibitors. Such reactions are called positive and can be simply written as pairs \((R, P)\) and are equivalent to \((R, \emptyset, P)\). One can always encode any standard RS \(\mathcal{A} = (S, A)\) into an equivalent one without inhibitors. In order to track the absence of entities, a new ``negative'' entity is added for each original one. In any meaningful state \(W = D \cup C\) there will always be either one between \(a\) and \(\bar{a}\), but never both. As a consequence, for any entity \(a \in S_C\), we must assume that the context will provide either \(a\) or \(\bar{a}\).
+    A particular kind of Reaction Systems, first seen in\ \cite{Brodo_Bruni_Falaschi_Gori_Milazzo_Montagna_Pulieri_2024}, are those without inhibitors. Such reactions are called positive and can be simply written as pairs \((R, P)\) and are equivalent to \((R, \emptyset, P)\). One can always encode any standard RS \(\mathcal{A} = (S, A)\) into an equivalent one without inhibitors. In order to track the absence of entities, a new ``negative'' entity is added for each original one. In any meaningful state \(W = D \cup C\) there will always be either one between \(a\) and \(\bar{a}\), but never both. As a consequence, for any entity \(a \in S_C\), we must assume that the context will provide either \(a\) or \(\bar{a}\).
     Define \(\textbf{S} \defeq S \uplus \bar{S} \) and \( \bar{S} \defeq \{ \bar{a} \vert a \in S\}\). A subscript \(D\) or \(C\) will be used to differentiate between entities related to reaction products and related to the context.
 
     \begin{definition}[State consistency]

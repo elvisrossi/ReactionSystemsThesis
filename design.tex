@@ -1,8 +1,10 @@
 \begin{chapter}{Design}
-  Two sub-problems where identified during the design: simulating the behavior of Reaction Systems, RS processes and other operations on LTS, and interacting with the user in a intuitive manner. The programming language chosen was Rust\cite{rust_2025}, since it offered good performance and ease of development.
+  Two main problems where targeted during the design: simulating the behavior of Reaction Systems, RS processes and other operations on LTS, and interacting with the user in a intuitive manner. The programming language chosen was Rust\cite{rust_2025}, since it offered good performance and ease of development.
   Two Git repositories are provided: ReactionSystems\cite{ReactionSystemsGit} and ReactionSystemsGUI\cite{ReactionSystemsGUIGit}.
 
-  The ReactionSystems project follows a modular architecture and clear design principles to mirror the theoretical model; it implements procedures over RS as pure rust functions and is structured as a library. It also provides a crude Command Line Interface for some of the functions provided.
+  The ReactionSystems project follows a modular architecture and clear design principles to mirror the theoretical model; it implements procedures over RS as pure rust functions and is structured as a library. It also provides a crude Command Line Interface (CLI) for some of the functions provided.
+  The CLI expects a path to a file with a RS definition and some instructions to execute.
+
   The code is organized in workspaces in order to reduce compilation time and aid code reuse.
   In the second Git repository a native and web application is implemented in Rust and in WebAssembly\cite{WebAssemblyCoreSpecification2} generated from Rust code. The web application consists of only static files and as such may be served by a simple HTTP server.
 
@@ -14,7 +16,7 @@
     Since the language Rust supports object-oriented programming via traits, but lacks generic inheritance, the design of the basic building blocks of RSs are designed around this limitation.
     Usually a basic trait is provided for each of them and an extension of the trait is implemented for all structures that implement the basic trait.
 
-    Since it is not practical for a user to specify the structures in Rust, a syntax for the basic structures has been specified. This syntax tries to remain as much as possible compatible with ones from previous software. To develop the parser, LALRPOP\cite{Burgener2025} was chosen as the parser generator framework. LALRPOP code is transpiled to Rust code via macros and then compiled to machine code.
+    Since it is not practical for a user to specify the structures in Rust, a syntax for the basic structures has been specified. This syntax tries to remain compatible, as much as possible, with ones from previous software. To develop the parser, LALRPOP\cite{Burgener2025} was chosen as the parser generator framework. LALRPOP code is transpiled to Rust code via macros and then compiled to machine code.
 
     \begin{figure}[!h]
       \centering
@@ -22,14 +24,14 @@
         place/.style={rectangle,draw=blue!50,fill=blue!20,thick},
         >=Stealth, thick, every node/.style={font=\sffamily}]
 
-        \node[place] (set)     at (0,3)      {Set};
-        \node[place] (reaction)at (4,3)      {Reaction};
+        \node[place] (set)     at (0,3)    {Set};
+        \node[place] (reaction)at (4,3)    {Reaction};
         \node[place] (choices) at (8,3)    {Choices};
         \node[place] (label)   at (-2,1.5) {Label};
         \node[place] (env)     at (2,1.5)  {Environment};
         \node[place] (process) at (6,1.5)  {Process};
         \node[place] (system)  at (4,0)    {System};
-        \node[place] (graph)   at (0,0)   {Graph};
+        \node[place] (graph)   at (0,0)    {Graph};
 
         % Set
         \draw[->]              (set) -- (reaction);
@@ -223,7 +225,7 @@
       \begin{itemize}
       \item \(\texttt{concat}(a, b) \to \texttt{process}\), which returns a new process \(a \vert b\) flattened with regards to parallel composition;
       \item \(\texttt{all\_elements}(a) \to \texttt{set}\), which returns all the entities used in the process;
-      \item \(\texttt{filter\_delta}(a, \mathit{id}: \texttt{entity}) \to \texttt{set}^{?}\), which returns the first rule \(X = Q. rec(X)\) for any symbol \(X\).
+      \item \(\texttt{filter\_delta}(a, \mathit{id}: \texttt{entity}) \to \texttt{set}^{?}\), which returns the first rule \(X = Q.X\) for any symbol \(X\) and any set \(Q\).
       \end{itemize}
 
       \begin{minipage}{\textwidth}
@@ -291,7 +293,7 @@
             ;; % chktex 26
             Where \\ & \(ps\) -> {is a positive set,\\ see\ \ref{bnf_positive_set}} ==
             ;; % chktex 26
-            \(pr\) -> {is a positive reaction,\\ see\ \ref{bnf_positive_reaction}} ==
+            \(pr\) -> {is a positive\\reaction, see\ \ref{bnf_positive_reaction}} ==
             ;; % chktex 26
             \(i\) :in: \(\mathbb{N}\) == % chktex 26
             ;; % chktex 26
@@ -308,7 +310,8 @@
     \begin{subsection}{Choices}
       Since one RS process may have more than one possible next system when evaluating, there is a need to express all possible choices for next states.
       The structure choices represents all those possible continuations, associating a set with a process. The set signifies all the entities that are provided by the context by choosing that context.
-      One particular operation called \texttt{shuffle} is needed: given two choices structures \( c_1 \) and \( c_2 \) where \(c_i : \texttt{set} \rightharpoonup \texttt{process}, i \in \{1, 2\}\), it generates a new choices structure \(c'\) such that \(\forall s_1 \in \mathit{domain}(c_1) . (\forall s_2 \in \mathit{domain}(c_2) . \mathit{domain}(c') \ni (s_1 \cup s_2) \land c'(s_1 \cup s_2) = \texttt{concat}(c_1(s_1), c_2(s_2)) ) \). Intuitively it is all the possible combinations of two parallel processes.
+      One particular operation called \texttt{shuffle} is needed: given two choices structures \( c_1 \) and \( c_2 \) where \(c_i : \texttt{set} \rightharpoonup \texttt{process}, i \in \{1, 2\}\), it generates a new choices structure \(c'\) such that \(\forall s_1 \in \mathit{domain}(c_1) . (\forall s_2 \in \mathit{domain}(c_2) . \mathit{domain}(c') \ni (s_1 \cup s_2) \land c'(s_1 \cup s_2) = \texttt{concat}(c_1(s_1), c_2(s_2)) ) \), where \(\rightharpoonup\) symbolizes a partial function.
+      Intuitively it is all the possible combinations of two parallel processes.
     \end{subsection}
 
 
@@ -351,7 +354,7 @@
             | $\texttt{[} E \texttt{]}$ == % chktex 9
             ;; % chktex 26
             $E$ == ::= % chktex 26
-            | $ x = c \texttt{,} E $ ==
+            | $ x = c \texttt{,}\ E $ ==
             | $ x = c $ ==
             | $ \epsilon $ ==
             ;; % chktex 26
@@ -379,7 +382,7 @@
             | $\texttt{[} E \texttt{]}$ == % chktex 9
             ;; % chktex 26
             $E$ == ::= % chktex 26
-            | $ x = pc \texttt{,} E $ ==
+            | $ x = pc \texttt{,}\ E $ ==
             | $ x = pc $ ==
             | $ \epsilon $ ==
             ;; % chktex 26
@@ -453,8 +456,8 @@
           ;; % chktex 26
         \end{bnf}
         \captionsetup{type=table, name=\textbf{Syntax}}
-        \caption{Syntax for System}
-      \end{minipage}
+        \caption{Syntax for System}\label{bnf_system}
+      \end{minipage}\vspace{1em}
 
       While writing systems, occurs often to forget an element or swap elements names. This type of user error is particularly difficult to spot since most element names are not easily recognizable and the system grammar is particularly dense in information. A useful method to mitigate these problems is provided: \(\texttt{statistics}\). For the structure \(\texttt{System}\) a static analysis of the entities of the system is run and various parameters are checked and reported.
     \end{subsection}
@@ -474,15 +477,18 @@
               {:in:} = {\ensuremath{\in}},
             },)
             $Label$ == ::= % chktex 26
-            | {$\texttt{[Entities:} s\texttt{,}$\\$\texttt{Context:} s\texttt{,}$\\$\texttt{Reactants:} s\texttt{,}$\\$\texttt{ReactantsAbsent:} s\texttt{,}$\\$\texttt{Inhibitors:} s\texttt{,}$\\$\texttt{InhibitorsPresent:} s\texttt{,}$\\$\texttt{Products:} s \texttt{]}$} == % chktex 9
+            | {$\texttt{[ Entities:} s\texttt{,}$\\$\texttt{Context:} s\texttt{,}$\\$\texttt{Reactants:} s\texttt{,}$\\$\texttt{ReactantsAbsent:} s\texttt{,}$\\$\texttt{Inhibitors:} s\texttt{,}$\\$\texttt{InhibitorsPresent:} s\texttt{,}$\\$\texttt{Products:} s \texttt{ ]}$} == % chktex 9
             ;; % chktex 26
             Where \\ & \(s\) -> {is a set, see\ \ref{bnf_set}} ==
             ;; % chktex 26
           \end{bnf}
           \captionsetup{type=table, name=\textbf{Syntax}}
           \caption{Syntax for Label}\label{bnf_label}
-        \end{minipage}\vspace{1em}
+        \end{minipage}
+      \end{minipage}\vspace{1em}
 
+      \begin{minipage}{\textwidth}
+        \centering
         \begin{minipage}{.9\textwidth}
           \begin{bnf} (relation = {::=|:in:|->},
             comment = {==},
@@ -492,14 +498,14 @@
               {->} = {},
               {:in:} = {\ensuremath{\in}},
             },)
-            $Label$ == ::= % chktex 26
-            | {$\texttt{[Entities:} ps\texttt{,}$\\$\texttt{Context:} ps\texttt{,}$\\$\texttt{Reactants:} ps\texttt{,}$\\$\texttt{ReactantsAbsent:} ps\texttt{,}$\\$\texttt{Inhibitors:} ps\texttt{,}$\\$\texttt{InhibitorsPresent:} ps\texttt{,}$\\$\texttt{Products:} ps \texttt{]}$} == % chktex 9
+            $Positive Label$ == ::= % chktex 26
+            | {$\texttt{[ Entities:} ps\texttt{,}$\\$\texttt{Context:} ps\texttt{,}$\\$\texttt{Reactants:} ps\texttt{,}$\\$\texttt{ReactantsAbsent:} ps\texttt{,}$\\$\texttt{Inhibitors:} ps\texttt{,}$\\$\texttt{InhibitorsPresent:} ps\texttt{,}$\\$\texttt{Products:} ps \texttt{ ]}$} == % chktex 9
             ;; % chktex 26
             Where \\ & \(ps\) -> {is a positive set, see\ \ref{bnf_positive_set}} ==
             ;; % chktex 26
           \end{bnf}
           \captionsetup{type=table, name=\textbf{Syntax}}
-          \caption{Syntax for Positive Environment}\label{bnf_positive_label}
+          \caption{Syntax for Positive Label}\label{bnf_positive_label}
         \end{minipage}
       \end{minipage}
     \end{subsection}
@@ -549,7 +555,7 @@
         \caption{Syntax for \(\texttt{NodeDisplay}\)}\label{bnf_node_display}
       \end{minipage}\vspace{1em}
 
-      $\texttt{Hide}$ ignores the content of the node and prints the empty string, $\texttt{Entities}$ prints the list of entities currently available in the system,  $\texttt{MaskEntities}\ S$ prints the list of entities masked by a specified set \(S\), $\texttt{ExcludeEntities}\ S$ prints the list of entities except for the entities specified by the set \(S\), $\texttt{Context}$ prints the context of the system, $\texttt{UncommonEntities}$ prints only the entities that are not shared between all the nodes in the graph, $\texttt{MaskUncommonEntities}\ S$ prints the entities not shared between all the nodes in the graph and masked by a specified set \(S\).
+      $\texttt{Hide}$ ignores the content of the node and prints the empty string, $\texttt{Entities}$ prints the list of entities currently available in the system,  $\texttt{MaskEntities}\ S$ prints the list of entities masked by a specified set \(S\), $\texttt{ExcludeEntities}\ S$ prints the list of entities except for the entities specified by the set \(S\), $\texttt{Context}$ prints the context of the system, $\texttt{UncommonEntities}$ prints only the entities that are not shared between all the nodes in the graph, $\texttt{MaskUncommonEntities}\ S$ prints the entities not shared between all the nodes in the graph and masked by a specified set \(S\).\vspace*{\fill}
 
       \begin{minipage}{\textwidth}
         \begin{bnf}(relation-sym-map = % chktex 36
@@ -602,7 +608,7 @@
         \caption{Syntax for \(\texttt{EdgeDisplay}\)}\label{bnf_edge_display}
       \end{minipage}\vspace{1em}
 
-      Four version of each base option is available: normal, \(\texttt{Mask}\) which masks the normal set of entities with a specified set, \(\texttt{Uncommon}\) which considers only the entities that are not shared between all edges of the graph, and \(\texttt{UncommonMask}\) which combines the two functionalities. The base options return the corresponding entities available in the label.
+      Four version of each base option is available: normal, \(\texttt{Mask}\) which masks the normal set of entities with a specified set, \(\texttt{Uncommon}\) which considers only the entities that are not shared between all edges of the graph, and \(\texttt{UncommonMask}\) which combines the two functionalities. The base options return the corresponding entities available in the label.\vspace{1em}
 
       \begin{minipage}{\textwidth}
         \begin{bnf}(relation-sym-map = % chktex 36
@@ -697,7 +703,7 @@
 
       One key feature was the ability to control via a domain specific language the labels on the edges of the graphs. The developed language is able to also specify values over nodes such that nodes with equal value may be collapsed into one node with outgoing and incoming edges inherited from the original nodes. The code for the typechecking and execution is available in the library \(\texttt{assert}\).
 
-      The language has way to define subroutines or functions, has no while loop and limited for loop construction, so that the execution always terminates.
+      The language has way to define subroutines or functions, has no while loop and limited for loop construction, so that the execution always terminates.\vspace{1em}
 
       \begin{minipage}{\textwidth}
         \begin{bnf}(relation-sym-map = % chktex 36
@@ -764,6 +770,8 @@
 
       Continues on the next page.
 
+      \newpage
+
       \begin{minipage}{\textwidth}
         \begin{bnf}(relation-sym-map = % chktex 36
           {
@@ -820,7 +828,22 @@
           | $\texttt{max}$ == % chktex 35
           | $\texttt{commonsubstr}$ ==
           ;; % chktex 26
+        \end{bnf}
+        \captionsetup{type=table, name=\textbf{Syntax}}
+        \ContinuedFloat{}
+        \caption{Syntax for \(\texttt{Assert}\) (Continued)}
+      \end{minipage}
 
+      \newpage
+
+      \begin{minipage}{\textwidth}
+        \begin{bnf}(relation-sym-map = % chktex 36
+          {
+            {::=} = {\ensuremath{\Coloneqq}},
+            {->} = {},
+            {:in:} = {\ensuremath{\in}},
+          },
+          comment = {==})
           $unaryS$ == ::= % chktex 26
           | $\texttt{Entities}$ ==
           | $\texttt{length}$ ==
@@ -841,11 +864,12 @@
       \item \(\texttt{positive\_grouping}\)
       \end{itemize}
 
-      \(\texttt{relabel}\) has, in its syntax, the first token equal to \(\texttt{label}\), has as special variables \(\texttt{label}\) and \(\texttt{edge}\) that function as input, with \(\texttt{edge.label} == \texttt{label}\). It's used for grouping labels before calculating bisimilarity. \(\texttt{grouping}\) has, in its syntax, the first token equal to \(\texttt{node}\), has as special variables \(\texttt{entities}\) and \(\texttt{node}\) that function as input, with \(\texttt{node.system.SystemEntities} == \texttt{entities}\). It's used for grouping nodes. \(\texttt{positive\_relabel}\) and \(\texttt{positive\_grouping}\) have as first token \(\texttt{label}\) and \(\texttt{node}\) respectively and behave in a similar manner compared to their respective functions over RS.%
+      \(\texttt{relabel}\) has, in its syntax, the first token equal to \(\texttt{label}\); it also has as special variables \(\texttt{label}\) and \(\texttt{edge}\) that function as input, with \(\texttt{edge.label} == \texttt{label}\). It's used for grouping labels before calculating bisimilarity. \(\texttt{grouping}\) has, in its syntax, the first token equal to \(\texttt{node}\) and has as special variables \(\texttt{entities}\) and \(\texttt{node}\) that function as input, with \(\texttt{node.system.SystemEntities} == \texttt{entities}\). It's used for grouping nodes.
+      \(\texttt{positive\_relabel}\) and \(\texttt{positive\_grouping}\) have as first token \(\texttt{label}\) and \(\texttt{node}\) respectively and behave in a similar manner compared to their respective functions over RS.%
 
       The template language requires two structures to function relating to the input of the language: a type structure and a value structure. The trait \(\texttt{SpecialVariables}\) holds all the necessary functions that need to be implemented for the special variables to function. Finally the generic language can have the two functions \(\texttt{typecheck}\) and \(\texttt{execute}\) implemented.
 
-      The language is very limited and is only designed for simple algorithms since there is no scoping. Typechecking consists in only asserting acceptable types for unary and binary functions, range declaration and for all return statements to return the same type.
+      The language is very limited and is only designed for simple algorithms since there is no scoping. Typechecking consists in only asserting acceptable types for unary and binary functions, correct type in range declarations and for all return statements to have the same type.
 
       A version for Positive RS is also provided and reflects the previous grammar with basic types replaced with their positive versions.
     \end{subsection}
@@ -918,81 +942,88 @@
           | $ I $ ==
           | $ \epsilon $ ==
           ;; % chktex 26
-
-          Where \\ & \(\epsilon\) -> is the empty string ==
-          ;; % chktex 26
         \end{bnf}
         \captionsetup{type=table, name=\textbf{Syntax}}
         \caption{Syntax for Instructions}
       \end{minipage}
 
-      \begin{minipage}{\textwidth}
-        \begin{bnf}(relation-sym-map = % chktex 36
-          {
-            {::=} = {\ensuremath{\Coloneqq}},
-            {->} = {},
-            {:in:} = {\ensuremath{\in}},
-          },
-          comment = {==})
+      \newpage
 
-          $I$ == ::= % chktex 26
-          | $ \texttt{Stats > } so $ ==
-          | $ \texttt{Target > } so $ ==
-          | $ \texttt{Target ( Limit :} i \texttt{ ) > } so $ == % chktex 9
-          | $ \texttt{Run > } so $ ==
-          | $ \texttt{Run ( Limit :} i \texttt{ ) > } so $ == % chktex 9
-          | $ \texttt{Loop (} el \texttt{) > } so $ == % chktex 9
-          | $ \texttt{Frequency > } so $ ==
-          | $ \texttt{LimitFrequency ("} path \texttt{") > } so $ == % chktex 9 chktex 18
-          | $ \texttt{FastFrequency ("} path \texttt{") > } so $ == % chktex 9 chktex 18
-          | $ \texttt{Digraph > } gso $ ==
-          | $ \texttt{Digraph } group \texttt{ > } \mathit{gso} $ ==
-          | $ \texttt{Bisimilarity ("} path \texttt{") relabel } relabel \texttt{ > } so $ == % chktex 9 chktex 18
-          ;; % chktex 26
+      \scalebox{.01}{
+        \begin{minipage}{\textwidth}
+          \begin{bnf}(relation-sym-map = % chktex 36
+            {
+              {::=} = {\ensuremath{\Coloneqq}},
+              {->} = {},
+              {:in:} = {\ensuremath{\in}},
+            },
+            comment = {==})
 
-          $\mathit{gso}$ == ::= % chktex 26
-          | $g\ \texttt{\textbar}\ \mathit{gso}$ ==
-          | $g$ ==
-          ;; % chktex 26
+            $I$ == ::= % chktex 26
+            | $ \texttt{Stats > } so $ ==
+            | $ \texttt{Target > } so $ ==
+            | $ \texttt{Target ( Limit: } i \texttt{ ) > } so $ == % chktex 9
+            | $ \texttt{Run > } so $ ==
+            | $ \texttt{Run ( Limit: } i \texttt{ ) > } so $ == % chktex 9
+            | $ \texttt{Loop (} el \texttt{) > } so $ == % chktex 9
+            | $ \texttt{Frequency > } so $ ==
+            | $ \texttt{LimitFrequency ("} path \texttt{") > } so $ == % chktex 9 chktex 18
+            | $ \texttt{FastFrequency ("} path \texttt{") > } so $ == % chktex 9 chktex 18
+            | $ \texttt{Digraph > } gso $ ==
+            | $ \texttt{Digraph } group \texttt{ > } \mathit{gso} $ ==
+            | $ \texttt{Bisimilarity ("} path \texttt{") relabel } relabel \texttt{ > } so $ == % chktex 9 chktex 18
+            ;; % chktex 26
 
-          $g$ == ::= % chktex 26
-          | { $\texttt{Dot}$\\ $\texttt{\textbar}\ NodeDisplay$\\ $\texttt{\textbar}\ EdgeDisplay$\\ $\texttt{\textbar}\ NodeColor$\\ $\texttt{\textbar}\ EdgeColor$\\ $\texttt{>}\ so$ } ==
-          | { $\texttt{GraphML}$\\ $\texttt{\textbar}\ NodeDisplay$\\ $\texttt{\textbar}\ EdgeDisplay$\\ $\texttt{>}\ so$ } ==
-          | $\texttt{Serialize("} path \texttt{")}$ == % chktex 9 chktex 18
-          ;; % chktex 26
+            $\mathit{gso}$ == ::= % chktex 26
+            | $g\ \texttt{\textbar}\ \mathit{gso}$ ==
+            | $g$ ==
+            ;; % chktex 26
 
-          $so$ == ::= % chktex 26
-          | $\texttt{Print}; so$ ==
-          | $\texttt{Print}$ ==
-          | $\texttt{Save ("} path \texttt{")}; so$ == % chktex 9 chktex 18
-          | $\texttt{Save ("} path \texttt{")}$ == % chktex 9 chktex 18
-          ;; % chktex 26
+            $g$ == ::= % chktex 26
+            | { $\texttt{Dot}$\\ $\texttt{\textbar}\ NodeDisplay$\\ $\texttt{\textbar}\ EdgeDisplay$\\ $\texttt{\textbar}\ NodeColor$\\ $\texttt{\textbar}\ EdgeColor$\\ $\texttt{>}\ so$ } ==
+            | { $\texttt{GraphML}$\\ $\texttt{\textbar}\ NodeDisplay$\\ $\texttt{\textbar}\ EdgeDisplay$\\ $\texttt{>}\ so$ } ==
+            | $\texttt{Serialize("} path \texttt{")}$ == % chktex 9 chktex 18
+            ;; % chktex 26
 
-          Where \\ & \(path\) -> is a path to a file ==
-          ;; % chktex 26
-          \(NodeDisplay\) -> follows the syntax from\ \ref{bnf_node_display} ==
-          ;; % chktex 26
-          \(EdgeDisplay\) -> follows the syntax from\ \ref{bnf_edge_display} ==
-          ;; % chktex 26
-          \(NodeColor\) -> follows the syntax from\ \ref{bnf_node_color} ==
-          ;; % chktex 26
-          \(EdgeColor\) -> follows the syntax from\ \ref{bnf_edge_color} ==
-          ;; % chktex 26
-          \(group\) -> is a group function with syntax from\ \ref{bnf_assert} ==
-          ;; % chktex 26
-          \(relabel\) -> is a relabel function with syntax from\ \ref{bnf_assert} ==
-          ;; % chktex 26
-          \(i\) :in: $\mathbb{N}$ == % chktex 26
-          ;; % chktex 26
-          \(el\) -> is a string that symbolizes an element ==
-          ;; % chktex 26
-          \(path\) -> is a path to a file ==
-          ;; % chktex 26
-        \end{bnf}
-        \captionsetup{type=table, name=\textbf{Syntax}}
-        \ContinuedFloat{}
-        \caption{Syntax for Instructions (Continued)}
-      \end{minipage}
+            $so$ == ::= % chktex 26
+            | $\texttt{Print}; so$ ==
+            | $\texttt{Print}$ ==
+            | $\texttt{Save ("} path \texttt{")};\ so$ == % chktex 9 chktex 18
+            | $\texttt{Save ("} path \texttt{")}$ == % chktex 9 chktex 18
+            ;; % chktex 26
+
+            Where \\ & \(path\) -> is a path to a file ==
+            ;; % chktex 26
+            \(NodeDisplay\) -> follows the syntax from\ \ref{bnf_node_display} ==
+            ;; % chktex 26
+            \(EdgeDisplay\) -> follows the syntax from\ \ref{bnf_edge_display} ==
+            ;; % chktex 26
+            \(NodeColor\) -> follows the syntax from\ \ref{bnf_node_color} ==
+            ;; % chktex 26
+            \(EdgeColor\) -> follows the syntax from\ \ref{bnf_edge_color} ==
+            ;; % chktex 26
+            \(group\) -> is a group function with syntax from\ \ref{bnf_assert} ==
+            ;; % chktex 26
+            \(relabel\) -> is a relabel function with syntax from\ \ref{bnf_assert} ==
+            ;; % chktex 26
+            \(i\) :in: $\mathbb{N}$ == % chktex 26
+            ;; % chktex 26
+            \(el\) -> is a string that symbolizes an element ==
+            ;; % chktex 26
+            \(path\) -> is a path to a file ==
+            ;; % chktex 26
+            \(\epsilon\) -> is the empty string ==
+            ;; % chktex 26
+            \(System\) -> is a system, see\ \ref{bnf_system} ==
+            ;; % chktex 26
+          \end{bnf}
+          \captionsetup{type=table, name=\textbf{Syntax}}
+          \ContinuedFloat{}
+          \caption{Syntax for Instructions (Continued)}
+        \end{minipage}
+      }
+
+      \newpage
 
       The instruction \(\texttt{Stats}\) returns static information and statistics about the system. \(\texttt{Target}\) and \(\texttt{Run}\) return the results of the function with the same name defined in section\ \ref{function_target}. \(\texttt{Loop}\) returns the result of the function \(\texttt{lollipops\_only\_loop\_named}\) described in the same section. \(\texttt{Frequency}\) returns the results of \(\texttt{naive\_frequency}\) as described in section\ \ref{function_naive_frequency}. \(\texttt{LimitFrequency}\) and \(\texttt{FastFrequency}\) require a path to an experiment, with syntax described in\ \ref{experiment}, and they return the result of \(\texttt{limit\_frequency}\) and \(\texttt{fast\_frequency}\) respectively. \(\texttt{Digraph}\) may take a function \(group\) that groups together nodes that have the same output, described in section\ \ref{bisimilarity_design}. The graphs can be either saved as a Dot or GraphML file or serialized directly. \(\texttt{Bisimilarity}\) takes a path to another instruction file, whose instructions are ignored, and returns if the two systems are bisimilar. The results can be saved to a file or print to screen or both.
     \end{subsection}

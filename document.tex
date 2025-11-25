@@ -258,7 +258,23 @@
 
 \begin{document}
 
+\pagenumbering{roman}
+
+\input{title_page}
+
+\newpage
+\null % chktex 1
+\vspace*{\fill}
+\begin{center}
+  \color{black!30}\pgfornament[width=2cm]{123}
+\end{center}
+\newpage
+
 \tableofcontents
+
+\newpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
 
 \input{introduction}
 \input{background}
