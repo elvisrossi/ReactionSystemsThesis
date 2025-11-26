@@ -88,7 +88,7 @@
       The complete RS \(\mathcal{B}_n\) is defined as follows: \(\mathcal{B}_n = \left(S_n, B_n\right)\) where\[S_n = \{p_0, p_1, \ldots, p_{n-1}\} \cup \{dec, inc\}\] and \[B_n = \{a_j, b_j, d_j | 0 \leq k < n\} \cup \{c_{j, k}, e_{j, k} | 0 \leq l < k < n\}\]
 
       To illustrate the system in action consider the sequence of contexts:
-      \(C_0 = \{p1, p3\},\\C_1 = \emptyset, C_2 = \{inc\}, C_3 = \{inc\}, C_4 = \{dec\}, C_5 = \{dec, inc\}\). This gives the result sequence \(\delta = \emptyset.\{p1, p3\}.\{p1, p3\}.\{p0, p1, p3\}.\{p2, p3\}.\{p0, p1, p3\}.\emptyset\) and state sequence\\\(\tau = \{p1, p3\}.\{p1, p3\}.\{p1, p3, inc\}.\{p0, p1, p3, inc\}.\{p2, p3, dec\}.\{p0, p1, p3, dec, inc\}.\emptyset\)\\that in binary representation is \(\{1010_2\}.\{1010_2\}.\{1010_2\}.\{1011_2\}.\{1100_2\}.\{1011_2\}.\{0000_2\}\) by ignoring \(inc\) and \(dec\).
+      \(C_0 = \{p1, p3\},\\C_1 = \emptyset, C_2 = \{inc\}, C_3 = \{inc\}, C_4 = \{dec\}, C_5 = \{dec, inc\}\). This gives the result sequence \(\delta = \emptyset.\{p1, p3\}.\{p1, p3\}.\{p0, p1, p3\}.\{p2, p3\}.\{p0, p1, p3\}.\emptyset\) and state sequence\\\(\tau = \{p1, p3\}.\{p1, p3\}.\{p1, p3, inc\}.\{p0, p1, p3, inc\}.\{p2, p3, dec\}.\{p0, p1, p3, dec, inc\}.\emptyset\),\\in binary representation is \(\{1010_2\}.\{1010_2\}.\{1010_2\}.\{1011_2\}.\{1100_2\}.\{1011_2\}.\{0000_2\}\) by ignoring \(inc\) and \(dec\).
     \end{subsection}
 
     \begin{subsection}{Simple loops}
@@ -226,6 +226,7 @@
       A set \(\textbf{W} \subseteq \textbf{S}\) is non-contradictory if for all entities \(a \in S\) it holds that \(\{a, \bar{a}\} \nsubseteq \textbf{W}\). A non-contradictory state \(\textbf{W} \subseteq \textbf{S}\) is consistent if, for any entity \(a \in S\), either \(a \in \textbf{W}\) or \(\bar{a} \in \textbf{W}\) holds.
     \end{definition}
 
+
     \begin{definition}[Positive RS\cite{Brodo_Bruni_Falaschi_Gori_Milazzo_2025}]\label{positive_rs}
       A Positive RS is a Reaction System \(\mathcal{A}^+ = (\textbf{S}, A)\) that satisfies the following conditions:
       \begin{enumerate}
@@ -254,7 +255,7 @@
           A^+_{neg} &\defeq \bigcup_{a \in S} \left\{ (\textbf{T}, \bar{a}) \vert \textbf{T} \in \mathit{Proh}_{\mathcal{A}}(a) \right\}
         \end{align*}
 
-        The resulting \({\mathcal{A}}^+\) satisfies the two conditions from Definition\ \ref{positive_rs} and thus is a Positive RS.\@
+        The resulting \({\mathcal{A}}^+\) satisfies the two conditions from Definition\ \ref{positive_rs} and thus is a Positive RS.%
       \end{definition}
 
       The states of the new Positive RS are in bijection with the states of the old system and can be proven that the two systems compute exactly the same states at each step.
@@ -517,7 +518,7 @@
         \item Refining \(\pi\) with respect to \(B\) splits a block \(D \in \pi\) into two blocks \(D_1 = D \cap pre(B)\) and \(D_2 = D \setminus pre(B)\) if, and only if, \(D\) is not stable with respect to \(B\).
         \item Refining further \(\texttt{split}(B, \pi)\) with respect to \(I \setminus B\) splits the block \(D_1\) into two blocks \(D_{11} = D_1 \cap pre(S \setminus B) \) and \(D_{12} = D_1 \setminus D_{11}\) if, and only if, \(D_1\) is not stable with respect to \(S \setminus B\).
         \end{itemize}
-        \begin{figure}[!h]
+        \begin{figure}[!ht]
           \centering
           \begin{tikzpicture}[
             place/.style={rectangle,draw=blue!50,fill=blue!20,thick,
@@ -560,8 +561,8 @@
           Finally for every process \(P\) in \(T\) we create in \(T'\) a newly added path of length \(l+1\) starting from \(P\).
           A small optimization can be added by sorting the frequency of labels and thus creating the lowest possible number of auxiliary nodes for each label.
 
-          \begin{figure}[!h]
-            \begin{tblr}{width=\linewidth, colspec={X[1,c]X[4,c]}}
+          \begin{figure}[!ht]
+            \begin{tblr}{width=\linewidth, colspec={Q[m,c]X[4,c]}}
               \begin{minipage}{.3\textwidth}
                 \begin{tikzpicture}[auto,
                   place/.style={rectangle,draw=blue!50,fill=blue!20,thick,inner sep=0pt,
@@ -578,62 +579,60 @@
                 \end{tikzpicture}
               \end{minipage}
               &
-                \begin{minipage}{.48\textwidth}
-                  \begin{tikzpicture}[auto,
-                    place/.style={rectangle,draw=blue!50,fill=blue!20,thick,inner sep=0pt,
-                      minimum size=6mm},
-                    new/.style={circle,draw=blue!30,fill=blue!10,thick,inner sep=0pt,
-                      minimum size=6mm},
-                    pre/.style={<-,shorten <=1pt,>={Stealth[round]},semithick},
-                    post/.style={->,shorten >=1pt,>={Stealth[round]},semithick}
-                    ]
-                    \node[place] (P1) {\(P_1\)};
-                    \node[new] (p1e1) [above=of P1] {}
-                    edge [pre] (P1);
-                    \node[new] (p1e2) [above=of p1e1] {}
-                    edge [pre] (p1e1);
-                    \node[new] (p1e3) [above=of p1e2] {}
-                    edge [pre] (p1e2);
+                \begin{tikzpicture}[auto,
+                  place/.style={rectangle,draw=blue!50,fill=blue!20,thick,inner sep=0pt,
+                    minimum size=6mm},
+                  new/.style={circle,draw=blue!30,fill=blue!10,thick,inner sep=0pt,
+                    minimum size=6mm},
+                  pre/.style={<-,shorten <=1pt,>={Stealth[round]},semithick},
+                  post/.style={->,shorten >=1pt,>={Stealth[round]},semithick}
+                  ]
+                  \node[place] (P1) {\(P_1\)};
+                  \node[new] (p1e1) [above=of P1] {}
+                  edge [pre] (P1);
+                  \node[new] (p1e2) [above=of p1e1] {}
+                  edge [pre] (p1e1);
+                  \node[new] (p1e3) [above=of p1e2] {}
+                  edge [pre] (p1e2);
 
-                    \node[new] (a1) [right=of P1] {}
-                    edge [pre] (P1);
-                    \node[new] (a1e1) [above=of a1] {}
-                    edge [pre] (a1);
+                  \node[new] (a1) [right=of P1] {}
+                  edge [pre] (P1);
+                  \node[new] (a1e1) [above=of a1] {}
+                  edge [pre] (a1);
 
-                    \node[place] (P2) [right=of a1] {\(P_2\)}
-                    edge [pre] (a1);
-                    \node[new] (p2e1) [above=of P2] {}
-                    edge [pre] (P2);
-                    \node[new] (p2e2) [above=of p2e1] {}
-                    edge [pre] (p2e1);
-                    \node[new] (p2e3) [above=of p2e2] {}
-                    edge [pre] (p2e2);
+                  \node[place] (P2) [right=of a1] {\(P_2\)}
+                  edge [pre] (a1);
+                  \node[new] (p2e1) [above=of P2] {}
+                  edge [pre] (P2);
+                  \node[new] (p2e2) [above=of p2e1] {}
+                  edge [pre] (p2e1);
+                  \node[new] (p2e3) [above=of p2e2] {}
+                  edge [pre] (p2e2);
 
-                    \node[new] (a2) [below=of P2] {}
-                    edge [pre] (P2);
-                    \node[new] (a2e1) [right=of a2] {}
-                    edge [pre] (a2);
-                    \node[new] (a2e2) [right=of a2e1] {}
-                    edge [pre] (a2e1);
+                  \node[new] (a2) [below=of P2] {}
+                  edge [pre] (P2);
+                  \node[new] (a2e1) [right=of a2] {}
+                  edge [pre] (a2);
+                  \node[new] (a2e2) [right=of a2e1] {}
+                  edge [pre] (a2e1);
 
-                    \node[new] (a3) [below=of a1] {}
-                    edge [pre] (P1);
-                    \node[new] (a3e1) [below=of a3] {}
-                    edge [pre] (a3);
-                    \node[new] (a3e2) [below=of a3e1] {}
-                    edge [pre] (a3e1);
+                  \node[new] (a3) [below=of a1] {}
+                  edge [pre] (P1);
+                  \node[new] (a3e1) [below=of a3] {}
+                  edge [pre] (a3);
+                  \node[new] (a3e2) [below=of a3e1] {}
+                  edge [pre] (a3e1);
 
-                    \node[place] (P3) [below=of a2] {\(P_3\)}
-                    edge [pre] (a2)
-                    edge [pre] (a3);
-                    \node[new] (p3e1) [right=of P3] {}
-                    edge [pre] (P3);
-                    \node[new] (p3e2) [right=of p3e1] {}
-                    edge [pre] (p3e1);
-                    \node[new] (p3e3) [right=of p3e2] {}
-                    edge [pre] (p3e2);
-                  \end{tikzpicture}
-                \end{minipage} \\
+                  \node[place] (P3) [below=of a2] {\(P_3\)}
+                  edge [pre] (a2)
+                  edge [pre] (a3);
+                  \node[new] (p3e1) [right=of P3] {}
+                  edge [pre] (P3);
+                  \node[new] (p3e2) [right=of p3e1] {}
+                  edge [pre] (p3e1);
+                  \node[new] (p3e3) [right=of p3e2] {}
+                  edge [pre] (p3e2);
+                \end{tikzpicture}
             \end{tblr}
             \caption{Example of reduction}
           \end{figure}

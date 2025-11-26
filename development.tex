@@ -122,8 +122,10 @@ pub type PositiveSystemGraph =
 
 
     \begin{subsection}{Bisimilarity and Bisimulation}
-      The algorithms described in section\ \ref{bisimulation} are implemented in the files in the folder \href{https://github.com/elvisrossi/ReactionSystems/tree/master/bisimilarity/src}{\(\texttt{bisimilarity/src}\)}.
-      They are implemented for arbitrary graphs that satisfy some traits defined in the library petgraph. For example from file \href{https://github.com/elvisrossi/ReactionSystems/blob/master/bisimilarity/src/bisimilarity_kanellakis_smolka.rs}{\(\texttt{bisimilarity\_kanellakis\_smolka.rs}\)}:
+      The algorithms described in section\ \ref{bisimulation} are implemented in the files in the folder\\
+      \href{https://github.com/elvisrossi/ReactionSystems/tree/master/bisimilarity/src}{\(\texttt{bisimilarity/src}\)}.
+      They are implemented for arbitrary graphs that satisfy some traits defined in the library petgraph. For example from file\\
+      \href{https://github.com/elvisrossi/ReactionSystems/blob/master/bisimilarity/src/bisimilarity_kanellakis_smolka.rs}{\(\texttt{bisimilarity\_kanellakis\_smolka.rs}\)}:
 
 \begin{minted}{Rust}
 pub fn bisimilarity<'a, G>(graph_a: &'a G, graph_b: &'a G) -> bool
@@ -192,10 +194,10 @@ Reactions: (
 \end{minted}
 
       If we omit the last dot in the context: \mint{text}|Context: [{}.{inc}.{inc}.{dec}.{dec,inc}nill]| we obtain the following error message:\\\\
-\texttt{Unrecognized token~}\rd{\texttt{"nill"}}\texttt{between positions 82 and 86.}\\
-\texttt{Expected: (}\green{\texttt{"."}}\texttt{)}\\
+\texttt{Unrecognized token~}\rd{\texttt{"nill"}}\texttt{between positions 82 and 86.}\\ % chktex 18
+\texttt{Expected: (}\green{\texttt{"."}}\texttt{)}\\ % chktex 18 chktex 9
 \texttt{Line 3 position 40 to 44:}\\
-\blue{\texttt{3 |}}\green{\texttt{Context: [\{\}.\{inc\}.\{inc\}.\{dec\}.\{dec,inc\}}}\rd{\texttt{nill}}\texttt{]}\\
+\blue{\texttt{3 |}}\green{\texttt{Context: [\{\}.\{inc\}.\{inc\}.\{dec\}.\{dec,inc\}}}\rd{\texttt{nill}}\texttt{]}\\ % chktex 9
       \phantom{\texttt{be}}\blue{\texttt{|}}\texttt{~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}\rd{\texttt{\^{}~~\^{}}}\\
 
 

@@ -5,7 +5,8 @@
 %% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - %%
 
 \usepackage[
-  centering
+  centering,
+  head=13.6pt
 ]{geometry}
 \geometry{a4paper}
 
@@ -23,10 +24,11 @@
 
 \usepackage[a-3u,mathxmp]{pdfx}
 
+\directlua{pdf.setminorversion(5)}
+
 \pagestyle{headings}
 
 \usepackage{scrlayer-scrpage}
-\usepackage{csquotes} %% correct language also for citations
 
 \ifoot[]{}
 \cfoot[]{}
@@ -61,7 +63,7 @@
 \usepackage{stmaryrd}
 \usepackage{ebproof}
 \usepackage{xfrac}
-\usepackage{caption}
+%\usepackage{caption}
 \usepackage{bytefield}
 
 %% plot packages
@@ -81,6 +83,7 @@
 \usepackage{makeidx}
 
 %% load last
+\usepackage{csquotes} %% correct language also for citations
 \usepackage{hyperref} %% links for table of contents, load last
 \usepackage{bookmark} %% for better table of contents
 
@@ -166,7 +169,7 @@
  bodyfont=\normalfont,
  qed=\qedsymbol % chktex 1
 ]{steo}
-\declaretheorem[numbered=no, style=steo]{theorem}
+\declaretheorem[numbered=yes, style=steo]{theorem}
 
 \declaretheoremstyle[
  headfont=\normalfont\bfseries,
@@ -174,14 +177,14 @@
  bodyfont=\normalfont,
  qed=\qedsymbol % chktex 1
 ]{slem}
-\declaretheorem[numbered=no, style=slem]{lemma}
+\declaretheorem[numbered=yes, style=slem]{lemma}
 
 \declaretheoremstyle[
   headfont=\normalfont\bfseries,
   notefont=\mdseries,
   bodyfont=\normalfont,
 ]{sdef}
-\declaretheorem[numbered=no, style=sdef]{definition}
+\declaretheorem[numbered=yes, style=sdef]{definition}
 
 \declaretheoremstyle[
   spaceabove=-6pt,
@@ -192,7 +195,7 @@
   qed=$\blacksquare$,
   headpunct={:}
 ]{sprf}
-\declaretheorem[name={Proof}, style=sprf, numbered=no]{prof}
+\declaretheorem[name={Proof}, style=sprf, numbered=yes]{prof}
 
 %% ......................................................................... %%
 %% local changes

@@ -40,6 +40,7 @@ fn bisimilar_paige_tarjan_3() {
 
     The structure of the two graph can be seen in figure\ \ref{graph_paige_tarjan_3}.
 
+    \noindent
     \begin{minipage}{\textwidth}
       \centering
       \begin{minipage}[b][][b]{0.25\textwidth}
@@ -58,12 +59,13 @@ fn bisimilar_paige_tarjan_3() {
 
     The graphs have been generated using ReactionSystemsGUI using the nodes displayed in figure\ \ref{generating_graphs}. Note that to differentiate the two edges exiting \(\texttt{node-1}\) additional entities \(\texttt{left}\) and \(\texttt{right}\) are used, but are not displayed because the function for displaying the edges masks only for \(\texttt{edge-1}\) and \(\texttt{edge-2}\).
 
+    \noindent
     \begin{minipage}{\textwidth}
       \centering
       \begin{minipage}{0.8\textwidth}
         \centering
         \includegraphics[width=\textwidth]{figures/straight_gui.png}
-      \end{minipage}%
+      \end{minipage}
 
       \begin{minipage}{0.8\textwidth}
         \centering
@@ -153,6 +155,7 @@ After 5 steps we arrive at state:
 
     The execution of these examples is more computationally expensive with increasing \(n\). The execution of \(\texttt{mex10.system}\) took 78791.202 milliseconds to run the instruction\ \ref{instruction_mex} which generate the graph of the system, converts it to dot format and saves it.\vspace{1em}
 
+    \noindent
     \begin{minipage}{\textwidth}
 \begin{minted}{Text}
 Digraph > Dot
@@ -189,7 +192,7 @@ Digraph > Dot
     \item \(\texttt{alloc::collections::btree::map::IntoIter::dying\_next}\) that took 14\% of samples,
     \item \(\texttt{<alloc::collections::btree::map::Iter as}\\\texttt{ core::iter::traits::iterator::Iterator>::next}\) that took 11\% of samples,
     \item \(\texttt{alloc::collections::btree::append::::bulk\_push}\) that took 11\% of samples,
-    \item \(\texttt{alloc::collections::btree::map::BTreeMap::bulk\_build\_from\_sorted\_iter}\) that took 5,1\% of samples,
+    \item {\small\(\texttt{alloc::collections::btree::map::BTreeMap::bulk\_build\_from\_sorted\_iter}\)}\\ that took 5,1\% of samples,
     \item \(\ldots\)
     \end{itemize}
 

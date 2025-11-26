@@ -98,12 +98,9 @@
 
       Both normal sets and positive sets satisfy this interface, but have additional specific functions for converting between the two.
 
-      The syntax for sets is:
-
+      The syntax for sets is:\\
       \begin{minipage}{\textwidth}
-        \centering
-        \begin{minipage}[b][][b]{.38\textwidth}
-          \centering
+        \begin{minipage}[b][][b]{.48\textwidth}
           \begin{bnf}(relation-sym-map = % chktex 36
             {
               {::=} = {\ensuremath{\Coloneqq}},
@@ -126,8 +123,7 @@
           \captionsetup{type=table, name=\textbf{Syntax}}
           \caption{Syntax for Set}\label{bnf_set}
         \end{minipage}%
-        \begin{minipage}[b][][b]{.58\textwidth}
-          \centering
+        \begin{minipage}[b][][b]{.5\textwidth}
           \begin{bnf}(relation-sym-map = % chktex 36
             {
               {::=} = {\ensuremath{\Coloneqq}},
@@ -170,52 +166,47 @@
       \begin{itemize}
       \item \(\texttt{find\_loop}(\mathit{rs}: \texttt{[reaction]}, \mathit{entities}: \texttt{set}, q: \texttt{set}) \to \texttt{([set], [set])}\), which finds a loop and returns the sets that make up the prefix and the loop separately;
       \item \(\texttt{find\_only\_loop}(\mathit{rs}: \texttt{[reaction]}, \mathit{entities}: \texttt{set}, q: \texttt{set}) \to \texttt{[set]}\), which finds a loop and returns the sets that form it;
-      \item \(\texttt{find\_prefix\_len\_loop}(\mathit{rs}: \texttt{[reaction]}, \mathit{entities}: \texttt{set}, q: \texttt{set}) \to \texttt{(integer, [set])}\), which finds a loop and returns the length of the prefix and the sequence of sets that compose the loop;
+      \item \(\texttt{find\_prefix\_len\_loop}(\mathit{rs}: \texttt{[reaction]}, \mathit{entities}: \texttt{set}, q: \texttt{set})\)\\\(\to \texttt{(integer, [set])}\), which finds a loop and returns the length of the prefix and the sequence of sets that compose the loop;
       \end{itemize}
-
-      \begin{minipage}{\textwidth}
+      \begin{minipage}{0.96\textwidth}
         \centering
-        \begin{minipage}{\textwidth}
-          \centering
-          \begin{bnf} (relation = {::=|:in:|->},
-            comment = {==},
-            relation-sym-map = % chktex 36
-            {
-              {::=} = {\ensuremath{\Coloneqq}},
-              {->} = {},
-              {:in:} = {\ensuremath{\in}},
-            },)
-            $Reaction$ == ::= % chktex 26
-            | $\texttt{[} s \texttt{,}\  s \texttt{,}\  s \texttt{]}$ == % chktex 26 chktex 9
-            | $\texttt{[r:}\ s \texttt{, i:}\ s \texttt{, p:}\ s \texttt{]}$ == % chktex 26 chktex 9
-            ;; % chktex 26
-            Where \\ & \(s\) -> {is a set, see\ \ref{bnf_set}} == % chktex 26
-            ;; % chktex 26
-          \end{bnf}
-          \captionsetup{type=table, name=\textbf{Syntax}}
-          \caption{Syntax for Reaction}\label{bnf_reaction}
-        \end{minipage}\vspace{2em}
-
-        \begin{minipage}{\textwidth}
-          \centering
-          \begin{bnf} (relation = {::=|:in:|->},
-            comment = {==},
-            relation-sym-map = % chktex 36
-            {
-              {::=} = {\ensuremath{\Coloneqq}},
-              {->} = {},
-              {:in:} = {\ensuremath{\in}},
-            },)
-            $PositiveReaction$ == ::= % chktex 26
-            | $\texttt{[} s \texttt{,}\  s \texttt{,}\  s \texttt{]}$ == % chktex 26 chktex 9
-            | $\texttt{[r:}\ s \texttt{, i:}\ s \texttt{, p:}\ s \texttt{]}$ == % chktex 26 chktex 9
-            ;; % chktex 26
-            Where \\ & \(s\) -> {is a positive set, see\ \ref{bnf_positive_set}} == % chktex 26
-            ;; % chktex 26
-          \end{bnf}
-          \captionsetup{type=table, name=\textbf{Syntax}}
-          \caption{Syntax for Positive Reaction}\label{bnf_positive_reaction}
-        \end{minipage}
+        \begin{bnf} (relation = {::=|:in:|->},
+          comment = {==},
+          relation-sym-map = % chktex 36
+          {
+            {::=} = {\ensuremath{\Coloneqq}},
+            {->} = {},
+            {:in:} = {\ensuremath{\in}},
+          },)
+          $Reaction$ == ::= % chktex 26
+          | $\texttt{[} s \texttt{,}\  s \texttt{,}\  s \texttt{]}$ == % chktex 26 chktex 9
+          | $\texttt{[r:}\ s \texttt{, i:}\ s \texttt{, p:}\ s \texttt{]}$ == % chktex 26 chktex 9
+          ;; % chktex 26
+          Where \\ & \(s\) -> {is a set, see\ \ref{bnf_set}} == % chktex 26
+          ;; % chktex 26
+        \end{bnf}
+        \captionsetup{type=table, name=\textbf{Syntax}}
+        \caption{Syntax for Reaction}\label{bnf_reaction}
+      \end{minipage}\vspace{2em}\\
+      \begin{minipage}{0.96\textwidth}
+        \centering
+        \begin{bnf} (relation = {::=|:in:|->},
+          comment = {==},
+          relation-sym-map = % chktex 36
+          {
+            {::=} = {\ensuremath{\Coloneqq}},
+            {->} = {},
+            {:in:} = {\ensuremath{\in}},
+          },)
+          $PositiveReaction$ == ::= % chktex 26
+          | $\texttt{[} s \texttt{,}\  s \texttt{,}\  s \texttt{]}$ == % chktex 26 chktex 9
+          | $\texttt{[r:}\ s \texttt{, i:}\ s \texttt{, p:}\ s \texttt{]}$ == % chktex 26 chktex 9
+          ;; % chktex 26
+          Where \\ & \(s\) -> {is a positive set, see\ \ref{bnf_positive_set}} == % chktex 26
+          ;; % chktex 26
+        \end{bnf}
+        \captionsetup{type=table, name=\textbf{Syntax}}
+        \caption{Syntax for Positive Reaction}\label{bnf_positive_reaction}
       \end{minipage}
     \end{subsection}
 
@@ -228,81 +219,80 @@
       \item \(\texttt{filter\_delta}(a, \mathit{id}: \texttt{entity}) \to \texttt{set}^{?}\), which returns the first rule \(X = Q.X\) for any symbol \(X\) and any set \(Q\).
       \end{itemize}
 
-      \begin{minipage}{\textwidth}
-        \begin{minipage}[b][][b]{.48\textwidth}
-          \begin{bnf} (relation = {::=|:in:|->},
-            comment = {==},
-            relation-sym-map = % chktex 36
-            {
-              {::=} = {\ensuremath{\Coloneqq}},
-              {->} = {},
-              {:in:} = {\ensuremath{\in}},
-            },)
-            $Process$ == ::= % chktex 26
-            | $\texttt{[} P \texttt{]}$ == % chktex 9
-            ;; % chktex 26
-            $P$ == ::= % chktex 26
-            | $ C \texttt{,} P $ ==
-            | $ C $ ==
-            ;; % chktex 26
-            $C$ == ::= % chktex 26
-            | $ \texttt{(} C \texttt{)} $ == % chktex 9 chktex 10
-            | $ \texttt{nill} $ ==
-            | $ s \texttt{.} C $ ==
-            | $ C \texttt{+} C $ ==
-            | $ \texttt{?} r \texttt{?.} C $ ==
-            | $ \texttt{<} i \texttt{,} C \texttt{>.} C $ ==
-            | $ x $ ==
-            ;; % chktex 26
-            Where \\ & \(s\) -> {is a set,\\ see\ \ref{bnf_set}} ==
-            ;; % chktex 26
-            \(r\) -> {is a reaction,\\ see\ \ref{bnf_reaction}} ==
-            ;; % chktex 26
-            \(i\) :in: \(\mathbb{N}\) == % chktex 26
-            ;; % chktex 26
-            \(x\) -> is a variable name ==
-            ;; % chktex 26
-          \end{bnf}
-          \captionsetup{type=table, name=\textbf{Syntax}}
-          \caption{Syntax for Process}\label{bnf_process}
-        \end{minipage}
-        \begin{minipage}[b][][b]{.48\textwidth}
-          \begin{bnf} (relation = {::=|:in:|->},
-            comment = {==},
-            relation-sym-map = % chktex 36
-            {
-              {::=} = {\ensuremath{\Coloneqq}},
-              {->} = {},
-              {:in:} = {\ensuremath{\in}},
-            },)
-            $PositiveP$ == ::= % chktex 26
-            | $\texttt{[} P \texttt{]}$ == % chktex 9
-            ;; % chktex 26
-            $P$ == ::= % chktex 26
-            | $ C \texttt{,} P $ ==
-            | $ C $ ==
-            ;; % chktex 26
-            $C$ == ::= % chktex 26
-            | $ \texttt{(} C \texttt{)} $ == % chktex 9 chktex 10
-            | $ \texttt{nill} $ ==
-            | $ ps \texttt{.} C $ ==
-            | $ C \texttt{+} C $ ==
-            | $ \texttt{?} pr \texttt{?.} C $ ==
-            | $ \texttt{<} i \texttt{,} C \texttt{>.} C $ ==
-            | $ x $ ==
-            ;; % chktex 26
-            Where \\ & \(ps\) -> {is a positive set,\\ see\ \ref{bnf_positive_set}} ==
-            ;; % chktex 26
-            \(pr\) -> {is a positive\\reaction, see\ \ref{bnf_positive_reaction}} ==
-            ;; % chktex 26
-            \(i\) :in: \(\mathbb{N}\) == % chktex 26
-            ;; % chktex 26
-            \(x\) -> is a variable name ==
-            ;; % chktex 26
-          \end{bnf}
-          \captionsetup{type=table, name=\textbf{Syntax}}
-          \caption{Syntax for Positive Process}\label{bnf_positive_process}
-        \end{minipage}
+      \noindent
+      \begin{minipage}[b][][b]{.48\textwidth}
+        \begin{bnf} (relation = {::=|:in:|->},
+          comment = {==},
+          relation-sym-map = % chktex 36
+          {
+            {::=} = {\ensuremath{\Coloneqq}},
+            {->} = {},
+            {:in:} = {\ensuremath{\in}},
+          },)
+          $Process$ == ::= % chktex 26
+          | $\texttt{[} P \texttt{]}$ == % chktex 9
+          ;; % chktex 26
+          $P$ == ::= % chktex 26
+          | $ C \texttt{,} P $ ==
+          | $ C $ ==
+          ;; % chktex 26
+          $C$ == ::= % chktex 26
+          | $ \texttt{(} C \texttt{)} $ == % chktex 9 chktex 10
+          | $ \texttt{nill} $ ==
+          | $ s \texttt{.} C $ ==
+          | $ C \texttt{+} C $ ==
+          | $ \texttt{?} r \texttt{?.} C $ ==
+          | $ \texttt{<} i \texttt{,} C \texttt{>.} C $ ==
+          | $ x $ ==
+          ;; % chktex 26
+          Where \\ & \(s\) -> {is a set,\\ see\ \ref{bnf_set}} ==
+          ;; % chktex 26
+          \(r\) -> {is a reaction,\\ see\ \ref{bnf_reaction}} ==
+          ;; % chktex 26
+          \(i\) :in: \(\mathbb{N}\) == % chktex 26
+          ;; % chktex 26
+          \(x\) -> is a variable name ==
+          ;; % chktex 26
+        \end{bnf}
+        \captionsetup{type=table, name=\textbf{Syntax}}
+        \caption{Syntax for Process}\label{bnf_process}
+      \end{minipage}%
+      \begin{minipage}[b][][b]{.48\textwidth}
+        \begin{bnf} (relation = {::=|:in:|->},
+          comment = {==},
+          relation-sym-map = % chktex 36
+          {
+            {::=} = {\ensuremath{\Coloneqq}},
+            {->} = {},
+            {:in:} = {\ensuremath{\in}},
+          },)
+          $PositiveP$ == ::= % chktex 26
+          | $\texttt{[} P \texttt{]}$ == % chktex 9
+          ;; % chktex 26
+          $P$ == ::= % chktex 26
+          | $ C \texttt{,} P $ ==
+          | $ C $ ==
+          ;; % chktex 26
+          $C$ == ::= % chktex 26
+          | $ \texttt{(} C \texttt{)} $ == % chktex 9 chktex 10
+          | $ \texttt{nill} $ ==
+          | $ ps \texttt{.} C $ ==
+          | $ C \texttt{+} C $ ==
+          | $ \texttt{?} pr \texttt{?.} C $ ==
+          | $ \texttt{<} i \texttt{,} C \texttt{>.} C $ ==
+          | $ x $ ==
+          ;; % chktex 26
+          Where \\ & \(ps\) -> {is a positive set,\\ see\ \ref{bnf_positive_set}} ==
+          ;; % chktex 26
+          \(pr\) -> {is a positive\\reaction, see\ \ref{bnf_positive_reaction}} ==
+          ;; % chktex 26
+          \(i\) :in: \(\mathbb{N}\) == % chktex 26
+          ;; % chktex 26
+          \(x\) -> is a variable name ==
+          ;; % chktex 26
+        \end{bnf}
+        \captionsetup{type=table, name=\textbf{Syntax}}
+        \caption{Syntax for Positive Process}\label{bnf_positive_process}
       \end{minipage}
     \end{subsection}
 
@@ -339,63 +329,62 @@
       \(\texttt{lollipops\_prefix\_len\_loop\_decomposed}\) returns the length of the prefix and the trace of the loop for each recursive variable.
       \(\texttt{lollipops\_only\_loop\_decomposed}\) returns the trace of the loop for each recursive variable.\vspace{1em}
 
-      \begin{minipage}{\textwidth}
+      \noindent
+      \begin{minipage}{.9\textwidth}
         \centering
-        \begin{minipage}{.9\textwidth}
-          \begin{bnf} (relation = {::=|:in:|->},
-            comment = {==},
-            relation-sym-map = % chktex 36
-            {
-              {::=} = {\ensuremath{\Coloneqq}},
-              {->} = {},
-              {:in:} = {\ensuremath{\in}},
-            },)
-            $Environment$ == ::= % chktex 26
-            | $\texttt{[} E \texttt{]}$ == % chktex 9
-            ;; % chktex 26
-            $E$ == ::= % chktex 26
-            | $ x = c \texttt{,}\ E $ ==
-            | $ x = c $ ==
-            | $ \epsilon $ ==
-            ;; % chktex 26
-            Where \\ & \(c\) -> {is a process, see\ \ref{bnf_process}} ==
-            ;; % chktex 26
-            \(x\) -> is a variable name ==
-            ;; % chktex 26
-            \(\epsilon\) -> is the empty string ==
-            ;; % chktex 26
-          \end{bnf}
-          \captionsetup{type=table, name=\textbf{Syntax}}
-          \caption{Syntax for Environment}\label{bnf_environment}
-        \end{minipage}\vspace{1em}
-
-        \begin{minipage}{.9\textwidth}
-          \begin{bnf} (relation = {::=|:in:|->},
-            comment = {==},
-            relation-sym-map = % chktex 36
-            {
-              {::=} = {\ensuremath{\Coloneqq}},
-              {->} = {},
-              {:in:} = {\ensuremath{\in}},
-            },)
-            $Positive Environment$ == ::= % chktex 26
-            | $\texttt{[} E \texttt{]}$ == % chktex 9
-            ;; % chktex 26
-            $E$ == ::= % chktex 26
-            | $ x = pc \texttt{,}\ E $ ==
-            | $ x = pc $ ==
-            | $ \epsilon $ ==
-            ;; % chktex 26
-            Where \\ & \(pc\) -> {is a positive process, see\ \ref{bnf_positive_process}} ==
-            ;; % chktex 26
-            \(x\) -> is a variable name ==
-            ;; % chktex 26
-            \(\epsilon\) -> is the empty string ==
-            ;; % chktex 26
-          \end{bnf}
-          \captionsetup{type=table, name=\textbf{Syntax}}
-          \caption{Syntax for Positive Environment}\label{bnf_positive_environment}
-        \end{minipage}
+        \begin{bnf} (relation = {::=|:in:|->},
+          comment = {==},
+          relation-sym-map = % chktex 36
+          {
+            {::=} = {\ensuremath{\Coloneqq}},
+            {->} = {},
+            {:in:} = {\ensuremath{\in}},
+          },)
+          $Environment$ == ::= % chktex 26
+          | $\texttt{[} E \texttt{]}$ == % chktex 9
+          ;; % chktex 26
+          $E$ == ::= % chktex 26
+          | $ x = c \texttt{,}\ E $ ==
+          | $ x = c $ ==
+          | $ \epsilon $ ==
+          ;; % chktex 26
+          Where \\ & \(c\) -> {is a process, see\ \ref{bnf_process}} ==
+          ;; % chktex 26
+          \(x\) -> is a variable name ==
+          ;; % chktex 26
+          \(\epsilon\) -> is the empty string ==
+          ;; % chktex 26
+        \end{bnf}
+        \captionsetup{type=table, name=\textbf{Syntax}}
+        \caption{Syntax for Environment}\label{bnf_environment}
+      \end{minipage}\vspace{1em}\\
+      \begin{minipage}{.9\textwidth}
+        \centering
+        \begin{bnf} (relation = {::=|:in:|->},
+          comment = {==},
+          relation-sym-map = % chktex 36
+          {
+            {::=} = {\ensuremath{\Coloneqq}},
+            {->} = {},
+            {:in:} = {\ensuremath{\in}},
+          },)
+          $Positive Environment$ == ::= % chktex 26
+          | $\texttt{[} E \texttt{]}$ == % chktex 9
+          ;; % chktex 26
+          $E$ == ::= % chktex 26
+          | $ x = pc \texttt{,}\ E $ ==
+          | $ x = pc $ ==
+          | $ \epsilon $ ==
+          ;; % chktex 26
+          Where \\ & \(pc\) -> {is a positive process, see\ \ref{bnf_positive_process}} ==
+          ;; % chktex 26
+          \(x\) -> is a variable name ==
+          ;; % chktex 26
+          \(\epsilon\) -> is the empty string ==
+          ;; % chktex 26
+        \end{bnf}
+        \captionsetup{type=table, name=\textbf{Syntax}}
+        \caption{Syntax for Positive Environment}\label{bnf_positive_environment}
       \end{minipage}
     \end{subsection}
 
@@ -424,9 +413,10 @@
       \item \(\texttt{target}(\mathit{sys}) \to \texttt{(integer, set)}^{?}\), which returns the state in one of the terminal states and the number of steps to arrive at the last state;\label{function_target}
       \item \(\texttt{slice\_trace}(\mathit{sys}) \to \texttt{trace}^{?}\), which generates, similarly to \(\texttt{run}\), a trace appropriate to run slicing calculations over;
       \item \(\texttt{lollipops}(\mathit{sys}) \to \texttt{[([set], [set])]}\), similar to the method\\\(\texttt{lollipops\_decomposed}\) provided by \(\texttt{environment}\).
-      \item \(\texttt{lollipops\_only\_loop\_named}(\mathit{sys}, el: \texttt{element}) \to \texttt{[[set]]}^{?}\), similar to the method provided by \(\texttt{environment}\), returns the sequence of entities in the loop individuated by the variable name \(el\) in the environment.
+      \item \(\texttt{lollipops\_only\_loop\_named}(\mathit{sys}, el: \texttt{element}) \to \texttt{[[set]]}^{?}\), similar to the me\-thod provided by \(\texttt{environment}\), returns the sequence of entities in the loop individuated by the variable name \(el\) in the environment.
       \end{itemize}
 
+      \noindent
       \begin{minipage}{\textwidth}
         \centering
         \begin{bnf} (relation = {::=|:in:|->},
@@ -465,48 +455,44 @@
     \begin{subsection}{Label}
       The label structure holds the information about how entities are used in the production of a system and are the labels on the edges of the graphs. Since the only use is to hold data, no meaningful method is required.\vspace{2em}
 
-      \begin{minipage}{\textwidth}
+      \noindent
+      \begin{minipage}{.9\textwidth}
         \centering
-        \begin{minipage}{.9\textwidth}
-          \begin{bnf} (relation = {::=|:in:|->},
-            comment = {==},
-            relation-sym-map = % chktex 36
-            {
-              {::=} = {\ensuremath{\Coloneqq}},
-              {->} = {},
-              {:in:} = {\ensuremath{\in}},
-            },)
-            $Label$ == ::= % chktex 26
-            | {$\texttt{[ Entities:} s\texttt{,}$\\$\texttt{Context:} s\texttt{,}$\\$\texttt{Reactants:} s\texttt{,}$\\$\texttt{ReactantsAbsent:} s\texttt{,}$\\$\texttt{Inhibitors:} s\texttt{,}$\\$\texttt{InhibitorsPresent:} s\texttt{,}$\\$\texttt{Products:} s \texttt{ ]}$} == % chktex 9
-            ;; % chktex 26
-            Where \\ & \(s\) -> {is a set, see\ \ref{bnf_set}} ==
-            ;; % chktex 26
-          \end{bnf}
-          \captionsetup{type=table, name=\textbf{Syntax}}
-          \caption{Syntax for Label}\label{bnf_label}
-        \end{minipage}
-      \end{minipage}\vspace{1em}
-
-      \begin{minipage}{\textwidth}
+        \begin{bnf} (relation = {::=|:in:|->},
+          comment = {==},
+          relation-sym-map = % chktex 36
+          {
+            {::=} = {\ensuremath{\Coloneqq}},
+            {->} = {},
+            {:in:} = {\ensuremath{\in}},
+          },)
+          $Label$ == ::= % chktex 26
+          | {$\texttt{[ Entities:} s\texttt{,}$\\$\texttt{Context:} s\texttt{,}$\\$\texttt{Reactants:} s\texttt{,}$\\$\texttt{ReactantsAbsent:} s\texttt{,}$\\$\texttt{Inhibitors:} s\texttt{,}$\\$\texttt{InhibitorsPresent:} s\texttt{,}$\\$\texttt{Products:} s \texttt{ ]}$} == % chktex 9
+          ;; % chktex 26
+          Where \\ & \(s\) -> {is a set, see\ \ref{bnf_set}} ==
+          ;; % chktex 26
+        \end{bnf}
+        \captionsetup{type=table, name=\textbf{Syntax}}
+        \caption{Syntax for Label}\label{bnf_label}
+      \end{minipage}\vspace{1em}\\
+      \begin{minipage}{.9\textwidth}
         \centering
-        \begin{minipage}{.9\textwidth}
-          \begin{bnf} (relation = {::=|:in:|->},
-            comment = {==},
-            relation-sym-map = % chktex 36
-            {
-              {::=} = {\ensuremath{\Coloneqq}},
-              {->} = {},
-              {:in:} = {\ensuremath{\in}},
-            },)
-            $Positive Label$ == ::= % chktex 26
-            | {$\texttt{[ Entities:} ps\texttt{,}$\\$\texttt{Context:} ps\texttt{,}$\\$\texttt{Reactants:} ps\texttt{,}$\\$\texttt{ReactantsAbsent:} ps\texttt{,}$\\$\texttt{Inhibitors:} ps\texttt{,}$\\$\texttt{InhibitorsPresent:} ps\texttt{,}$\\$\texttt{Products:} ps \texttt{ ]}$} == % chktex 9
-            ;; % chktex 26
-            Where \\ & \(ps\) -> {is a positive set, see\ \ref{bnf_positive_set}} ==
-            ;; % chktex 26
-          \end{bnf}
-          \captionsetup{type=table, name=\textbf{Syntax}}
-          \caption{Syntax for Positive Label}\label{bnf_positive_label}
-        \end{minipage}
+        \begin{bnf} (relation = {::=|:in:|->},
+          comment = {==},
+          relation-sym-map = % chktex 36
+          {
+            {::=} = {\ensuremath{\Coloneqq}},
+            {->} = {},
+            {:in:} = {\ensuremath{\in}},
+          },)
+          $Positive Label$ == ::= % chktex 26
+          | {$\texttt{[ Entities:} ps\texttt{,}$\\$\texttt{Context:} ps\texttt{,}$\\$\texttt{Reactants:} ps\texttt{,}$\\$\texttt{ReactantsAbsent:} ps\texttt{,}$\\$\texttt{Inhibitors:} ps\texttt{,}$\\$\texttt{InhibitorsPresent:} ps\texttt{,}$\\$\texttt{Products:} ps \texttt{ ]}$} == % chktex 9
+          ;; % chktex 26
+          Where \\ & \(ps\) -> {is a positive set, see\ \ref{bnf_positive_set}} ==
+          ;; % chktex 26
+        \end{bnf}
+        \captionsetup{type=table, name=\textbf{Syntax}}
+        \caption{Syntax for Positive Label}\label{bnf_positive_label}
       \end{minipage}
     \end{subsection}
 
@@ -525,6 +511,7 @@
 
       Follows the BNF for each of the languages:\vspace{2em}
 
+      \noindent
       \begin{minipage}{\textwidth}
         \centering
         \begin{bnf}(relation-sym-map = % chktex 36
@@ -557,7 +544,9 @@
 
       $\texttt{Hide}$ ignores the content of the node and prints the empty string, $\texttt{Entities}$ prints the list of entities currently available in the system,  $\texttt{MaskEntities}\ S$ prints the list of entities masked by a specified set \(S\), $\texttt{ExcludeEntities}\ S$ prints the list of entities except for the entities specified by the set \(S\), $\texttt{Context}$ prints the context of the system, $\texttt{UncommonEntities}$ prints only the entities that are not shared between all the nodes in the graph, $\texttt{MaskUncommonEntities}\ S$ prints the entities not shared between all the nodes in the graph and masked by a specified set \(S\).\vspace*{\fill}
 
+      \noindent
       \begin{minipage}{\textwidth}
+        \centering
         \begin{bnf}(relation-sym-map = % chktex 36
           {
             {::=} = {\ensuremath{\Coloneqq}},
@@ -610,7 +599,9 @@
 
       Four version of each base option is available: normal, \(\texttt{Mask}\) which masks the normal set of entities with a specified set, \(\texttt{Uncommon}\) which considers only the entities that are not shared between all edges of the graph, and \(\texttt{UncommonMask}\) which combines the two functionalities. The base options return the corresponding entities available in the label.\vspace{1em}
 
+      \noindent
       \begin{minipage}{\textwidth}
+        \centering
         \begin{bnf}(relation-sym-map = % chktex 36
           {
             {::=} = {\ensuremath{\Coloneqq}},
@@ -651,7 +642,9 @@
       The \(\texttt{NodeColor}\) structure assigns the first correct color to the node. The structure can be thought of as a list of pairs; each pair has an entry that evaluated returns true or false, and an entry that holds the desired color of the node.
       To find the correct color, the list is scanned until the first pair that returns true and the color is assigned. If no pair returns true, a default value is assigned, specified after \(\texttt{!}\). The possible functions expressible by the grammar are the ones expressed by \(E\) and query either the entities available or the current context.
 
+      \noindent
       \begin{minipage}{\textwidth}
+        \centering
         \begin{bnf}(relation-sym-map = % chktex 36
           {
             {::=} = {\ensuremath{\Coloneqq}},
@@ -705,7 +698,9 @@
 
       The language has way to define subroutines or functions, has no while loop and limited for loop construction, so that the execution always terminates.\vspace{1em}
 
+      \noindent
       \begin{minipage}{\textwidth}
+        \centering
         \begin{bnf}(relation-sym-map = % chktex 36
           {
             {::=} = {\ensuremath{\Coloneqq}},
@@ -772,7 +767,9 @@
 
       \newpage
 
+      \noindent
       \begin{minipage}{\textwidth}
+        \centering
         \begin{bnf}(relation-sym-map = % chktex 36
           {
             {::=} = {\ensuremath{\Coloneqq}},
@@ -836,7 +833,9 @@
 
       \newpage
 
+      \noindent
       \begin{minipage}{\textwidth}
+        \centering
         \begin{bnf}(relation-sym-map = % chktex 36
           {
             {::=} = {\ensuremath{\Coloneqq}},
@@ -888,7 +887,9 @@
       \item \(\texttt{fast\_frequency}(experiment: \texttt{[set]}, reactions: \texttt{[reaction]}, entities: \texttt{set},\\ weights: \texttt{[int]}) \to \texttt{frequency}^{?}\), which computes the weighted relative frequency of each entity in any of the loops.
       \end{itemize}
 
+      \noindent
       \begin{minipage}{\textwidth}
+        \centering
         \begin{bnf}(relation-sym-map = % chktex 36
           {
             {::=} = {\ensuremath{\Coloneqq}},
@@ -924,7 +925,9 @@
     \begin{subsection}{Instructions}\label{instructions_analysis}
       The command line interface provided by the workspace \(\texttt{analysis}\) expects as input a path to a file with a RS and some instructions, reads the file, executes the instructions and returns the result in the forms specified. The syntax for specifying instructions is as follows:\vspace{1em}
 
+      \noindent
       \begin{minipage}{\textwidth}
+        \centering
         \begin{bnf}(relation-sym-map = % chktex 36
           {
             {::=} = {\ensuremath{\Coloneqq}},
@@ -949,8 +952,10 @@
 
       \newpage
 
-      \scalebox{.01}{
+      \noindent
+      \scalebox{.95}{
         \begin{minipage}{\textwidth}
+          \centering
           \begin{bnf}(relation-sym-map = % chktex 36
             {
               {::=} = {\ensuremath{\Coloneqq}},
@@ -1081,147 +1086,150 @@
 
     Since the generated graphs were often times immediately converted to DOT files and rendered to SVG, a native renderer is included that can create PNG images of the supplied graph. They are then rendered to screen. This reduces greatly the time switching between software to achieve the same result.
 
+    \noindent
     \begin{table}
       \centering
-      \fboxrule=0.25mm
+      \fboxrule=0.2mm
       \begin{tblr}{colspec={Q[c, m]Q[c, l]Q[c, l]}, colsep=3pt}
-        \fcolorbox{black}{color_Error}{\makebox[2mm][l]{\strut}} & \(\texttt{Error}\) & Structure that holds error messages \\
+        \fcolorbox{black}{color_Error}{\makebox[4mm][l]{\strut}} & \(\texttt{Error}\) & Structure that holds error messages \\
 
-        \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \(\texttt{String}\) & A string \\
-        \fcolorbox{black}{color_Path}{\makebox[2mm][l]{\strut}} & \(\texttt{Path}\) & A path to a file \\
-        \fcolorbox{black}{color_Svg}{\makebox[2mm][l]{\strut}} & \(\texttt{Svg}\) & A structure for creating and rendering SVG \\
-        \fcolorbox{black}{color_PositiveInt}{\makebox[2mm][l]{\strut}} & \(\texttt{PositiveInt}\) & Integer in \(\mathbb{N}\) \\
-        \fcolorbox{black}{color_Symbol}{\makebox[2mm][l]{\strut}} & \(\texttt{Symbol}\) & A single symbol, see section\ \ref{design_entities} \\
+        \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \(\texttt{String}\) & A string \\
+        \fcolorbox{black}{color_Path}{\makebox[4mm][l]{\strut}} & \(\texttt{Path}\) & A path to a file \\
+        \fcolorbox{black}{color_Svg}{\makebox[4mm][l]{\strut}} & \(\texttt{Svg}\) & A structure for creating and rendering SVG \\
+        \fcolorbox{black}{color_PositiveInt}{\makebox[4mm][l]{\strut}} & \(\texttt{PositiveInt}\) & Integer in \(\mathbb{N}\) \\
+        \fcolorbox{black}{color_Symbol}{\makebox[4mm][l]{\strut}} & \(\texttt{Symbol}\) & A single symbol, see section\ \ref{design_entities} \\
 
-        \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}} & \(\texttt{System}\) & see section\ \ref{design_system} \\
-        \fcolorbox{black}{color_Environment}{\makebox[2mm][l]{\strut}} & \(\texttt{Environment}\) & see section\ \ref{design_environment} \\
-        \fcolorbox{black}{color_Set}{\makebox[2mm][l]{\strut}} & \(\texttt{Set}\) & see section\ \ref{design_set} \\
-        \fcolorbox{black}{color_Context}{\makebox[2mm][l]{\strut}} & \(\texttt{Context}\) & see section\ \ref{design_process} \\
-        \fcolorbox{black}{color_Reactions}{\makebox[2mm][l]{\strut}} & \(\texttt{Reactions}\) & see section\ \ref{design_reaction} \\
+        \fcolorbox{black}{color_System}{\makebox[4mm][l]{\strut}} & \(\texttt{System}\) & see section\ \ref{design_system} \\
+        \fcolorbox{black}{color_Environment}{\makebox[4mm][l]{\strut}} & \(\texttt{Environment}\) & see section\ \ref{design_environment} \\
+        \fcolorbox{black}{color_Set}{\makebox[4mm][l]{\strut}} & \(\texttt{Set}\) & see section\ \ref{design_set} \\
+        \fcolorbox{black}{color_Context}{\makebox[4mm][l]{\strut}} & \(\texttt{Context}\) & see section\ \ref{design_process} \\
+        \fcolorbox{black}{color_Reactions}{\makebox[4mm][l]{\strut}} & \(\texttt{Reactions}\) & see section\ \ref{design_reaction} \\
 
-        \fcolorbox{black}{color_Experiment}{\makebox[2mm][l]{\strut}} & \(\texttt{Experiment}\) & see section\ \ref{experiment} \\
+        \fcolorbox{black}{color_Experiment}{\makebox[4mm][l]{\strut}} & \(\texttt{Experiment}\) & see section\ \ref{experiment} \\
 
-        \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}} & \(\texttt{PositiveSystem}\) & see section\ \ref{design_system} \\
-        \fcolorbox{black}{color_PositiveEnvironment}{\makebox[2mm][l]{\strut}} & \(\texttt{PositiveEnvironment}\) & see section\ \ref{design_environment} \\
-        \fcolorbox{black}{color_PositiveSet}{\makebox[2mm][l]{\strut}} & \(\texttt{PositiveSet}\) & see section\ \ref{design_set} \\
-        \fcolorbox{black}{color_PositiveContext}{\makebox[2mm][l]{\strut}} & \(\texttt{PositiveContext}\) & see section\ \ref{design_process} \\
-        \fcolorbox{black}{color_PositiveReactions}{\makebox[2mm][l]{\strut}} & \(\texttt{PositiveReactions}\) & see section\ \ref{design_reaction} \\
+        \fcolorbox{black}{color_PositiveSystem}{\makebox[4mm][l]{\strut}} & \(\texttt{PositiveSystem}\) & see section\ \ref{design_system} \\
+        \fcolorbox{black}{color_PositiveEnvironment}{\makebox[4mm][l]{\strut}} & \(\texttt{PositiveEnvironment}\) & see section\ \ref{design_environment} \\
+        \fcolorbox{black}{color_PositiveSet}{\makebox[4mm][l]{\strut}} & \(\texttt{PositiveSet}\) & see section\ \ref{design_set} \\
+        \fcolorbox{black}{color_PositiveContext}{\makebox[4mm][l]{\strut}} & \(\texttt{PositiveContext}\) & see section\ \ref{design_process} \\
+        \fcolorbox{black}{color_PositiveReactions}{\makebox[4mm][l]{\strut}} & \(\texttt{PositiveReactions}\) & see section\ \ref{design_reaction} \\
 
-        \fcolorbox{black}{color_Trace}{\makebox[2mm][l]{\strut}} & \(\texttt{Trace}\) & see section\ \ref{design_trace} \\
-        \fcolorbox{black}{color_PositiveTrace}{\makebox[2mm][l]{\strut}} & \(\texttt{PositiveTrace}\) & see section\ \ref{design_trace} \\
+        \fcolorbox{black}{color_Trace}{\makebox[4mm][l]{\strut}} & \(\texttt{Trace}\) & see section\ \ref{design_trace} \\
+        \fcolorbox{black}{color_PositiveTrace}{\makebox[4mm][l]{\strut}} & \(\texttt{PositiveTrace}\) & see section\ \ref{design_trace} \\
 
-        \fcolorbox{black}{color_Graph}{\makebox[2mm][l]{\strut}} & \(\texttt{Graph}\) & see section\ \ref{design_graph} \\
-        \fcolorbox{black}{color_PositiveGraph}{\makebox[2mm][l]{\strut}} & \(\texttt{PositiveGraph}\) & see section\ \ref{design_graph} \\
+        \fcolorbox{black}{color_Graph}{\makebox[4mm][l]{\strut}} & \(\texttt{Graph}\) & see section\ \ref{design_graph} \\
+        \fcolorbox{black}{color_PositiveGraph}{\makebox[4mm][l]{\strut}} & \(\texttt{PositiveGraph}\) & see section\ \ref{design_graph} \\
 
-        \fcolorbox{black}{color_DisplayNode}{\makebox[2mm][l]{\strut}} & \(\texttt{DisplayNode}\) & see section\ \ref{design_graph} \\
-        \fcolorbox{black}{color_DisplayEdge}{\makebox[2mm][l]{\strut}} & \(\texttt{DisplayEdge}\) & see section\ \ref{design_graph} \\
-        \fcolorbox{black}{color_ColorNode}{\makebox[2mm][l]{\strut}} & \(\texttt{ColorNode}\) & see section\ \ref{design_graph} \\
-        \fcolorbox{black}{color_ColorEdge}{\makebox[2mm][l]{\strut}} & \(\texttt{ColorEdge}\) & see section\ \ref{design_graph} \\
+        \fcolorbox{black}{color_DisplayNode}{\makebox[4mm][l]{\strut}} & \(\texttt{DisplayNode}\) & see section\ \ref{design_graph} \\
+        \fcolorbox{black}{color_DisplayEdge}{\makebox[4mm][l]{\strut}} & \(\texttt{DisplayEdge}\) & see section\ \ref{design_graph} \\
+        \fcolorbox{black}{color_ColorNode}{\makebox[4mm][l]{\strut}} & \(\texttt{ColorNode}\) & see section\ \ref{design_graph} \\
+        \fcolorbox{black}{color_ColorEdge}{\makebox[4mm][l]{\strut}} & \(\texttt{ColorEdge}\) & see section\ \ref{design_graph} \\
 
-        \fcolorbox{black}{color_AssertFunction}{\makebox[2mm][l]{\strut}} & \(\texttt{AssertFunction}\) & see section\ \ref{bisimilarity_design} \\
-        \fcolorbox{black}{color_GroupFunction}{\makebox[2mm][l]{\strut}} & \(\texttt{GroupFunction}\) & see section\ \ref{bisimilarity_design} \\
-        \fcolorbox{black}{color_PositiveAssertFunction}{\makebox[2mm][l]{\strut}} & \(\texttt{PositiveAssertFunction}\) & see section\ \ref{bisimilarity_design} \\
-        \fcolorbox{black}{color_PositiveGroupFunction}{\makebox[2mm][l]{\strut}} & \(\texttt{PositiveGroupFunction}\) & see section\ \ref{bisimilarity_design} \\
+        \fcolorbox{black}{color_AssertFunction}{\makebox[4mm][l]{\strut}} & \(\texttt{AssertFunction}\) & see section\ \ref{bisimilarity_design} \\
+        \fcolorbox{black}{color_GroupFunction}{\makebox[4mm][l]{\strut}} & \(\texttt{GroupFunction}\) & see section\ \ref{bisimilarity_design} \\
+        \fcolorbox{black}{color_PositiveAssertFunction}{\makebox[4mm][l]{\strut}} & \(\texttt{PositiveAssertFunction}\) & see section\ \ref{bisimilarity_design} \\
+        \fcolorbox{black}{color_PositiveGroupFunction}{\makebox[4mm][l]{\strut}} & \(\texttt{PositiveGroupFunction}\) & see section\ \ref{bisimilarity_design} \\
       \end{tblr}
       \caption{Types in ReactionSystemsGUI with associated color.}\label{types_gui}
     \end{table}
 
-    \fboxrule=0.25mm
+    \fboxrule=0.2mm
+    \noindent
     \begin{longtblr}[
       caption={Available nodes in ReactionSystemsGUI with inputs and outputs in color.},
       label={node_in_out},
       ]{
       colspec={Q[b, r]|Q[c, m]|Q[c, m]|Q[b, l]},
+      cells = {font = \fontsize{8pt}{12pt}\selectfont},
       colsep=2pt,}
-      \(\texttt{String}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & Creates a string \\
-      \(\texttt{Path}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_Path}{\makebox[2mm][l]{\strut}} & Creates a path from a string \\
-      \(\texttt{Read file}\) & \fcolorbox{black}{color_Path}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & Reads a file into a string \\
-      \(\texttt{Save string to file}\) & \fcolorbox{black}{color_Path}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & & Save a string to a file \\
-      \(\texttt{Symbol}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_Symbol}{\makebox[2mm][l]{\strut}} & Creates a symbol from a string \\
-      \(\texttt{Sleep}\) & \fcolorbox{black}{color_PositiveInt}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveInt}{\makebox[2mm][l]{\strut}} & Waits for selected number of seconds \\
-      \(\texttt{Dot file to SVG}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_Svg}{\makebox[2mm][l]{\strut}} & Parses a Dot file string into an SVG \\
-      \(\texttt{Save SVG}\) & \fcolorbox{black}{color_Path}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Svg}{\makebox[2mm][l]{\strut}} & & Saves an SVG \\
-      \(\texttt{Save Rasterized SVG}\) & \fcolorbox{black}{color_Path}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Svg}{\makebox[2mm][l]{\strut}} & & Saves an SVG as a picture \\
+      \(\texttt{String}\) & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & Creates a string \\
+      \(\texttt{Path}\) & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_Path}{\makebox[4mm][l]{\strut}} & Creates a path from a string \\
+      \(\texttt{Read file}\) & \fcolorbox{black}{color_Path}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & Reads a file into a string \\
+      \(\texttt{Save string to file}\) & \fcolorbox{black}{color_Path}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & & Save a string to a file \\
+      \(\texttt{Symbol}\) & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_Symbol}{\makebox[4mm][l]{\strut}} & Creates a symbol from a string \\
+      \(\texttt{Sleep}\) & \fcolorbox{black}{color_PositiveInt}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_PositiveInt}{\makebox[4mm][l]{\strut}} & Waits for selected number of seconds \\
+      \(\texttt{Dot file to SVG}\) & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_Svg}{\makebox[4mm][l]{\strut}} & Parses a Dot file string into an SVG \\
+      \(\texttt{Save SVG}\) & \fcolorbox{black}{color_Path}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_Svg}{\makebox[4mm][l]{\strut}} & & Saves an SVG \\
+      \(\texttt{Save Rasterized SVG}\) & \fcolorbox{black}{color_Path}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_Svg}{\makebox[4mm][l]{\strut}} & & Saves an SVG as a picture \\
 
-      \(\texttt{Create System}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}} & Creates system from string \\
-      \(\texttt{Create Positive System}\) & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}} & Creates positive system from system \\
-      \(\texttt{Compose System}\) & \fcolorbox{black}{color_Environment}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Set}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Context}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Reactions}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}} & {Composes system from\\individual structures} \\
-      \(\texttt{Compose Positive System}\) & \fcolorbox{black}{color_PositiveEnvironment}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveSet}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveContext}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveReactions}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Decompose System}\) & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_Environment}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Set}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Context}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Reactions}{\makebox[2mm][l]{\strut}} & {Decomposes system\\into individual structures} \\
-      \(\texttt{Decompose Positive System}\) & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveEnvironment}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveSet}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveContext}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveReactions}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Create System}\) & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_System}{\makebox[4mm][l]{\strut}} & Creates system from string \\
+      \(\texttt{Create Positive System}\) & \fcolorbox{black}{color_System}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_PositiveSystem}{\makebox[4mm][l]{\strut}} & Creates positive system from system \\
+      \(\texttt{Compose System}\) & \fcolorbox{black}{color_Environment}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_Set}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_Context}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_Reactions}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_System}{\makebox[4mm][l]{\strut}} & {Composes system from\\individual structures} \\
+      \(\texttt{Compose Positive System}\) & \fcolorbox{black}{color_PositiveEnvironment}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_PositiveSet}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_PositiveContext}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_PositiveReactions}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_PositiveSystem}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Decompose System}\) & \fcolorbox{black}{color_System}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_Environment}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_Set}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_Context}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_Reactions}{\makebox[4mm][l]{\strut}} & {Decomposes system\\into individual structures} \\
+      \(\texttt{Decompose Positive System}\) & \fcolorbox{black}{color_PositiveSystem}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_PositiveEnvironment}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_PositiveSet}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_PositiveContext}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_PositiveReactions}{\makebox[4mm][l]{\strut}} & \\
 
-      \(\texttt{Environment}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_Environment}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Positive Environment}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveEnvironment}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Set}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_Set}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Positive Set}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveSet}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Context}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_Context}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Positive Context}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveContext}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Reactions}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_Reactions}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Positive Reactions}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveReactions}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Environment}\) & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_Environment}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Positive Environment}\) & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_PositiveEnvironment}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Set}\) & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_Set}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Positive Set}\) & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_PositiveSet}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Context}\) & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_Context}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Positive Context}\) & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_PositiveContext}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Reactions}\) & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_Reactions}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Positive Reactions}\) & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_PositiveReactions}{\makebox[4mm][l]{\strut}} & \\
 
-      \(\texttt{Convert to Positive Environment}\) & \fcolorbox{black}{color_Environment}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveEnvironment}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Convert to Positive Set}\) & \fcolorbox{black}{color_Set}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveSet}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Convert to Positive Context}\) & \fcolorbox{black}{color_Context}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveContext}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Convert to Positive Reactions}\) & \fcolorbox{black}{color_Reactions}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveReactions}{\makebox[2mm][l]{\strut}} & \\
+      {\(\texttt{Convert to}\)\\\(\texttt{Positive Environment}\)} & \fcolorbox{black}{color_Environment}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_PositiveEnvironment}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Convert to Positive Set}\) & \fcolorbox{black}{color_Set}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_PositiveSet}{\makebox[4mm][l]{\strut}} & \\
+      {\(\texttt{Convert to}\)\\\(\texttt{Positive Context}\)} & \fcolorbox{black}{color_Context}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_PositiveContext}{\makebox[4mm][l]{\strut}} & \\
+      {\(\texttt{Convert to}\)\\\(\texttt{Positive Reactions}\)} & \fcolorbox{black}{color_Reactions}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_PositiveReactions}{\makebox[4mm][l]{\strut}} & \\
 
-      \(\texttt{Statistics}\) & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Statistics}\) & \fcolorbox{black}{color_System}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \\
 
-      \(\texttt{Target}\) & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveInt}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Target of Positive RS}\) & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveInt}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Run}\) & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveInt}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Run of Positive RS}\) & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveInt}{\makebox[2mm][l]{\strut}} &  \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Loop}\) & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Symbol}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & {Applies function\\\(\texttt{lollipops\_only\_loop\_named}\) to RS} \\
-      \(\texttt{Loop of Positive RS}\) & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Symbol}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Target}\) & \fcolorbox{black}{color_System}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_PositiveInt}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Target of Positive RS}\) & \fcolorbox{black}{color_PositiveSystem}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_PositiveInt}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Run}\) & \fcolorbox{black}{color_System}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_PositiveInt}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Run of Positive RS}\) & \fcolorbox{black}{color_PositiveSystem}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_PositiveInt}{\makebox[4mm][l]{\strut}} &  \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Loop}\) & \fcolorbox{black}{color_System}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_Symbol}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & {Applies function\\\(\texttt{lollipops\_only\_loop\_named}\) to RS} \\
+      \(\texttt{Loop of Positive RS}\) & \fcolorbox{black}{color_PositiveSystem}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_Symbol}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \\
 
-      \(\texttt{Create Experiment}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_Experiment}{\makebox[2mm][l]{\strut}} & Creates experiment from string \\
+      \(\texttt{Create Experiment}\) & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_Experiment}{\makebox[4mm][l]{\strut}} & Creates experiment from string \\
 
-      \(\texttt{Frequency}\) & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Frequency of Positive RS}\) & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Limit Frequency}\) & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Experiment}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Limit Frequency of Positive RS}\) & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Experiment}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Fast Frequency}\) & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Experiment}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Fast Frequency of Positive RS}\) & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Experiment}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Frequency}\) & \fcolorbox{black}{color_System}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Frequency of Positive RS}\) & \fcolorbox{black}{color_PositiveSystem}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Limit Frequency}\) & \fcolorbox{black}{color_System}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_Experiment}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Limit Frequency of Positive RS}\) & \fcolorbox{black}{color_PositiveSystem}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_Experiment}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Fast Frequency}\) & \fcolorbox{black}{color_System}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_Experiment}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Fast Frequency of Positive RS}\) & \fcolorbox{black}{color_PositiveSystem}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_Experiment}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \\
 
-      \(\texttt{Graph System}\) & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_Graph}{\makebox[2mm][l]{\strut}} & Creates digraph of RS \\
-      \(\texttt{Graph Positive System}\) & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveGraph}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Graph System}\) & \fcolorbox{black}{color_System}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_Graph}{\makebox[4mm][l]{\strut}} & Creates digraph of RS \\
+      \(\texttt{Graph Positive System}\) & \fcolorbox{black}{color_PositiveSystem}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_PositiveGraph}{\makebox[4mm][l]{\strut}} & \\
 
-      \(\texttt{Create Dot file}\) & \fcolorbox{black}{color_Graph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_DisplayNode}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_DisplayEdge}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_ColorNode}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_ColorEdge}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & Creates Dot file from a graph \\
-      {\(\texttt{Create Dot file}\)\\\(\texttt{of Positive System}\)} & \fcolorbox{black}{color_PositiveGraph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_DisplayNode}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_DisplayEdge}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_ColorNode}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_ColorEdge}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Create GraphML file}\) & \fcolorbox{black}{color_Graph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_DisplayNode}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_DisplayEdge}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & Creates GraphML file from a graph \\
-      {\(\texttt{Create GraphML file}\)\\\(\texttt{of Positive System}\)} & \fcolorbox{black}{color_PositiveGraph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_DisplayNode}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_DisplayEdge}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Create Dot file}\) & \fcolorbox{black}{color_Graph}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_DisplayNode}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_DisplayEdge}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_ColorNode}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_ColorEdge}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & Creates Dot file from a graph \\
+      {\(\texttt{Create Dot file}\)\\\(\texttt{of Positive System}\)} & \fcolorbox{black}{color_PositiveGraph}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_DisplayNode}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_DisplayEdge}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_ColorNode}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_ColorEdge}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Create GraphML file}\) & \fcolorbox{black}{color_Graph}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_DisplayNode}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_DisplayEdge}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & Creates GraphML file from a graph \\
+      {\(\texttt{Create GraphML file}\)\\\(\texttt{of Positive System}\)} & \fcolorbox{black}{color_PositiveGraph}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_DisplayNode}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_DisplayEdge}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \\
 
-      \(\texttt{Display node function}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_DisplayNode}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Display edge function}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_DisplayEdge}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Color node function}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_ColorNode}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Color edge function}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_ColorEdge}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Display node function}\) & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_DisplayNode}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Display edge function}\) & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_DisplayEdge}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Color node function}\) & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_ColorNode}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Color edge function}\) & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_ColorEdge}{\makebox[4mm][l]{\strut}} & \\
 
-      \(\texttt{Bisimilarity Kanellakis \& Smolka}\) & \fcolorbox{black}{color_Graph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Graph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_AssertFunction}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
-      {\(\texttt{Bisimilarity Kanellakis \& Smolka}\)\\\(\texttt{for Positive RS}\)} & \fcolorbox{black}{color_PositiveGraph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveGraph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveAssertFunction}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Bisimilarity Paige \& Tarjan}\) & \fcolorbox{black}{color_Graph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Graph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_AssertFunction}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
-      {\(\texttt{Bisimilarity Paige \& Torjan}\)\\\(\texttt{for Positive RS}\)} & \fcolorbox{black}{color_PositiveGraph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveGraph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveAssertFunction}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
-      {\(\texttt{Bisimilarity Paige \& Tarjan}\)\\\(\texttt{(ignore labels)}\)} & \fcolorbox{black}{color_Graph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Graph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_AssertFunction}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
-      {\(\texttt{Bisimilarity Paige \& Torjan}\)\\\(\texttt{(ignore labels) for Positive RS}\)} & \fcolorbox{black}{color_PositiveGraph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveGraph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveAssertFunction}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Bisimilarity Kanellakis \& Smolka}\) & \fcolorbox{black}{color_Graph}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_Graph}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_AssertFunction}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \\
+      {\(\texttt{Bisimilarity Kanellakis \& Smolka}\)\\\(\texttt{for Positive RS}\)} & \fcolorbox{black}{color_PositiveGraph}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_PositiveGraph}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_PositiveAssertFunction}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Bisimilarity Paige \& Tarjan}\) & \fcolorbox{black}{color_Graph}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_Graph}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_AssertFunction}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \\
+      {\(\texttt{Bisimilarity Paige \& Torjan}\)\\\(\texttt{for Positive RS}\)} & \fcolorbox{black}{color_PositiveGraph}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_PositiveGraph}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_PositiveAssertFunction}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \\
+      {\(\texttt{Bisimilarity Paige \& Tarjan}\)\\\(\texttt{(ignore labels)}\)} & \fcolorbox{black}{color_Graph}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_Graph}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_AssertFunction}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \\
+      {\(\texttt{Bisimilarity Paige \& Torjan}\)\\\(\texttt{(ignore labels) for Positive RS}\)} & \fcolorbox{black}{color_PositiveGraph}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_PositiveGraph}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_PositiveAssertFunction}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \\
 
-      \(\texttt{Create relabeling edge function}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_AssertFunction}{\makebox[2mm][l]{\strut}} & \\
-      {\(\texttt{Create relabeling edge function}\)\\\(\texttt{for Positive RS}\)} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveAssertFunction}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Create relabeling edge function}\) & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_AssertFunction}{\makebox[4mm][l]{\strut}} & \\
+      {\(\texttt{Create relabeling edge function}\)\\\(\texttt{for Positive RS}\)} & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_PositiveAssertFunction}{\makebox[4mm][l]{\strut}} & \\
 
-      \(\texttt{Trace}\) & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveInt}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_Trace}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Positive Trace}\) & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveInt}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveTrace}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Slice Trace}\) & \fcolorbox{black}{color_Trace}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Set}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_Trace}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Positive Slice Trace}\) & \fcolorbox{black}{color_PositiveTrace}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveSet}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveTrace}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Trace}\) & \fcolorbox{black}{color_System}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_PositiveInt}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_Trace}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Positive Trace}\) & \fcolorbox{black}{color_PositiveSystem}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_PositiveInt}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_PositiveTrace}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Slice Trace}\) & \fcolorbox{black}{color_Trace}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_Set}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_Trace}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Positive Slice Trace}\) & \fcolorbox{black}{color_PositiveTrace}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_PositiveSet}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_PositiveTrace}{\makebox[4mm][l]{\strut}} & \\
 
-      \(\texttt{Trace to string}\) & \fcolorbox{black}{color_Trace}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Positive trace to string}\) & \fcolorbox{black}{color_PositiveTrace}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Trace to string}\) & \fcolorbox{black}{color_Trace}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Positive trace to string}\) & \fcolorbox{black}{color_PositiveTrace}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \\
 
-      \(\texttt{Overwrite context entities}\) & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Set}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Overwirite reaction entities}\) & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_Set}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_System}{\makebox[2mm][l]{\strut}} & \\
-      {\(\texttt{Overwrite context entities}\)\\\(\texttt{of Positive System}\)} & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveSet}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}} & \\
-      {\(\texttt{Overwrite reaction entities}\)\\\(\texttt{of Positive System}\)} & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveSet}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveSystem}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Overwrite context entities}\) & \fcolorbox{black}{color_System}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_Set}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_System}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Overwirite reaction entities}\) & \fcolorbox{black}{color_System}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_Set}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_System}{\makebox[4mm][l]{\strut}} & \\
+      {\(\texttt{Overwrite context entities}\)\\\(\texttt{of Positive System}\)} & \fcolorbox{black}{color_PositiveSystem}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_PositiveSet}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_PositiveSystem}{\makebox[4mm][l]{\strut}} & \\
+      {\(\texttt{Overwrite reaction entities}\)\\\(\texttt{of Positive System}\)} & \fcolorbox{black}{color_PositiveSystem}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_PositiveSet}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_PositiveSystem}{\makebox[4mm][l]{\strut}} & \\
 
-      \(\texttt{Create Grouping Function}\) & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_GroupFunction}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Group Nodes}\) & \fcolorbox{black}{color_Graph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_GroupFunction}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_Graph}{\makebox[2mm][l]{\strut}} & \\
-      {\(\texttt{Create Grouping Function}\)\\\(\texttt{for Positive System}\)} & \fcolorbox{black}{color_String}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveGroupFunction}{\makebox[2mm][l]{\strut}} & \\
-      \(\texttt{Group Nodes of Positive System}\) & \fcolorbox{black}{color_PositiveGraph}{\makebox[2mm][l]{\strut}}\fcolorbox{black}{color_PositiveGroupFunction}{\makebox[2mm][l]{\strut}} & \fcolorbox{black}{color_PositiveGraph}{\makebox[2mm][l]{\strut}} & \\
+      \(\texttt{Create Grouping Function}\) & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_GroupFunction}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Group Nodes}\) & \fcolorbox{black}{color_Graph}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_GroupFunction}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_Graph}{\makebox[4mm][l]{\strut}} & \\
+      {\(\texttt{Create Grouping Function}\)\\\(\texttt{for Positive System}\)} & \fcolorbox{black}{color_String}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_PositiveGroupFunction}{\makebox[4mm][l]{\strut}} & \\
+      \(\texttt{Group Nodes of Positive System}\) & \fcolorbox{black}{color_PositiveGraph}{\makebox[4mm][l]{\strut}}\fcolorbox{black}{color_PositiveGroupFunction}{\makebox[4mm][l]{\strut}} & \fcolorbox{black}{color_PositiveGraph}{\makebox[4mm][l]{\strut}} & \\
     \end{longtblr}
 
     All the types can be seen in table\ \ref{types_gui} that are used for the node's input and output. Each type has a distinct color associated that is used to color the connectors between nodes. All nodes can be seen in table\ \ref{node_in_out}. The second column holds the color of the inputs types used; the third column holds the color of the outputs types.
