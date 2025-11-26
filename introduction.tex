@@ -4,17 +4,17 @@
   The interaction between biochemical reactions and the functioning of single reactions is based on the mechanisms of facilitation and inhibition.
   Facilitation and inhibition are key concepts in molecular biology\ \cite{Clark_Pazdernik_McGehee_2018}: gene promoters, both in lower and higher organisms, function poorly or not at all in the absence of extra proteins known as gene activator proteins, or transcription factors.
   Other promoters may be inherently active: these are often controlled by a class of gene regulator proteins known as repressors that act to turn genes off.
-  Reaction Systems aims to models cell biology by representing this complex interaction between inducers and genes.
+  Reaction Systems aims to model cell biology by representing this complex interaction between inducers and genes.
 
-  A Reaction System consists of a set of entities and a set of reactions over such entities. Each reaction if enabled produces a set of entities P (called products). A reaction is enabled if its set R (called reactants) is wholly present and if the set I (called inhibitors) of entities is completely absent.
+  A Reaction System consists of a set of entities and a set of reactions over such entities. Each reaction, if enabled, produces a set of entities P (called products). A reaction is enabled if its set R (called reactants) is wholly present and if the set I (called inhibitors) of entities is completely absent.
   The use of inhibitors induces non-monotonic behaviors that are difficult to analyze.
   Entities can also be provided by an external context sequence to simulate interaction with an environment, based on a structural operational semantics (SOS) coupled with different transformations and new frameworks aiming at analyzing causal properties that have been developed during the past years\ \cite{Brodo_Bruni_Falaschi_2021, Brodo_Bruni_Falaschi_Gori_Milazzo_Montagna_Pulieri_2024, Brodo_Bruni_Falaschi_Gori_Milazzo_2025}.
-  A comprehensive overview of all the different transformations and techniques implemented in the proposed tool are listed in chapter\ \ref{background_chap}.
+  A comprehensive overview of all the different transformations and techniques implemented in the proposed tool is listed in Chapter\ \ref{background_chap}.
 
-  Despite the rich theoretical development of Reaction Systems, practical tools for working with RS models have lagged behind. Numerous versions of Prolog and Python programs have been developed\cite{BioResolve2025}, but have problems regarding performance and usability.
+  Despite the rich theoretical development of Reaction Systems, practical tools for working with RS models have lagged behind. Numerous versions of Prolog and Python programs have been developed (see for example\ \cite{BioResolve2025}), but have problems regarding performance and usability.
   This technological barrier caused by lack of appropriate software may hinder future developments.
 
-  This thesis aims to bridge the gap between the theoretical foundations of Reaction Systems and their practical application. To achieve this a new software platform for modeling, analyzing and designing Reaction Systems is proposed.
+  This thesis aims to bridge the gap between the theoretical foundations of Reaction Systems and their practical application. To achieve this, a new software platform for modeling, analyzing and designing Reaction Systems is proposed.
 
   \begin{section}{Software Design and Key Features}
     The core contribution of this work is a new software tool built from the ground up to support Reaction Systems modeling and analysis. Equal emphasis has been placed on performance and user experience. The software is implemented in Rust\cite{rust_2025}, a modern systems programming language chosen for its efficiency and reliability.
