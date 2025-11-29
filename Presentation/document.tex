@@ -1,0 +1,204 @@
+\documentclass[
+    11pt,
+    %draft
+]{beamer}
+ 
+\usetheme{Antibes} % or Malmoe -> more somber
+
+%% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - %%
+%%                               Load Packages                               %%
+%% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - %%
+
+\usepackage[utf8]{inputenc} %% use UTF-8, maybe not needed since 2018
+\usepackage[italian,main=english]{babel} %% language
+
+\usepackage{csquotes} %% correct language also for citations
+
+\usepackage[
+  backend=biber,
+  style=numeric,
+  sorting=ynt
+]{biblatex} %% for citations
+\addbibresource{document.bib}
+
+\usepackage{import} %% specify path for import
+
+%% math packages
+\usepackage{graphicx} %% for pictures
+\usepackage{float}
+\usepackage{amssymb} %% math symbols
+\usepackage{amsmath} %% math matrix etc
+\usepackage{minted} %% code block
+\usepackage{tabularray} %% better tables
+\usepackage{booktabs} %% rules for tables
+\usepackage{mathrsfs}
+\usepackage{mathtools}
+\usepackage{algorithm} %% for algorithms
+\usepackage{algpseudocode} %% loads algorithmicx
+\usepackage{amsthm}
+\usepackage{thmtools} %% theorems
+
+%% plot packages
+\usepackage{pgfplots} %% plots used with \begin{tikzpicture}
+\usepackage{tikz} %% for pictures
+\usetikzlibrary{trees}
+\pgfplotsset{width=10cm,compat=newest}
+
+%% design packages
+\usepackage{enumitem} %% for lists and enumerating
+\usepackage{color}
+\usepackage{xcolor,colortbl} % xcolor for defining colors, colortbl for table colors
+\usepackage{makecell} %% for multiple lines in cell of table
+\usepackage{cancel}
+\usepackage{pgfornament} %% ornaments
+
+
+
+%% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - %%
+%%                       Configuration of the packages                       %%
+%% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - %%
+
+\linespread{1}
+\raggedbottom %% spaces if page is empty % chktex 1
+
+%% set max table of contents recursion to subsection (3->subsubsecition)
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
+
+%% use bar instead of arrow for vectors
+\renewcommand{\vec}[1]{\bar{#1}}
+%% easy norm
+\newcommand{\norm}[1]{\left\lvert#1\right\rvert}
+
+% argmin and argmax
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\argmin}{argmin}
+
+%% itemize use less vertical space (use olditemize for default behaviour)
+\let\olditemize=\itemize%% old itemize
+\let\endolditemize=\enditemize%% old end itemize
+\renewenvironment{itemize}{\olditemize\itemsep-0.2em}{\endolditemize}
+
+%% items in itemize emph+box
+%% usage: \ieb{Class:} for simple item
+%%        \ieb[4cm]{Class:} for specific size of box
+\newcommand{\ieb}[2][2cm]{
+        \makebox[#1][l]{\emph{#2}}
+} %% TODO: replace with description environment (? maybe)
+
+% section not in table of contents
+\newcommand{\hiddensection}[1]{
+  \stepcounter{section}
+  \section*{{#1}}
+}
+
+\newcommand{\hiddensubsection}[1]{
+  \stepcounter{subsection}
+  \subsection*{{#1}}
+}
+
+% less vertical space around align & align*
+\newcommand{\zerodisplayskips}{
+  \setlength{\abovedisplayskip}{0pt}
+  \setlength{\belowdisplayskip}{0pt}
+  \setlength{\abovedisplayshortskip}{0pt}
+  \setlength{\belowdisplayshortskip}{0pt}
+}
+
+% make dotfill use all the space available
+\renewcommand{\dotfill}{
+  \leavevmode\cleaders\hbox to 1.00em{\hss .\hss }\hfill\kern0pt } % chktex 1 chktex 26
+
+\setlength{\fboxsep}{-\fboxrule} % for debugging
+
+
+%% PACKAGE algorithm
+\floatname{algorithm}{Algorithm}
+
+
+%% PACKAGE tabularray
+\UseTblrLibrary{amsmath}
+
+
+%% PACKAGE color
+\definecolor{red}{rgb}{1, 0.1, 0.1}
+\definecolor{lightgreen}{rgb}{0.55, 0.87, 0.47}
+\definecolor{gray}{rgb}{0.3, 0.3, 0.3}
+\newcommand{\lgt}{\cellcolor{lightgreen}} %% light green in tables
+\newcommand{\gry}{\textcolor{gray}} %% gray text
+\newcommand{\rd}{\textcolor{red}} %% red text
+
+%% PACKAGE minipage
+\newcommand{\thend}[1]{\begin{center}
+  \begin{minipage}[c][1em][c]{#1}
+    \dotfill{}
+  \end{minipage}
+\end{center}}
+
+
+%% PACKAGE thmtools
+\declaretheoremstyle[
+ headfont=\normalfont\bfseries,
+ notefont=\mdseries,
+ bodyfont=\normalfont,
+ qed=\qedsymbol % chktex 1
+]{steo}
+\declaretheorem[numbered=no, style=steo]{mtheo}
+
+\declaretheoremstyle[
+  headfont=\normalfont\bfseries,
+  notefont=\mdseries,
+  bodyfont=\normalfont,
+]{sdef}
+\declaretheorem[numbered=no, style=sdef]{mdef}
+
+\declaretheoremstyle[
+  spaceabove=-6pt,
+  spacebelow=6pt,
+  headfont=\normalfont\bfseries,
+  bodyfont=\normalfont,
+  postheadspace=1em,
+  qed=$\blacksquare$,
+  headpunct={:}
+]{sprf}
+\declaretheorem[name={Proof}, style=sprf, numbered=no]{mproof}
+
+%% ......................................................................... %%
+%% local changes
+% \setcounter{secnumdepth}{0}
+
+
+%% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - %%
+
+\title{SEMINARIO}
+\author{Elvis Rossi}
+\institute[DEPARTMENT OF COMPUTER SCIENCE]{Department of Computer Science\\
+  \medskip
+  Master Degree in Computer Science
+}
+\date{\today}
+\logo{\includegraphics[width=1cm]{figures/cherubino.eps}}
+
+%% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - %%
+
+\begin{document}
+
+\begin{frame}
+  \titlepage % chktex 1
+\end{frame}
+
+\section*{Table of Contents}
+\begin{frame}[allowframebreaks]
+  \frametitle{Table of Contents}
+  \tableofcontents
+\end{frame}
+
+\include{write_here.tex}
+
+\end{document}
+
+%% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - %%
+
+%%% Local Variables:
+%%% TeX-command-extra-options: "-shell-escape"
+%%% End:
