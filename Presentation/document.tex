@@ -37,11 +37,12 @@
 \usepackage{algpseudocode} %% loads algorithmicx
 \usepackage{amsthm}
 \usepackage{thmtools} %% theorems
+\usepackage{simplebnf}
+\usepackage{caption}
 
 %% plot packages
 \usepackage{pgfplots} %% plots used with \begin{tikzpicture}
 \usepackage{tikz} %% for pictures
-\usetikzlibrary{trees}
 \pgfplotsset{width=10cm,compat=newest}
 
 %% design packages
@@ -117,8 +118,12 @@
 
 
 %% PACKAGE tabularray
-\UseTblrLibrary{amsmath}
+\UseTblrLibrary{counter,varwidth} 
 
+%% PACKAGE tikz
+\usetikzlibrary{trees, positioning, shapes.misc, positioning, arrows.meta}
+\usetikzlibrary{decorations.pathmorphing, decorations.pathreplacing, decorations.shapes}
+\usetikzlibrary{fit,shapes.geometric}
 
 %% PACKAGE color
 \definecolor{red}{rgb}{1, 0.1, 0.1}
@@ -167,14 +172,23 @@
 %% local changes
 % \setcounter{secnumdepth}{0}
 
+\usefonttheme[onlymath]{serif}
 
 %% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - %%
 
-\title{SEMINARIO}
-\author{Elvis Rossi}
-\institute[DEPARTMENT OF COMPUTER SCIENCE]{Department of Computer Science\\
-  \medskip
-  Master Degree in Computer Science
+\title{Modeling Reaction Systems}
+%\author{Elvis Rossi}
+\institute[UNIVERSITY OF PISA]{
+  \centering
+  \begin{tblr}{colspec={Q[c,l]X[1,c]Q[c,r]}, row{1-2} = {rowsep=0.5em},row{3} = {belowsep=1em}} % chktex 8
+    & UNIVERSITY OF PISA & \\
+    & Department of Computer Science & \\
+    & Master Degree in Computer Science & \\
+    Supervisor: & & Candidate: \\
+    \SetCell[c=2]{} {\textbf{Prof.\ Roberto Bruni}} & & \textbf{Elvis Rossi} \\
+    \SetCell[c=2]{} {\textbf{Prof.\ Roberta Gori}} \\
+    \SetCell[c=2]{} {\textbf{Prof.\ Paolo Milazzo}} \\
+  \end{tblr}
 }
 \date{\today}
 \logo{\includegraphics[width=1cm]{figures/cherubino.eps}}
@@ -184,7 +198,7 @@
 \begin{document}
 
 \begin{frame}
-  \titlepage % chktex 1
+  \titlepage{}
 \end{frame}
 
 \section*{Table of Contents}
@@ -195,10 +209,10 @@
 
 \include{content.tex}
 
+\begin{frame}[allowframebreaks]\frametitle{References}
+  \printbibliography{}
+\end{frame}
+
 \end{document}
 
 %% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - %%
-
-%%% Local Variables:
-%%% TeX-command-extra-options: "-shell-escape"
-%%% End:

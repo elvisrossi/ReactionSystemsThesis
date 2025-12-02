@@ -1,8 +1,484 @@
-\begin{section}{First Section}
-  \begin{frame}\frametitle{Title}
+\begin{section}{Introduction}
+
+  % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+
+  \begin{frame}
+    Two Rust crates have been developed to model, analyze and design Reaction Systems.
+
+    \vspace{1em}
+
     \begin{itemize}
-    \item first item
-    \item second item
+    \item ReactionSystems
+    \item ReactionSystemsGUI
+    \end{itemize}
+
+    \vspace{1em}
+
+    ReactionSystemsGUI implements a custom visual language using the libraries \(\texttt{egui}\) and \(\texttt{egui\_node\_graph2}\).
+
+    \vspace{1em}
+
+    A web version is also provided that runs locally using WebAssembly.
+
+    % A CLI is implemented in ReactionSystems too
+  \end{frame}
+
+  % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+
+  \begin{frame}
+    \begin{figure}[h]
+      \includegraphics[width=0.9\textwidth]{figures/instructions_medical.png}
+    \end{figure}
+    \begin{figure}[h]
+      \includegraphics[width=0.9\textwidth]{figures/output_medical.png}
+    \end{figure}
+  \end{frame}
+  % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+\end{section}
+
+% ==============================================================================
+
+\begin{section}{Design}
+  % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+  \begin{frame}
+    The libraries are more than 30k lines of code, organized in workspaces that allow easy development; the GUI has 29 types and more than 70 node operations.
+
+    \begin{figure}[!h]
+      \centering
+      \scalebox{0.55}{
+        \begin{tikzpicture}[
+          place/.style={rectangle,draw=blue!50,fill=blue!20,thick},
+          >=Stealth, thick, every node/.style={font=\sffamily}]
+
+          \node[place] (analysis)          at (0,0.1)  {analysis};
+          \node[place] (grammar)           at (3,-2)  {grammar};
+          \node[place] (grammarseparated) at (-3,-2) {grammar\_separated};
+          \node[place] (execution)         at (0,-1)  {execution};
+          \node[place] (bisimilarity)      at (-3,-1) {bisimilarity};
+          \node[place] (assert)            at (0,-2)  {assert};
+          \node[place] (rsprocess)         at (0,-3)  {rsprocess};
+
+          \draw[->]              (rsprocess) -- (assert);
+          \draw[->]              (rsprocess) -- (grammarseparated);
+          \draw[->,bend right=35](rsprocess) to[bend right=55] (execution);
+          \draw[->]              (rsprocess) -- (grammar);
+          \draw[->,bend right=32](rsprocess) to[bend right=57] (analysis);
+
+          \draw[->]              (assert) -- (execution);
+          \draw[->]              (assert) -- (grammarseparated);
+          \draw[->]              (assert) -- (grammar);
+
+          \draw[->]              (execution) -- (analysis);
+          \draw[->]              (execution) -- (grammarseparated);
+          \draw[->]              (execution) -- (grammar);
+
+          \draw[->]              (bisimilarity) -- (execution);
+
+          \draw[->]              (grammar) to[bend right=10] (analysis);
+        \end{tikzpicture}
+      }
+      \scalebox{0.55}{
+        \begin{tikzpicture}[scale=0.8, every node/.style={scale=0.8},
+          place/.style={rectangle,draw=blue!50,fill=blue!20,thick},
+          >=Stealth, thick, every node/.style={font=\sffamily}]
+
+          \node[place] (set)     at (0,3)    {Set};
+          \node[place] (reaction)at (4,3)    {Reaction};
+          \node[place] (choices) at (8,3)    {Choices};
+          \node[place] (label)   at (-2,1.5) {Label};
+          \node[place] (env)     at (2,1.5)  {Environment};
+          \node[place] (process) at (6,1.5)  {Process};
+          \node[place] (system)  at (4,0)    {System};
+          \node[place] (graph)   at (0,0)    {Graph};
+
+          % Set
+          \draw[->]              (set) -- (reaction);
+          \draw[->,bend left=18] (set) to (choices);
+          \draw[->,bend right=25](set) to (label);
+          \draw[->]              (set) -- (graph);
+          \draw[->,bend right=35,looseness=1.1] (set) to (system);
+          \draw[->,bend right=12](set) to (env);
+
+          % Label -> Graph
+          \draw[->] (label) -- (graph);
+
+          % Reaction
+          \draw[->,bend left=12]  (reaction) to (process);
+          \draw[->,bend right=12] (reaction) to (env);
+          \draw[->,bend left=16]  (reaction) to (system);
+
+          % Process
+          \draw[->]               (process) -- (env);
+          \draw[->]               (process) -- (system);
+          \draw[->,bend right=18] (process) to (choices);
+
+          \draw[->] (choices) to [bend left=2] (env);
+          \draw[->] (choices.south) to [bend left=25] (system.east);
+          \draw[->]               (env) -- (system);
+          \draw[<->,bend left=15] (system) to (graph);
+        \end{tikzpicture}
+      }
+    \end{figure}
+
+    Grammars have been specified and developed for the RS structures using \(\texttt{lalrpop}\).
+  \end{frame}
+
+  % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+
+  \begin{frame}\frametitle{Reaction Systems}
+    \begin{tblr}{colspec={X[b]X[h]}, measure = vbox}
+      {\begin{minipage}{\dimexpr\linewidth-\tabcolsep}\raggedright%
+        Reaction System (RS) is a successful computational framework inspired by biological systems.
+
+        \vspace{1em}
+
+        Key concepts: \textit{Facilitation} and \textit{Inhibition}
+
+        \vspace{1em}
+
+        Reaction: \((R, I, P)\)
+
+        Reaction System: \(\mathcal{A} = (S, A)\)
+      \end{minipage}} & {\captionsetup[figure]{font=tiny}\begin{figure}
+        \includegraphics[clip, trim=20mm 110mm 85mm 40mm, width=0.8\linewidth, ]{figures/Molecular_Biology.pdf}
+        \caption{Principle of Positive and Negative Regulation\cite{Clark_Pazdernik_McGehee_2018}}
+      \end{figure}} \\
+    \end{tblr}
+
+    % S is called the background set of A and its elements are called entities
+    % A is a set of reactions
+  \end{frame}
+
+  % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+
+  \begin{frame}
+    Three key properties:
+    \begin{enumerate}[label= (\roman*)]
+    \item no permanency: entities vanish unless sustained by a reaction;
+    \item no counting: the exact quantity of each entity is irrelevant;
+    \item threshold nature of resources: if an entity is present, it is present for all possible reactions.
+    \end{enumerate}
+  \end{frame}
+
+  % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+
+  \begin{frame}\frametitle{Interactive Process}
+    The behavior of a RS is formalized through the notion of an interactive process:
+
+    \begin{center}
+      \begin{tblr}{colspec={rll}, colsep=1pt}
+        Context Sequence: & \(\gamma\) & \(= {\{ C_i \}}_{i \in [0,n]}\), \\
+        Result Sequence: & \(\delta\) & {\(= {\{ D_i \}}_{i \in [0, n]}\) with \text{\tikz[baseline={(char.base)}]{
+    \node[anchor=base] (char) {\(D_{i+1} := res_A(D_i \cup C_i)\)};
+    \draw[thick,blue!50,decorate,decoration={coil,aspect=0,pre length=4pt,post length=0pt, amplitude=1pt}] (char.south west) to (char.south east);
+}}}
+      \end{tblr}
+    \end{center}
+    \begin{figure}[h]
+      \def\svgwidth{0.7\linewidth}
+      \import{figures}{reaction_system.pdf_tex}
+    \end{figure}
+    % A Reaction System is then modeled as a process, with a externally given
+    % context, from which the result is calculated: given a set given from the
+    % context, it is summed to the previous result and for each reaction that is
+    % activated the products are then summed and are the next result
+  \end{frame}
+
+  % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+  \begin{frame}\frametitle{SOS rules}
+    \begin{tblr}{colspec={Q[c,m]Q[l,m]}}
+      {\begin{bnf}(relation-sym-map = % chktex 36
+        {
+          {::=} = {\ensuremath{\Coloneqq}},
+          {->} = {},
+          {:in:} = {\ensuremath{\subseteq}},
+        },)
+        $P$ : ::= % chktex 26
+        | [$M$] : % chktex 26
+        ;; % chktex 26
+        $M$ : ::= % chktex 26
+        | $(R, I, P)$ : % chktex 26
+        | $D$ : % chktex 26
+        | $K$ : % chktex 26
+        | $M \vert M$ : % chktex 26
+        ;; % chktex 26
+        $K$ : ::= % chktex 26
+        | \textbf{$0$} : % chktex 26
+        | $X$ : % chktex 26
+        | $C.K$ : % chktex 26
+        | $K + K$ : % chktex 26
+        | $\texttt{rec} X . K$ : % chktex 26
+      \end{bnf}} & {Mutual Exclusion of 2 looping processes:\\
+      \vspace{1em}
+      {\tt Environment: [\\
+      \quad k1 = (\{\}.k1 + \{act\_1\}.k1),\\
+      \quad k2 = (\{\}.k2 + \{act\_2\}.k2)\\
+      ]\\
+      Initial Entities: \{out\_1, out\_2\}\\
+      Context: [k1, k2]\\
+      Reactions: (}\(\ldots\){\tt)}}\\ % chktex 9
+    \end{tblr}
+    % The behavior of a RS could be defined as a discrete time interactive
+    % process: a finite context sequence describes the entities provided by the
+    % environment at each step, the current state is determined by the union of
+    % the entities coming from the environment with those produced from the
+    % previous step and the state sequence is determined by applying all and
+    % only the enabled reactions to the set of entities available in the current
+    % state
+
+    % (R, I, P) is a reaction, D is a set of entities (a reaction that is always
+    % enabled), | (pipe) is the parallel composition
+
+    % 0 is the nil context written as nill, X is a process variable, C is a set
+    % of entities, + is non deterministic choice, rec is the recursive operator
+
+    % operational semantics follow the definitions
+  \end{frame}
+
+  % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+
+  \begin{frame}{Graphs}
+    To explore the structure of RSs, methods are provided to create and manipulate graphs.
+
+    \begin{tblr}{colspec={Q[l,b]Q[l,b]},width=\linewidth}
+      {\includegraphics[scale=0.16]{figures/graph_instructions.png}} & {
+                                                                       Domain specific languages have been\\developed for:
+      \begin{itemize}
+      \item[$-$] specifying labels of nodes \& edges,
+      \item[$-$] specifying color of nodes \& edges,
+      \item[$-$] grouping of nodes,
+      \item[$-$] relabeling of edges.
+      \end{itemize}} \\
+    \end{tblr}
+  \end{frame}
+
+  % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+
+  \begin{frame}
+    \begin{figure}[h]
+      \includegraphics[width=0.95\textwidth]{figures/lock_instructions.png}
+    \end{figure}
+
+    \begin{figure}[h]
+      \includegraphics[scale=0.2]{figures/lock.pdf}
+    \end{figure}
+  \end{frame}
+
+  % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+
+  \begin{frame}\frametitle{Positive Reaction Systems}
+    Instead of considering the absence of an element, consider the presence of a negative element:
+
+    \vspace{0.5em}
+
+    Reaction: \((R, P)\)
+
+    \vspace{0.5em}
+
+    An equivalent Positive RS can be built for each RS.%
+    \begin{figure}[h]
+      \includegraphics[width=0.9\textwidth]{figures/to_positive_reactions.png}
+    \end{figure}
+
+    % To convert a list of reactions we first create a reaction for each product
+    % in each reaction, then all reactions that have the same product are
+    % converted together into their positive versions: One reaction is simply
+    % the positive reactants and the negative inhibitors that produce the
+    % positive product. The others are related to the absence of the product and
+    % are created from the prohibiting set, where for every reactants or
+    % inhibitor that does not allow the reaction to be enabled a reaction is
+    % created.
+
+    % The resulting reactions are then minimized, in order to reduce the
+    % complexity of the traces, even tho the behavior is the same.
+  \end{frame}
+
+  % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+
+  \begin{frame}\frametitle{Slicing}
+    Dynamic slicing is a technique that helps a user to debug a program by simplifying a partial execution trace.
+
+    The goal is to highlight how a subset of the elements in a state were originated.
+
+    \begin{minipage}{\textwidth}
+      \centering
+      \begin{minipage}[t][0.5\textheight][t]{0.75\textwidth}
+        \begin{figure}
+          \includegraphics[height=0.5\textheight]{figures/positive_slice.png}
+        \end{figure}
+      \end{minipage}%
+      \begin{minipage}[t][0.5\textheight][t]{0.25\textwidth}
+        \begin{figure}
+          \includegraphics[scale=0.25]{figures/counting.pdf}
+        \end{figure}
+      \end{minipage}
+    \end{minipage}
+  \end{frame}
+
+  % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+  \begin{frame}\frametitle{Bisimulation}
+    A common question given two RS processes is if they behave the same.
+    Bisimulation is a binary relation between transition systems defined in therms of coinductive games, of fixed point theory and of logic.
+
+    Two algorithms have been implemented: by Kanellakis and Smolka, and by Paige and Tarjan.
+
+    \begin{figure}
+      \includegraphics[scale=0.25]{figures/bisimilarity.png}
+    \end{figure}
+  \end{frame}
+
+  % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+  \begin{frame}\frametitle{Kanellakis and Smolka}
+    The algorithm by Kanellakis and Smolka is based on the concept of splitter.
+
+    \begin{tikzpicture}[baseline,
+      place/.style={circle,draw=blue!50,fill=blue!20,thick},
+      >=Stealth, thick, every node/.style={font=\sffamily}]
+
+      \node[place] (s1) at (0,0) {\(s_1\)};
+      \node[place] (s2) at (2,0) {\(s_2\)};
+      \node[place] (s3) at (4,0) {\(s_3\)};
+      \node[place] (s4) at (1,-2) {\(s_4\)};
+      \node[place] (s5) at (3,-2) {\(s_5\)};
+
+      \draw[->]    (s1) -- (s4);
+      \draw[->]    (s2) -- (s5);
+
+      \draw[->]    (s2) to[bend left=20] (s3);
+      \draw[->]    (s3) to[bend left=20] (s2);
+
+      \node[draw=black!80,fit=(s1) (s2) (s3),label=above right:$B_1$] {};
+      \node[draw=black!80,fit=(s4) (s5),label=below right:$B_2$] {};
+    \end{tikzpicture}%
+    \hspace{0.3em}\(\to\)\hspace{0.3em}%
+    \begin{tikzpicture}[baseline,
+      place/.style={circle,draw=blue!50,fill=blue!20,thick},
+      >=Stealth, thick, every node/.style={font=\sffamily}]
+
+      \node[place] (s1) at (0,0) {\(s_1\)};
+      \node[place] (s2) at (2,0) {\(s_2\)};
+      \node[place] (s3) at (4,0) {\(s_3\)};
+      \node[place] (s4) at (1,-2) {\(s_4\)};
+      \node[place] (s5) at (3,-2) {\(s_5\)};
+
+      \draw[->]    (s1) -- (s4);
+      \draw[->]    (s2) -- (s5);
+
+      \draw[->]    (s2) to[bend left=20] (s3);
+      \draw[->]    (s3) to[bend left=20] (s2);
+
+      \node[draw=blue!80,fit=(s1) (s2),label=above right:$B_1$] {};
+      \node[draw=blue!80,fit=(s3),label=above:$B_3$] {};
+      \node[draw=black!80,fit=(s4) (s5),label=below right:$B_2$] {};
+    \end{tikzpicture}%
+  \end{frame}
+
+  % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+  \begin{frame}\frametitle{Paige and Tarjan}
+    The algorithm by Kanellakis and Smolka has time complexity \(O(n \cdot m)\).
+    % where n is the number of states and m is the number of transitions
+    By reducing to the coarsest stable partition problem, the complexity can be reduced to \(O(n \cdot \log(m))\), since three-way splitting can be performed in time proportional to the size of the smaller of the two blocks.
+    % additional structures are needed for bookkeeping
+
+    \vspace{1em}
+
+    The algorithm is specified over systems with only one action, but other systems can be translated into equivalent ones.
+
+
+    \begin{tblr}{width=\linewidth, colspec={X[r]Q[c]X[l]}}
+      \begin{tikzpicture}[auto,
+        place/.style={rectangle,draw=blue!50,fill=blue!20,thick,inner sep=0pt,
+          minimum size=6mm},
+        pre/.style={<-,shorten <=1pt,>={Stealth[round]},semithick},
+        post/.style={->,shorten >=1pt,>={Stealth[round]},semithick}
+        ]
+        \node[place] (P1)               {\(P_1\)};
+        \node[place] (P2) [right=of P1] {\(P_2\)}
+        edge [pre] node [auto, swap] {\(\alpha_1\)} (P1);
+        \node[place] (P3) [below=of P2] {\(P_3\)}
+        edge [pre] node [auto] {\(\alpha_2\)} (P1)
+        edge [pre] node [auto, swap] {\(\alpha_2\)} (P2);
+      \end{tikzpicture}
+      & \(\raisebox{3.5em}{\to}\) &
+        \scalebox{0.30}{
+        \begin{tikzpicture}[auto,
+          place/.style={rectangle,draw=blue!50,fill=blue!20,thick,inner sep=0pt,
+            minimum size=6mm},
+          new/.style={circle,draw=blue!30,fill=blue!10,thick,inner sep=0pt,
+            minimum size=6mm},
+          pre/.style={<-,shorten <=1pt,>={Stealth[round]},semithick},
+          post/.style={->,shorten >=1pt,>={Stealth[round]},semithick}
+          ]
+          \node[place] (P1) {\(P_1\)};
+          \node[new] (p1e1) [above=of P1] {}
+          edge [pre] (P1);
+          \node[new] (p1e2) [above=of p1e1] {}
+          edge [pre] (p1e1);
+          \node[new] (p1e3) [above=of p1e2] {}
+          edge [pre] (p1e2);
+
+          \node[new] (a1) [right=of P1] {}
+          edge [pre] (P1);
+          \node[new] (a1e1) [above=of a1] {}
+          edge [pre] (a1);
+
+          \node[place] (P2) [right=of a1] {\(P_2\)}
+          edge [pre] (a1);
+          \node[new] (p2e1) [above=of P2] {}
+          edge [pre] (P2);
+          \node[new] (p2e2) [above=of p2e1] {}
+          edge [pre] (p2e1);
+          \node[new] (p2e3) [above=of p2e2] {}
+          edge [pre] (p2e2);
+
+          \node[new] (a2) [below=of P2] {}
+          edge [pre] (P2);
+          \node[new] (a2e1) [right=of a2] {}
+          edge [pre] (a2);
+          \node[new] (a2e2) [right=of a2e1] {}
+          edge [pre] (a2e1);
+
+          \node[new] (a3) [below=of a1] {}
+          edge [pre] (P1);
+          \node[new] (a3e1) [below=of a3] {}
+          edge [pre] (a3);
+          \node[new] (a3e2) [below=of a3e1] {}
+          edge [pre] (a3e1);
+
+          \node[place] (P3) [below=of a2] {\(P_3\)}
+          edge [pre] (a2)
+          edge [pre] (a3);
+          \node[new] (p3e1) [right=of P3] {}
+          edge [pre] (P3);
+          \node[new] (p3e2) [right=of p3e1] {}
+          edge [pre] (p3e1);
+          \node[new] (p3e3) [right=of p3e2] {}
+          edge [pre] (p3e2);
+        \end{tikzpicture}
+        }
+    \end{tblr}
+    % The operation is log-space
+  \end{frame}
+
+  % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+
+\end{section}
+
+% ==============================================================================
+
+\begin{section}{Conclusion}
+  
+  % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+
+  \begin{frame}\frametitle{Conclusion}
+    Key contributions:
+    \begin{itemize}
+    \item[$\bullet$] New RS Modeling Platform that aids in analysis and design, implemented in Rust. Provided both a CLI and a GUI.%
+    \item[$\bullet$] Comprehensive Feature Set: simulation of RS, bisimulation of graphs, trace slicing, graph generation with Dot, GraphML and SVG outputs, loop analysis, automated conversion between RS types.
+    \item[$\bullet$] Improved performance and usability compared to previous software written in prolog and python.
     \end{itemize}
   \end{frame}
+
+  % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+
 \end{section}
