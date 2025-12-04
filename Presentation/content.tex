@@ -2,30 +2,67 @@
 
   % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
 
-  \begin{frame}
-    Two Rust crates have been developed to model, analyze and design Reaction Systems.
+  \begin{frame}\frametitle{Reaction Systems}
+    \begin{tblr}{colspec={X[5,b]X[4,h]}, measure = vbox}
+      {\begin{minipage}{\dimexpr\linewidth-\tabcolsep}\raggedright%
+          RS is a qualitative model:
+          \begin{itemize}
+          \item[-] no permanency,
+          \item[-] no counting.
+          \end{itemize}
 
-    \vspace{1em}
+          \vspace{1em}
 
-    \begin{itemize}
-    \item ReactionSystems
-    \item ReactionSystemsGUI
-    \end{itemize}
+          Key concepts: \textit{Facilitation} and \textit{Inhibition}
 
-    \vspace{1em}
+          \vspace{1em}
 
-    ReactionSystemsGUI implements a custom visual language using the libraries \(\texttt{egui}\) and \(\texttt{egui\_node\_graph2}\).
+          A reaction \((R, I, P)\) is composed by reactants, inhibitors and products.
 
-    \vspace{1em}
+          Reaction System: \(\mathcal{A} = (S, A)\)
 
-    A web version is also provided that runs locally using WebAssembly.
+          \vspace{1em}
 
-    % A CLI is implemented in ReactionSystems too
+          Behavior is not monotone.
+        \end{minipage}} & {\captionsetup[figure]{font=tiny}\begin{figure}
+          \includegraphics[clip, trim=20mm 110mm 85mm 40mm, width=0.8\linewidth, ]{figures/Molecular_Biology.pdf}
+          \caption{Principle of Positive and Negative Regulation}
+        \end{figure}} \\
+    \end{tblr}
+
+    % Reaction System (RS) is a successful computational framework inspired by biological systems.
+    % S is called the background set of A and its elements are called entities
+    % A is a set of reactions
   \end{frame}
 
   % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
 
   \begin{frame}
+    \begin{itemize}
+    \item[-] Modeling and \textit{in silico} experiments,
+    \item[-] Visualizing of LTS % labelled transition systems
+    \item[-] Verifying properties: reachability, model checking, equivalence.
+    \item[-] Analysis: causality, slicing, attractors, profiling.
+    \item[-] Transformations: positive form, minimization.
+    \end{itemize}
+  \end{frame}
+  
+  % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+
+  \begin{frame}\frametitle{Contribution}
+    The main contribution is a rewrite of previous Prolog code in Rust.
+
+    \vspace{1em}
+
+    \begin{itemize}
+    \item[-] ReactionSystems: contains the basic structures, parsers and a CLI.%
+    \item[-] ReactionSystemsGUI:\ implements a native and web application with a custom visual language to interact with RS.%
+    \end{itemize}
+  \end{frame}
+
+  % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+
+  \begin{frame}\frametitle{Example}
     \begin{figure}[h]
       \includegraphics[width=0.9\textwidth]{figures/instructions_medical.png}
     \end{figure}
@@ -40,8 +77,8 @@
 
 \begin{section}{Design}
   % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
-  \begin{frame}
-    The libraries are more than 30k lines of code, organized in workspaces that allow easy development; the GUI has 29 types and more than 70 node operations.
+  \begin{frame}\frametitle{Structure}
+    The libraries are more than 30k lines of code, organized in workspaces that allow easy development; the visual language has 29 types and more than 70 node operations.
 
     \begin{figure}[!h]
       \centering
@@ -124,67 +161,6 @@
   \end{frame}
 
   % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
-
-  \begin{frame}\frametitle{Reaction Systems}
-    \begin{tblr}{colspec={X[b]X[h]}, measure = vbox}
-      {\begin{minipage}{\dimexpr\linewidth-\tabcolsep}\raggedright%
-        Reaction System (RS) is a successful computational framework inspired by biological systems.
-
-        \vspace{1em}
-
-        Key concepts: \textit{Facilitation} and \textit{Inhibition}
-
-        \vspace{1em}
-
-        Reaction: \((R, I, P)\)
-
-        Reaction System: \(\mathcal{A} = (S, A)\)
-      \end{minipage}} & {\captionsetup[figure]{font=tiny}\begin{figure}
-        \includegraphics[clip, trim=20mm 110mm 85mm 40mm, width=0.8\linewidth, ]{figures/Molecular_Biology.pdf}
-        \caption{Principle of Positive and Negative Regulation\cite{Clark_Pazdernik_McGehee_2018}}
-      \end{figure}} \\
-    \end{tblr}
-
-    % S is called the background set of A and its elements are called entities
-    % A is a set of reactions
-  \end{frame}
-
-  % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
-
-  \begin{frame}
-    Three key properties:
-    \begin{enumerate}[label= (\roman*)]
-    \item no permanency: entities vanish unless sustained by a reaction;
-    \item no counting: the exact quantity of each entity is irrelevant;
-    \item threshold nature of resources: if an entity is present, it is present for all possible reactions.
-    \end{enumerate}
-  \end{frame}
-
-  % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
-
-  \begin{frame}\frametitle{Interactive Process}
-    The behavior of a RS is formalized through the notion of an interactive process:
-
-    \begin{center}
-      \begin{tblr}{colspec={rll}, colsep=1pt}
-        Context Sequence: & \(\gamma\) & \(= {\{ C_i \}}_{i \in [0,n]}\), \\
-        Result Sequence: & \(\delta\) & {\(= {\{ D_i \}}_{i \in [0, n]}\) with \text{\tikz[baseline={(char.base)}]{
-    \node[anchor=base] (char) {\(D_{i+1} := res_A(D_i \cup C_i)\)};
-    \draw[thick,blue!50,decorate,decoration={coil,aspect=0,pre length=4pt,post length=0pt, amplitude=1pt}] (char.south west) to (char.south east);
-}}}
-      \end{tblr}
-    \end{center}
-    \begin{figure}[h]
-      \def\svgwidth{0.7\linewidth}
-      \import{figures}{reaction_system.pdf_tex}
-    \end{figure}
-    % A Reaction System is then modeled as a process, with a externally given
-    % context, from which the result is calculated: given a set given from the
-    % context, it is summed to the previous result and for each reaction that is
-    % activated the products are then summed and are the next result
-  \end{frame}
-
-  % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
   \begin{frame}\frametitle{SOS rules}
     \begin{tblr}{colspec={Q[c,m]Q[l,m]}}
       {\begin{bnf}(relation-sym-map = % chktex 36
@@ -218,6 +194,7 @@
       Context: [k1, k2]\\
       Reactions: (}\(\ldots\){\tt)}}\\ % chktex 9
     \end{tblr}
+    % structured operational semantics
     % The behavior of a RS could be defined as a discrete time interactive
     % process: a finite context sequence describes the entities provided by the
     % environment at each step, the current state is determined by the union of
@@ -374,6 +351,7 @@
   \end{frame}
 
   % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+
   \begin{frame}\frametitle{Paige and Tarjan}
     The algorithm by Kanellakis and Smolka has time complexity \(O(n \cdot m)\).
     % where n is the number of states and m is the number of transitions
@@ -382,7 +360,7 @@
 
     \vspace{1em}
 
-    The algorithm is specified over systems with only one action, but other systems can be translated into equivalent ones.
+    The algorithm is specified over systems with only one action, but other systems can be transformed into equivalent ones.
 
 
     \begin{tblr}{width=\linewidth, colspec={X[r]Q[c]X[l]}}
@@ -462,6 +440,18 @@
 
   % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
 
+  \begin{frame}\frametitle{Testing}
+    During the development to validate the program automated tests and manual integration have been used.
+
+    \begin{figure}[h]
+      \includegraphics[scale=0.2]{figures/flamegraph_mex10.pdf}
+      \caption{Profiling using \(\texttt{perf}\) and \(\texttt{flamegraph}\).}
+    \end{figure}
+    % 3k lines of tests
+  \end{frame}
+
+  % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+
 \end{section}
 
 % ==============================================================================
@@ -473,12 +463,16 @@
   \begin{frame}\frametitle{Conclusion}
     Key contributions:
     \begin{itemize}
-    \item[$\bullet$] New RS Modeling Platform that aids in analysis and design, implemented in Rust. Provided both a CLI and a GUI.%
+    \item[$\bullet$] New RS modeling platform that aids in analysis and design, implemented in 30k lines of Rust. Provides a CLI and a GUI.%
     \item[$\bullet$] Comprehensive Feature Set: simulation of RS, bisimulation of graphs, trace slicing, graph generation with Dot, GraphML and SVG outputs, loop analysis, automated conversion between RS types.
-    \item[$\bullet$] Improved performance and usability compared to previous software written in prolog and python.
+    \item[$\bullet$] Improved performance and usability compared to previous software written in Prolog and Python.
     \end{itemize}
   \end{frame}
 
   % §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
 
 \end{section}
+
+\begin{frame}
+
+\end{frame}

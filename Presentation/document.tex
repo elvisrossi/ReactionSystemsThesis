@@ -84,7 +84,7 @@
 %% usage: \ieb{Class:} for simple item
 %%        \ieb[4cm]{Class:} for specific size of box
 \newcommand{\ieb}[2][2cm]{
-        \makebox[#1][l]{\emph{#2}}
+  \makebox[#1][l]{\emph{#2}}
 } %% TODO: replace with description environment (? maybe)
 
 % section not in table of contents
@@ -201,17 +201,17 @@
   \titlepage{}
 \end{frame}
 
-\section*{Table of Contents}
-\begin{frame}[allowframebreaks]
-  \frametitle{Table of Contents}
-  \tableofcontents
-\end{frame}
+% \section*{Table of Contents}
+% \begin{frame}[allowframebreaks]
+%   \frametitle{Table of Contents}
+%   \tableofcontents
+% \end{frame}
 
 \include{content.tex}
 
-\begin{frame}[allowframebreaks]\frametitle{References}
-  \printbibliography{}
-\end{frame}
+% \begin{frame}[allowframebreaks]\frametitle{References}
+%   \printbibliography{}
+% \end{frame}
 
 \end{document}
 
